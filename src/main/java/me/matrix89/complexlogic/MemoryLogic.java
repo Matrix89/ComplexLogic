@@ -39,7 +39,7 @@ public class MemoryLogic extends BundledGateLogic {
 
     @Override
     public State getLayerState(int i) {
-        return State.ON;
+        return i==0 && getInputValueInside(EnumFacing.EAST)!=0? State.ON : State.OFF;
     }
 
     @Override

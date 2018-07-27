@@ -1,6 +1,0 @@
-{
-  "textures": {
-    "blob": "complex-logic:blocks/gate_adder_blob",
-    "side": "simplelogic:blocks/wire/wire_bundled_side"
-  }
-}

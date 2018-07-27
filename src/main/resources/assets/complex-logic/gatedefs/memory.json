@@ -1,6 +1,6 @@
 {
   "textures": {
-    "top": "simplelogic:blocks/empty"
+    "top": "complex-logic:blocks/gate_memory"
   },
   "models": {
     "blob": "complex-logic:block/memory"
