@@ -47,8 +47,6 @@ dependencies {
     //deobfCompile "pl.asie.charset:charset:0.5.3.12"
     //deobfCompile "pl.asie.charset:charset:0.5.3.12:api"
     //deobfCompile "pl.asie.charset:charset:0.5.3.12:full"
-    deobfCompile name: "Charset-0.5.3.1"
-    deobfCompile name: "Charset-0.5.3.1-api"
     deobfCompile name: "Charset-0.5.3.1-full"
 }
 
