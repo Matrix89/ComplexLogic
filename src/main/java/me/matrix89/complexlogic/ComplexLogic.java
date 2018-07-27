@@ -1,5 +1,6 @@
 package me.matrix89.complexlogic;
 
+import me.matrix89.complexlogic.gate.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;

@@ -1,4 +1,4 @@
-package me.matrix89.complexlogic;
+package me.matrix89.complexlogic.gate;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;

@@ -1,6 +1,6 @@
 package me.matrix89.complexlogic.client;
 
-import me.matrix89.complexlogic.BundledViewerLogic;
+import me.matrix89.complexlogic.gate.BundledViewerLogic;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;

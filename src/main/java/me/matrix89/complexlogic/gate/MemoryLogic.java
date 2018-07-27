@@ -1,4 +1,4 @@
-package me.matrix89.complexlogic;
+package me.matrix89.complexlogic.gate;
 
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.util.EnumFacing;

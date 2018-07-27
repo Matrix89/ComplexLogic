@@ -1,8 +1,8 @@
-package me.matrix89.complexlogic;
+package me.matrix89.complexlogic.gate;
 
 import net.minecraft.util.EnumFacing;
 
-public class XorLogic extends BundledGateLogic {
+public class AndLogic extends BundledGateLogic {
     @Override
     public Connection getType(EnumFacing dir) {
         switch (dir) {
@@ -18,9 +18,10 @@ public class XorLogic extends BundledGateLogic {
 
     @Override
     public byte[] calculateBundledOutput(EnumFacing facing) {
+        if(facing != EnumFacing.NORTH) return new byte[16];
         int a = bundledRsToDigi(getInputValueBundled(EnumFacing.WEST));
         int b = bundledRsToDigi(getInputValueBundled(EnumFacing.EAST));
-        return bundledDigiToRs(a ^ b);
+        return bundledDigiToRs(a & b);
     }
 
     @Override
