@@ -1,12 +1,9 @@
 package me.matrix89.complexlogic;
 
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import pl.asie.charset.lib.loader.CharsetModule;
 import pl.asie.simplelogic.gates.ItemGate;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.SimpleLogicGates;

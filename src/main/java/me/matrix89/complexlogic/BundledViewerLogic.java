@@ -2,18 +2,14 @@ package me.matrix89.complexlogic;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.logic.GateLogic;
 
-import java.util.Arrays;
-
-public class BundledViewerLogic extends GateLogic {
-    byte[] values = new byte[16];
+public class BundledViewerLogic extends BundledGateLogic {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
         super.writeToNBT(tag, isClient);
-        tag.setByteArray("v", values);
+        tag.setByteArray("v", getOutputValueBundled(EnumFacing.NORTH));
         return tag;
     }
 
@@ -21,7 +17,7 @@ public class BundledViewerLogic extends GateLogic {
     public void readFromNBT(NBTTagCompound compound, boolean isClient) {
         super.readFromNBT(compound, isClient);
         if (compound.hasKey("v"))
-            values = compound.getByteArray("v");
+            bundledValues.replace(EnumFacing.NORTH, compound.getByteArray("v"));
     }
 
     @Override
@@ -49,28 +45,12 @@ public class BundledViewerLogic extends GateLogic {
     }
 
     @Override
-    public boolean tick(PartGate parent) {
-        byte[] v = parent.getBundledInput(EnumFacing.SOUTH);
-        if (!Arrays.equals(values, v)) {
-            values = v;
-            super.updateOutputs();
-            return true;
-        }
-        return false;
+    public byte[] calculateBundledOutput(EnumFacing facing) {
+        return facing == EnumFacing.NORTH ? getOutputValueBundled(EnumFacing.SOUTH) : new byte[16];
     }
 
     @Override
     public State getTorchState(int i) {
-        return values[i] != 0 ? State.ON : State.OFF;
-    }
-
-    @Override
-    public byte[] getOutputValueBundled(EnumFacing side) {
-        return values;
-    }
-
-    @Override
-    protected byte calculateOutputInside(EnumFacing enumFacing) {
-        return 0;
+        return getOutputValueBundled(EnumFacing.NORTH)[i] != 0 ? State.ON : State.OFF;
     }
 }
