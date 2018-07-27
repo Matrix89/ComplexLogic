@@ -27,20 +27,23 @@ public abstract class BundledGateLogic extends GateLogic {
 
         for (EnumFacing facing : horizontals) {
             if (getType(facing) != Connection.INPUT_BUNDLED) continue;
-            bundledValues.replace(facing, parent.getBundledInput(facing));
+            byte[] newValue = parent.getBundledInput(facing);
+            if (!Arrays.equals(bundledValues.get(facing), newValue)) {
+                change = true;
+                bundledValues.replace(facing, newValue);
+            }
         }
 
         for (EnumFacing facing : horizontals) {
             if (getType(facing) != Connection.OUTPUT_BUNDLED) continue;
             byte[] newValue = calculateBundledOutput(facing);
-            change |= !Arrays.equals(bundledValues.get(facing), newValue);
-            if (change) {
+            if (!Arrays.equals(bundledValues.get(facing), newValue)) {
+                change = true;
                 bundledValues.replace(facing, newValue);
             }
-
         }
 
-        if(shouldUpdate) {
+        if (shouldUpdate) {
             shouldUpdate = false;
             return true;
         }
