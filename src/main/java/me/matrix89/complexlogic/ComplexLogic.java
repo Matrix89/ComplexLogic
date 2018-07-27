@@ -1,7 +1,9 @@
 package me.matrix89.complexlogic;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import pl.asie.simplelogic.gates.ItemGate;
@@ -21,6 +23,9 @@ public class ComplexLogic {
     public static final String MOD_NAME = "Complex Logic";
     public static final String VERSION = "1.0-SNAPSHOT";
 
+    @SidedProxy(modId=MOD_ID, clientSide = "me.matrix89.complexlogic.ProxyClient", serverSide = "me.matrix89.complexlogic.ProxyCommon")
+    public static ProxyCommon PROXY;
+
     @Mod.Instance(MOD_ID)
     public static ComplexLogic INSTANCE;
 
@@ -32,6 +37,9 @@ public class ComplexLogic {
         registerGate(new ResourceLocation(MOD_ID, "viewer"), BundledViewerLogic.class);
         registerGate(new ResourceLocation(MOD_ID, "and"), AndLogic.class);
         registerGate(new ResourceLocation(MOD_ID, "xor"), XorLogic.class);
+        registerGate(new ResourceLocation(MOD_ID, "memory"), MemoryLogic.class);
+
+        MinecraftForge.EVENT_BUS.register(PROXY);
     }
 
     @Mod.EventHandler
@@ -40,6 +48,9 @@ public class ComplexLogic {
         SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new BundledViewerLogic())));
         SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new AndLogic())));
         SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new XorLogic())));
+        SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new MemoryLogic())));
+
+        PROXY.init();
     }
 
     private void registerGate(ResourceLocation name, Class<? extends GateLogic> clazz) {

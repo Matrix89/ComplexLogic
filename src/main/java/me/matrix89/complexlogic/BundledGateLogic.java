@@ -5,10 +5,11 @@ import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.logic.GateLogic;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Map;
 
 public abstract class BundledGateLogic extends GateLogic {
-    HashMap<EnumFacing, byte[]> bundledValues = new HashMap<>();
+    final Map<EnumFacing, byte[]> bundledValues = new EnumMap<>(EnumFacing.class);
     private EnumFacing[] horizontals = EnumFacing.HORIZONTALS;
 
     public BundledGateLogic() {

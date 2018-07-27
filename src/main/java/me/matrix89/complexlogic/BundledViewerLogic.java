@@ -2,7 +2,6 @@ package me.matrix89.complexlogic;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import pl.asie.simplelogic.gates.logic.GateLogic;
 
 public class BundledViewerLogic extends BundledGateLogic {
 
@@ -30,13 +29,6 @@ public class BundledViewerLogic extends BundledGateLogic {
             default:
                 return Connection.NONE;
         }
-    }
-
-    public boolean renderEquals(GateLogic other) {
-        // if(!(other instanceof BundledViewerLogic)) return false;
-       // System.out.println(Arrays.toString(((BundledViewerLogic) other).values) + " " + Arrays.toString(values));
-       // return Arrays.equals(((BundledViewerLogic) other).values, values);
-        return false;
     }
 
     @Override
