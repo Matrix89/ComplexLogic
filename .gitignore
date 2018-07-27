@@ -33,7 +33,9 @@ gradle-app.setting
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
-
+.idea/*
+run/*
+*.iml
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
