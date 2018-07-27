@@ -30,12 +30,16 @@ public class ComplexLogic {
     public void preinit(FMLPreInitializationEvent event) {
         registerGate(new ResourceLocation(MOD_ID, "adder"), AdderLogic.class);
         registerGate(new ResourceLocation(MOD_ID, "viewer"), BundledViewerLogic.class);
+        registerGate(new ResourceLocation(MOD_ID, "and"), AndLogic.class);
+        registerGate(new ResourceLocation(MOD_ID, "xor"), XorLogic.class);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new AdderLogic())));
         SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new BundledViewerLogic())));
+        SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new AndLogic())));
+        SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new XorLogic())));
     }
 
     private void registerGate(ResourceLocation name, Class<? extends GateLogic> clazz) {
