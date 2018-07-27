@@ -13,7 +13,7 @@ public abstract class BundledGateLogic extends GateLogic {
 
     public BundledGateLogic() {
         for (EnumFacing horizontal : horizontals) {
-            if(getType(horizontal) == Connection.OUTPUT_BUNDLED || getType(horizontal) == Connection.INPUT_BUNDLED) {
+            if (getType(horizontal) == Connection.OUTPUT_BUNDLED || getType(horizontal) == Connection.INPUT_BUNDLED) {
                 bundledValues.put(horizontal, new byte[16]);
             }
         }
@@ -24,17 +24,19 @@ public abstract class BundledGateLogic extends GateLogic {
         boolean change = false;
 
         for (EnumFacing facing : horizontals) {
-            switch (getType(facing)) {
-                case OUTPUT_BUNDLED:
-                    byte[] newValue = calculateBundledOutput(facing);
-                    change |= !Arrays.equals(bundledValues.get(facing), newValue);
-                    if(change) {
-                        bundledValues.replace(facing, newValue);
-                    }
-                    continue;
-                case INPUT_BUNDLED:
-                    bundledValues.replace(facing, parent.getBundledInput(facing));
+            if (getType(facing) != Connection.INPUT_BUNDLED) continue;
+            bundledValues.replace(facing, parent.getBundledInput(facing));
+        }
+
+        for (EnumFacing facing : horizontals) {
+            if (getType(facing) != Connection.OUTPUT_BUNDLED) continue;
+
+            byte[] newValue = calculateBundledOutput(facing);
+            change |= !Arrays.equals(bundledValues.get(facing), newValue);
+            if (change) {
+                bundledValues.replace(facing, newValue);
             }
+
         }
 
         return change || super.tick(parent);

@@ -18,8 +18,9 @@ public class AndLogic extends BundledGateLogic {
 
     @Override
     public byte[] calculateBundledOutput(EnumFacing facing) {
+        if(facing != EnumFacing.NORTH) return new byte[16];
         int a = bundledRsToDigi(bundledValues.getOrDefault(EnumFacing.WEST, new byte[16]));
-        int b = bundledRsToDigi(bundledValues.getOrDefault(EnumFacing.WEST, new byte[16]));
+        int b = bundledRsToDigi(bundledValues.getOrDefault(EnumFacing.EAST, new byte[16]));
         return bundledDigiToRs(a & b);
     }
 
