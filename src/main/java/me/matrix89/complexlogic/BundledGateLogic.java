@@ -9,8 +9,9 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public abstract class BundledGateLogic extends GateLogic {
-    final Map<EnumFacing, byte[]> bundledValues = new EnumMap<>(EnumFacing.class);
+    private final Map<EnumFacing, byte[]> bundledValues = new EnumMap<>(EnumFacing.class);
     private EnumFacing[] horizontals = EnumFacing.HORIZONTALS;
+    private boolean shouldUpdate = false;
 
     public BundledGateLogic() {
         for (EnumFacing horizontal : horizontals) {
@@ -31,7 +32,6 @@ public abstract class BundledGateLogic extends GateLogic {
 
         for (EnumFacing facing : horizontals) {
             if (getType(facing) != Connection.OUTPUT_BUNDLED) continue;
-
             byte[] newValue = calculateBundledOutput(facing);
             change |= !Arrays.equals(bundledValues.get(facing), newValue);
             if (change) {
@@ -40,6 +40,10 @@ public abstract class BundledGateLogic extends GateLogic {
 
         }
 
+        if(shouldUpdate) {
+            shouldUpdate = false;
+            return true;
+        }
         return change || super.tick(parent);
     }
 
@@ -57,6 +61,15 @@ public abstract class BundledGateLogic extends GateLogic {
             out[i] = (byte) ((value & (1 << i)) != 0 ? 15 : 0);
         }
         return out;
+    }
+
+    public void setBundledValue(EnumFacing side, byte[] value) {
+        bundledValues.replace(side, value);
+        shouldUpdate = true;
+    }
+
+    public byte[] getInputValueBundled(EnumFacing side) {
+        return bundledValues.getOrDefault(side, new byte[16]);
     }
 
     @Override

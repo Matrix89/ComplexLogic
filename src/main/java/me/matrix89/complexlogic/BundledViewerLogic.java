@@ -16,7 +16,7 @@ public class BundledViewerLogic extends BundledGateLogic {
     public void readFromNBT(NBTTagCompound compound, boolean isClient) {
         super.readFromNBT(compound, isClient);
         if (compound.hasKey("v"))
-            bundledValues.replace(EnumFacing.NORTH, compound.getByteArray("v"));
+            setBundledValue(EnumFacing.NORTH, compound.getByteArray("v"));
     }
 
     @Override

@@ -28,15 +28,10 @@ public class AdderLogic extends BundledGateLogic {
         int b = bundledRsToDigi(inB);
 
         int v = a + b;
-        bundledValues.replace(EnumFacing.NORTH, bundledDigiToRs(v));
+        setBundledValue(EnumFacing.NORTH, bundledDigiToRs(v));
         outputValues[2] = (byte) (v >>> 16 != 0 ? 15 : 0); // carry
 
         return super.tick(parent);
-    }
-
-    @Override
-    public byte[] getOutputValueBundled(EnumFacing side) {
-        return bundledValues.get(EnumFacing.NORTH);
     }
 
     @Override
