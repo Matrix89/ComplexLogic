@@ -1,0 +1,35 @@
+{
+  "models": {
+    "indicator": "complex-logic:block/viewerindicator"
+  },
+  "textures": {
+    "top": "simplelogic:blocks/empty"
+  },
+  "layers": [
+    {
+      "type": "color",
+      "color_mask": "FF0000"
+    }
+  ],
+  "torches": [
+    { "pos": [10, 10], "model_on": "indicator", "model_off": "indicator", "color_on": "f9fffe" },
+    { "pos": [13, 10], "model_on": "indicator", "model_off": "indicator", "color_on": "f9801d" },
+    { "pos": [16, 10], "model_on": "indicator", "model_off": "indicator", "color_on": "c74ebd" },
+    { "pos": [19, 10], "model_on": "indicator", "model_off": "indicator", "color_on": "3ab3da" },
+
+    { "pos": [10, 13], "model_on": "indicator", "model_off": "indicator", "color_on": "fed83d" },
+    { "pos": [13, 13], "model_on": "indicator", "model_off": "indicator", "color_on": "80c71f" },
+    { "pos": [16, 13], "model_on": "indicator", "model_off": "indicator", "color_on": "f38baa" },
+    { "pos": [19, 13], "model_on": "indicator", "model_off": "indicator", "color_on": "474f52" },
+
+    { "pos": [10, 16], "model_on": "indicator", "model_off": "indicator", "color_on": "9d9d97" },
+    { "pos": [13, 16], "model_on": "indicator", "model_off": "indicator", "color_on": "169c9c" },
+    { "pos": [16, 16], "model_on": "indicator", "model_off": "indicator", "color_on": "8932b8" },
+    { "pos": [19, 16], "model_on": "indicator", "model_off": "indicator", "color_on": "3c44aa" },
+
+    { "pos": [10, 19], "model_on": "indicator", "model_off": "indicator", "color_on": "835432" },
+    { "pos": [13, 19], "model_on": "indicator", "model_off": "indicator", "color_on": "5e7c16" },
+    { "pos": [16, 19], "model_on": "indicator", "model_off": "indicator", "color_on": "b02e26" },
+    { "pos": [19, 19], "model_on": "indicator", "model_off": "indicator", "color_on": "1d1d21" }
+  ]
+}

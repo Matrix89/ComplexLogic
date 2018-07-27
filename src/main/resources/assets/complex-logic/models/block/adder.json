@@ -1,0 +1,41 @@
+{
+  "textures": {
+    "blob": "complex-logic:blocks/gate_adder_blob",
+    "side": "simplelogic:blocks/wire/wire_bundled_side"
+  },
+  "elements": [
+    {
+      "from": [ 0, 2, 5 ],
+      "to": [ 16, 4, 11 ],
+      "faces": {
+        "up":    { "uv": [0, 6, 16, 12], "texture": "#blob" },
+        "north": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "south": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "west":  { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "east":  { "uv": [0, 0, 16, 2], "texture": "#side" }
+      }
+    },
+    {
+      "from": [4, 2, 4],
+      "to":   [12, 5, 12],
+      "faces": {
+        "up":    { "uv": [4, 5, 12, 13], "texture": "#blob" },
+        "north": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "south": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "west":  { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "east":  { "uv": [0, 0, 16, 2], "texture": "#side" }
+      }
+    },
+    {
+      "from": [5, 2, 0],
+      "to":   [11, 4, 6],
+      "faces": {
+        "up":    { "uv": [5, 0, 11, 6], "texture": "#blob" },
+        "north": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "south": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "west":  { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "east":  { "uv": [0, 0, 16, 2], "texture": "#side" }
+      }
+    }
+  ]
+}
