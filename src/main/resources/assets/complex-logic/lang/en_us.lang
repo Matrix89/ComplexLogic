@@ -1,0 +1,6 @@
+tile.complex-logic.gate.memory.name=Bundled Memory Gate
+tile.complex-logic.gate.adder.name=Bundled Adder Gate
+tile.complex-logic.gate.and.name=Bundled AND Gate
+tile.complex-logic.gate.xor.name=Bundled XOR Gate
+tile.complex-logic.gate.viewer.name=Bundled Viewer Gate
+tile.complex-logic.gate.shifter.name=Bundled Shifter Gate
