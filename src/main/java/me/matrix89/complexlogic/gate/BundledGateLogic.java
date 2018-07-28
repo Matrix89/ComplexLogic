@@ -44,7 +44,8 @@ public abstract class BundledGateLogic extends GateLogic {
             shouldUpdate = false;
             return true;
         }
-        return change || super.tick(parent);
+        boolean update = super.tick(parent);
+        return change || update;
     }
 
     public int bundledRsToDigi(byte[] values) {
