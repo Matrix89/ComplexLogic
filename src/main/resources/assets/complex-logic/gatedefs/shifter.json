@@ -1,0 +1,26 @@
+{
+  "textures": {
+    "top": "complex-logic:blocks/shifter"
+  },
+  "models": {
+    "blob": "complex-logic:block/shifter"
+  },
+  "layers": [
+    {
+      "type": "color",
+      "color_mask": "FF0000"
+    }
+  ],
+  "torches": [
+    {
+      "pos": [7.5, 7.5],
+      "model_on": "blob",
+      "model_off": "blob"
+    },
+    {
+      "pos": [14, 7.5],
+      "inverter": "east"
+  }
+
+  ]
+}
