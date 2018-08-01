@@ -1,17 +1,24 @@
 buildscript {
     repositories {
+        mavenCentral()
         jcenter()
         maven {
             name = "forge"
             url = "https://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
+        classpath 'de.undercouch:gradle-download-task:3.3.0'
         classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
     }
 }
 
 apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: 'de.undercouch.download'
 
 version = modVersion
 group = modGroup
@@ -30,6 +37,24 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+download {
+    src 'https://media.forgecdn.net/files/2595/955/SimpleLogic-Wires-0.5.4.0.jar'
+    dest file('libs/SimpleLogic-Wires.jar')
+    overwrite true
+}
+
+download {
+    src 'https://media.forgecdn.net/files/2595/956/SimpleLogic-Gates-0.5.4.0.jar'
+    dest file('libs/SimpleLogic-Gates.jar')
+    overwrite true
+}
+
+download {
+    src 'https://media.forgecdn.net/files/2595/953/Charset-Lib-0.5.4.0.jar'
+    dest file('libs/Charset-Lib.jar')
+    overwrite true
+}
+
 repositories {
     mavenCentral()
     maven {
@@ -44,10 +69,7 @@ repositories {
 
 dependencies {
     deobfCompile "MCMultiPart2:MCMultiPart-exp:2.5.1_66"
-    //deobfCompile "pl.asie.charset:charset:0.5.3.12"
-    //deobfCompile "pl.asie.charset:charset:0.5.3.12:api"
-    //deobfCompile "pl.asie.charset:charset:0.5.3.12:full"
-    deobfCompile name: "Charset-0.5.3.1-full"
+
 }
 
 processResources {
