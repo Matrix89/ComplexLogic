@@ -1,0 +1,15 @@
+{
+  "conditions": {
+    "module_loaded": "pl.asie.charset.lib.recipe.ConditionModuleLoadedFactory",
+    "simplelogic_gate_enabled": "pl.asie.charset.shared.ConditionSimplelogicGateEnabledFactory"
+  },
+  "ingredients": {
+    "group": "pl.asie.charset.lib.recipe.IngredientGroup$Factory",
+    "material": "pl.asie.charset.lib.recipe.IngredientMaterial$Factory"
+  },
+  "recipes": {
+    "dyeable_item": "pl.asie.charset.lib.recipe.DyeableItemRecipeFactory",
+    "shaped": "pl.asie.charset.lib.recipe.RecipeCharset$Factory",
+    "shapeless": "pl.asie.charset.lib.recipe.RecipeCharset$Factory"
+  }
+}

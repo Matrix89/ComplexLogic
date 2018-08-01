@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import pl.asie.charset.ModCharset;
 import pl.asie.simplelogic.gates.ItemGate;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.SimpleLogicGates;
@@ -34,6 +35,7 @@ public class ComplexLogic {
 
     @Mod.EventHandler
     public void preinit(FMLPreInitializationEvent event) {
+        if (!ModCharset.isModuleLoaded("simplelogic.gates")) { throw new RuntimeException("Missing simplelogic.gates module"); }
         registerGate(new ResourceLocation(MOD_ID, "adder"), AdderLogic.class);
         registerGate(new ResourceLocation(MOD_ID, "viewer"), BundledViewerLogic.class);
         registerGate(new ResourceLocation(MOD_ID, "and"), AndLogic.class);

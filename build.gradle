@@ -20,7 +20,7 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: 'de.undercouch.download'
 
-version = "1.0." + System.getenv("BUILD_NUMBER")
+version = "1.1." + System.getenv("BUILD_NUMBER")
 group = modGroup
 archivesBaseName = modBaseName
 
