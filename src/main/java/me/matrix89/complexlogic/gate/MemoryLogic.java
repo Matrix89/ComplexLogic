@@ -25,7 +25,7 @@ public class MemoryLogic extends BundledGateLogic {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound, boolean isClient) {
+    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
         if(!isClient){
             if(compound.hasKey("address")) {
                 address = compound.getInteger("address");
@@ -35,7 +35,7 @@ public class MemoryLogic extends BundledGateLogic {
                 tag.getKeySet().forEach((k)-> memory.put(Integer.parseInt(k), tag.getInteger(k)));
             }
         }
-        super.readFromNBT(compound, isClient);
+        return super.readFromNBT(compound, isClient);
     }
 
     @Override

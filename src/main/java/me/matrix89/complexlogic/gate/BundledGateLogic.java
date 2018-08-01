@@ -8,6 +8,7 @@ import pl.asie.simplelogic.gates.logic.GateLogic;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class BundledGateLogic extends GateLogic {
     private final Map<EnumFacing, byte[]> bundledValues = new EnumMap<>(EnumFacing.class);
@@ -27,17 +28,28 @@ public abstract class BundledGateLogic extends GateLogic {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound, boolean isClient) {
-        super.readFromNBT(compound, isClient);
+    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
+        boolean oldSshouldUpdate  = shouldUpdate;
+        AtomicBoolean update = new AtomicBoolean(false);
         if(!isClient){
             if(compound.hasKey("shouldUpdate")){
                 shouldUpdate = compound.getBoolean("shouldUpdate");
             }
             if(compound.hasKey("bundledValues")){
                  NBTTagCompound tag = compound.getCompoundTag("bundledValues");
-                 Arrays.stream(horizontals).map(EnumFacing::getName).filter(tag::hasKey).forEach(i -> bundledValues.put(EnumFacing.byName(i), tag.getByteArray(i)));
+                 Arrays.stream(horizontals).map(EnumFacing::getName).filter(tag::hasKey).forEach(i -> {
+                     EnumFacing dir = EnumFacing.byName(i);
+                     byte[] oldArray = bundledValues.get(dir);
+                     byte[] newArray = tag.getByteArray(i);
+                     if(!Arrays.equals(newArray, oldArray)) {
+                         bundledValues.put(dir, tag.getByteArray(i));
+                         update.set(true);
+                     }
+                 } );
             }
         }
+
+        return super.readFromNBT(compound, isClient) || oldSshouldUpdate != shouldUpdate || update.get();
     }
 
     public BundledGateLogic() {

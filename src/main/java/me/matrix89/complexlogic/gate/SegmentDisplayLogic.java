@@ -15,10 +15,10 @@ public class SegmentDisplayLogic extends BundledGateLogic {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound, boolean isClient) {
-        super.readFromNBT(compound, isClient);
+    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
         if (compound.hasKey("v"))
             value = compound.getByteArray("v");
+        return super.readFromNBT(compound, isClient);
     }
 
     @Override
