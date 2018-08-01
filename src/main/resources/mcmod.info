@@ -8,13 +8,12 @@
     "url": "",
     "updateUrl": "",
     "authorList": [
-      ""
+      "marcin212",
+      "Matrix89"
     ],
     "credits": "",
     "logoFile": "",
     "screenshots": [],
-    "dependencies": [
-      ""
-    ]
+    "dependencies": []
   }
 ]
