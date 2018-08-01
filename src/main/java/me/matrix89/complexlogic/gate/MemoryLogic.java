@@ -1,6 +1,8 @@
 package me.matrix89.complexlogic.gate;
 
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
 
@@ -10,6 +12,31 @@ public class MemoryLogic extends BundledGateLogic {
 
     private int address = 0;
     private Map<Integer, Integer> memory = new Int2IntOpenHashMap();
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
+        if(!isClient){
+            tag.setInteger("address", address);
+            NBTTagCompound mapTag = new NBTTagCompound();
+            memory.forEach((k,v) -> mapTag.setInteger(k.toString(), v));
+            tag.setTag("memory", mapTag);
+        }
+        return super.writeToNBT(tag, isClient);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound, boolean isClient) {
+        if(!isClient){
+            if(compound.hasKey("address")) {
+                address = compound.getInteger("address");
+            }
+            if(compound.hasKey("memory")){
+                NBTTagCompound tag = compound.getCompoundTag("memory");
+                tag.getKeySet().forEach((k)-> memory.put(Integer.parseInt(k), tag.getInteger(k)));
+            }
+        }
+        super.readFromNBT(compound, isClient);
+    }
 
     @Override
     public Connection getType(EnumFacing dir) {
@@ -26,7 +53,12 @@ public class MemoryLogic extends BundledGateLogic {
     public boolean tick(PartGate parent) {
         address = bundledRsToDigi(parent.getBundledInput(EnumFacing.WEST));
         if(getInputValueInside(EnumFacing.EAST) != 0) {
-            memory.put(address, bundledRsToDigi(parent.getBundledInput(EnumFacing.SOUTH)));
+            int value = bundledRsToDigi(parent.getBundledInput(EnumFacing.SOUTH));
+            if(value==0) {
+                memory.remove(address);
+            }else {
+                memory.put(address, value);
+            }
         }
         return super.tick(parent);
     }
