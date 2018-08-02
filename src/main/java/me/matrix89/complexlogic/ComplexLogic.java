@@ -44,6 +44,7 @@ public class ComplexLogic {
         registerGate(new ResourceLocation(MOD_ID, "display"), SegmentDisplayLogic.class);
         registerGate(new ResourceLocation(MOD_ID, "counter"), CounterLogic.class);
         registerGate(new ResourceLocation(MOD_ID, "shifter"), ShifterLogic.class);
+        registerGate(new ResourceLocation(MOD_ID, "rtc"), RTCLogic.class);
 
         MinecraftForge.EVENT_BUS.register(PROXY);
     }
@@ -58,6 +59,7 @@ public class ComplexLogic {
         SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new SegmentDisplayLogic())));
         SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new CounterLogic())));
         SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new ShifterLogic())));
+        SIMPLE_LOGIC_GATES.registerGateStack(ItemGate.getStack(new PartGate(new RTCLogic())));
 
         PROXY.init();
     }
