@@ -3,6 +3,8 @@ package me.matrix89.complexlogic.gate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
+import java.util.Arrays;
+
 public class SegmentDisplayLogic extends BundledGateLogic {
 
     public byte[] value = new byte[16];
@@ -16,9 +18,10 @@ public class SegmentDisplayLogic extends BundledGateLogic {
 
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
+        byte[] valueOld = value;
         if (compound.hasKey("v"))
             value = compound.getByteArray("v");
-        return super.readFromNBT(compound, isClient);
+        return super.readFromNBT(compound, isClient) || !Arrays.equals(valueOld, value);
     }
 
     @Override
