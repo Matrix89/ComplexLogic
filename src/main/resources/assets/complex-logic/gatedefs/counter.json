@@ -1,14 +1,18 @@
 {
   "textures": {
-    "top": "complex-logic:blocks/gate_adder"
+    "top": "complex-logic:blocks/counter"
   },
   "models": {
-    "blob": "complex-logic:block/adder"
+    "blob": "complex-logic:block/counter"
   },
   "layers": [
     {
       "type": "color",
       "color_mask": "FF0000"
+    },
+    {
+      "type": "color",
+      "color_mask": "00FF00"
     }
   ],
   "torches": [
@@ -17,7 +21,7 @@
       "model_on": "blob"
     },
     {
-      "pos": [7.5, 7.5],
+      "pos": [14, 7.5],
       "inverter": "east"
     }
   ]
