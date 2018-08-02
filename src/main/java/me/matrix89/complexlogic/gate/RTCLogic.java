@@ -16,11 +16,6 @@ public class RTCLogic extends BundledGateLogic {
     }
 
     @Override
-    public State getLayerState(int i) {
-        return State.ON;
-    }
-
-    @Override
     public boolean tick(PartGate parent) {
         if(Minecraft.getMinecraft().world == null) return true;
 
@@ -34,6 +29,11 @@ public class RTCLogic extends BundledGateLogic {
         }
 
         return super.tick(parent);
+    }
+
+    @Override
+    public State getLayerState(int i) {
+        return getInputValueInside(EnumFacing.SOUTH) != 0 ? State.ON : State.OFF;
     }
 
     @Override
