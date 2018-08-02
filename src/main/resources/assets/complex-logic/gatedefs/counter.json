@@ -15,6 +15,10 @@
     {
       "pos": [7.5, 7.5],
       "model_on": "blob"
+    },
+    {
+      "pos": [7.5, 7.5],
+      "inverter": "east"
     }
   ]
 }
