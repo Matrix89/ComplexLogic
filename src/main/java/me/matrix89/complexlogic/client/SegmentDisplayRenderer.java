@@ -37,9 +37,9 @@ public class SegmentDisplayRenderer extends GateDynamicRenderer<SegmentDisplayLo
         for (int i = 0; i < 16; i++) {
             int v = data[i]!=0?1:0;
             tints[i][0] = 1f;
-            tints[i][1] = v;
-            tints[i][2] = v;
-            tints[i][3] = v;
+            tints[i][1] = v*113/255f;
+            tints[i][2] = v*235/255f;
+            tints[i][3] = v*14/255f;
         }
 
         renderTransformedModel(
