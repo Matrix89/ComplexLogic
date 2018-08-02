@@ -5,3 +5,4 @@ tile.complex-logic.gate.xor.name=Bundled XOR Gate
 tile.complex-logic.gate.viewer.name=Bundled Viewer Gate
 tile.complex-logic.gate.shifter.name=Bundled Shifter Gate
 tile.complex-logic.gate.display.name=7-Segment Display (2-Digit)
+tile.complex-logic.gate.counter.name=Counter
