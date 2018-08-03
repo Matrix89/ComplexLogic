@@ -44,13 +44,13 @@ download {
 }
 
 download {
-    src 'https://media.forgecdn.net/files/2595/956/SimpleLogic-Gates-0.5.4.0.jar'
+    src 'https://media.forgecdn.net/files/2597/201/SimpleLogic-Gates-0.5.4.1.jar'
     dest file('libs/SimpleLogic-Gates.jar')
     overwrite true
-}
+}/**/
 
 download {
-    src 'https://media.forgecdn.net/files/2595/953/Charset-Lib-0.5.4.0.jar'
+    src 'https://media.forgecdn.net/files/2597/248/Charset-Lib-0.5.4.2.jar'
     dest file('libs/Charset-Lib.jar')
     overwrite true
 }
