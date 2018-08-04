@@ -1,6 +1,7 @@
 package me.matrix89.complexlogic.gate;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
 
@@ -13,6 +14,23 @@ public class RTCLogic extends BundledGateLogic {
             case SOUTH: return Connection.INPUT;
             default: return Connection.NONE;
         }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
+        if(!isClient){
+            tag.setBoolean("updateSignalOn", updateSignalOn);
+        }
+        return super.writeToNBT(tag, isClient);
+    }
+
+    @Override
+    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
+        boolean updateSignalOnOld = updateSignalOn;
+        if(compound.hasKey("updateSignalOn")){
+            updateSignalOn = compound.getBoolean("updateSignalOn");
+        }
+        return super.readFromNBT(compound, isClient) || updateSignalOnOld!=updateSignalOn;
     }
 
     @Override
