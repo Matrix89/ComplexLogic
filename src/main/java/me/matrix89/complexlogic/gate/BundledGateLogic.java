@@ -82,11 +82,11 @@ public abstract class BundledGateLogic extends GateLogic {
             }
         }
 
+        boolean update = super.tick(parent);
         if (shouldUpdate) {
             shouldUpdate = false;
             return true;
         }
-        boolean update = super.tick(parent);
         return change || update;
     }
 
