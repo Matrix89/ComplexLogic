@@ -6,7 +6,7 @@
     },
     {
       "type": "charset:simplelogic_gate_enabled",
-      "gate": "complex-logic:counter"
+      "gate": "complex-logic:rtc"
     }
   ],
   "type": "charset:shaped",
