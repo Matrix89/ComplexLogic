@@ -6,5 +6,5 @@ tile.complex-logic.gate.viewer.name=Bundled Viewer Gate
 tile.complex-logic.gate.shifter.name=Bundled Shifter Gate
 tile.complex-logic.gate.display.name=7-Segment Display (2-Digit)
 tile.complex-logic.gate.counter.name=Counter
-tile.complex-logic.gate.division.name=Bundled Dividing gate
+tile.complex-logic.gate.division.name=Bundled Dividing Gate
 tile.complex-logic.gate.rtc.name=Real-Time Clock
