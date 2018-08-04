@@ -1,0 +1,30 @@
+{
+  "textures": {
+    "blob": "complex-logic:blocks/gate_rtc_blob",
+    "side": "simplelogic:blocks/wire/wire_bundled_side"
+  },
+  "elements": [
+    {
+      "from": [3, 2, 3],
+      "to":   [13, 5, 13],
+      "faces": {
+        "up":    { "uv": [3, 3, 13, 13], "texture": "#blob" },
+        "north": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "south": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "west":  { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "east":  { "uv": [0, 0, 16, 2], "texture": "#side" }
+      }
+    },
+    {
+      "from": [5, 2, 0],
+      "to":   [11, 4, 6],
+      "faces": {
+        "up":    { "uv": [5, 0, 11, 6], "texture": "#blob" },
+        "north": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "south": { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "west":  { "uv": [0, 0, 16, 2], "texture": "#side" },
+        "east":  { "uv": [0, 0, 16, 2], "texture": "#side" }
+      }
+    }
+  ]
+}
