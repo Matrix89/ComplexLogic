@@ -35,12 +35,11 @@ public class RTCLogic extends BundledGateLogic {
 
     @Override
     public boolean tick(PartGate parent) {
-        if(Minecraft.getMinecraft().world == null) return true;
 
         if (getInputValueInside(EnumFacing.SOUTH) != 0) {
             if(!updateSignalOn){
                 updateSignalOn = true;
-                setBundledValue(EnumFacing.NORTH, bundledDigiToRs((int) Minecraft.getMinecraft().world.getWorldTime()));
+                setBundledValue(EnumFacing.NORTH, bundledDigiToRs((int) parent.getWorld().getWorldTime()));
             }
         }else{
             updateSignalOn = false;
