@@ -23,6 +23,8 @@ public class ProxyCommon {
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "shifter"), ShifterLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "rtc"), RTCLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "division"), DivisionLogic.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "modulo"), ModuloLogic.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "multiplication"), MultiplicationLogic.class);
 
         event.registerPartForCreativeTab(new PartGate(new AdderLogic()));
         event.registerPartForCreativeTab(new PartGate(new BundledViewerLogic()));
@@ -34,5 +36,7 @@ public class ProxyCommon {
         event.registerPartForCreativeTab(new PartGate(new ShifterLogic()));
         event.registerPartForCreativeTab(new PartGate(new RTCLogic()));
         event.registerPartForCreativeTab(new PartGate(new DivisionLogic()));
+        event.registerPartForCreativeTab(new PartGate(new ModuloLogic()));
+        event.registerPartForCreativeTab(new PartGate(new MultiplicationLogic()));
     }
 }
