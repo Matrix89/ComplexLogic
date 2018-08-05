@@ -1,10 +1,19 @@
 package me.matrix89.complexlogic;
 
 import me.matrix89.complexlogic.gate.*;
+import me.matrix89.complexlogic.lights.ColorLampBlock;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.addon.GateRegisterEvent;
+
+import java.util.Map;
 
 public class ProxyCommon {
     public void init() {
@@ -39,4 +48,29 @@ public class ProxyCommon {
         event.registerPartForCreativeTab(new PartGate(new ModuloLogic()));
         event.registerPartForCreativeTab(new PartGate(new MultiplicationLogic()));
     }
+
+    @SideOnly(Side.CLIENT)
+    public void registerModels(ModelRegistryEvent event) {
+
+    }
+
+    @SubscribeEvent
+    public void registerBlocks(RegistryEvent.Register<Block> register) {
+        for (Map.Entry<Block, Item> entry : ColorLampBlock.LampRegistry.entrySet()) {
+            register.getRegistry().register(entry.getKey());
+        }
+    }
+
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> register) {
+        for (Map.Entry<Block, Item> entry : ColorLampBlock.LampRegistry.entrySet()) {
+            register.getRegistry().register(entry.getValue());
+        }
+    }
+
+
+    public void registerColor() {
+
+    }
+
 }
