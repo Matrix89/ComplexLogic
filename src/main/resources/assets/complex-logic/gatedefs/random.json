@@ -1,0 +1,20 @@
+{
+  "textures": {
+    "top": "complex-logic:blocks/gate_adder"
+  },
+  "models": {
+    "blob": "complex-logic:block/random"
+  },
+  "layers": [
+    {
+      "type": "color",
+      "color_mask": "FF0000"
+    }
+  ],
+  "torches": [
+    {
+      "pos": [7.5, 7.5],
+      "model_on": "blob"
+    }
+  ]
+}

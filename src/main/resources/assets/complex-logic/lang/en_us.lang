@@ -10,6 +10,7 @@ tile.complex-logic.gate.division.name=Bundled Dividing Gate
 tile.complex-logic.gate.rtc.name=Real-Time Clock
 tile.complex-logic.gate.modulo.name=Bundled Modulo Gate
 tile.complex-logic.gate.multiplication.name=Bundled Multiplier
+tile.complex-logic.gate.random.name=Random Value Generator
 
 #LAMPS
 tile.color_lamp_white.name=White Lamp

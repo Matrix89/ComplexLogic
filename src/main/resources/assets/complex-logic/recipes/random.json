@@ -6,15 +6,15 @@
     },
     {
       "type": "charset:simplelogic_gate_enabled",
-      "gate": "complex-logic:rtc"
+      "gate": "complex-logic:random"
     }
   ],
   "type": "charset:shaped",
-  "group": "complex-logic:gate_bundled_rtc",
+  "group": "complex-logic:gate_bundled_random",
   "pattern": [
     "sbs",
-    "szp",
-    "sss"
+    "zxc",
+    "sbs"
   ],
   "key": {
     "b": {
@@ -25,11 +25,14 @@
       "type": "charset:material",
       "material": ["stone", "slab"]
     },
-    "z": {
-      "item": "minecraft:clock"
+    "c": {
+      "item": "minecraft:comparator"
     },
-    "p": {
-      "item": "minecraft:stone_button"
+    "z": {
+      "item": "minecraft:redstone_block"
+    },
+    "x":{
+      "item": "minecraft:ender_pearl"
     }
   },
   "result": {
@@ -38,7 +41,7 @@
     "data": 0,
     "count": 1,
     "nbt": {
-      "logic": "complex-logic:rtc"
+      "logic": "complex-logic:random"
     }
   }
 }
