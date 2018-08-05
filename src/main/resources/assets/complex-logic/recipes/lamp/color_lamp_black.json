@@ -1,0 +1,24 @@
+{
+  "type": "charset:shaped",
+  "group": "complex-logic:lamp",
+  "pattern": [
+    " d ",
+    " l ",
+    "   "
+  ],
+  "key": {
+    "d": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
+    },
+    "l": {
+      "item": "minecraft:redstone_lamp"
+    }
+  },
+  "result": {
+    "type": "minecraft:item",
+    "item": "complex-logic:color_lamp_black",
+    "data": 0,
+    "count": 1
+  }
+}
