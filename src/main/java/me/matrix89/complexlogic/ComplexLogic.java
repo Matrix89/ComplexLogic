@@ -6,6 +6,12 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Scanner;
+
 @Mod(
         modid = ComplexLogic.MOD_ID,
         name = ComplexLogic.MOD_NAME,
@@ -35,7 +41,14 @@ public class ComplexLogic {
         PROXY.registerColor();
     }
 
-//    public static void main(String[] args) {
+   public static void main(String[] args) throws IOException {
+       File dir = new File("src/main/resources/assets/complex-logic/blockstates/");
+       for (File f: dir.listFiles()) {
+           byte[] a = Files.readAllBytes(f.toPath());
+           String ne = f.getName().substring(0, f.getName().indexOf(".")) + "_inverted.json";
+           Files.write(dir.toPath().resolve(ne), a);
+       }
+   }
 ////        System.out.println(new File(".").getAbsolutePath());
 //        File dir = new File("src/main/resources/assets/complex-logic/recipes/lamp");
 //        StringBuilder sb = new StringBuilder();

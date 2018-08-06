@@ -1,8 +1,16 @@
 {
- "variants":{
-   "inverted=true,is_on=false": {"model":"complex-logic:lamp/color_lamp_on"},
-   "inverted=true,is_on=true": {"model":"complex-logic:lamp/color_lamp_off"},
-   "inverted=false,is_on=true": {"model":"complex-logic:lamp/color_lamp_on"},
-   "inverted=false,is_on=false": {"model":"complex-logic:lamp/color_lamp_off"}
- }
+  "variants":{
+    "facing=up,is_on=true": {"model":"complex-logic:lamp/color_lamp_on"},
+    "facing=down,is_on=true": {"model":"complex-logic:lamp/color_lamp_on"},
+    "facing=east,is_on=true": {"model":"complex-logic:lamp/color_lamp_on"},
+    "facing=west,is_on=true": {"model":"complex-logic:lamp/color_lamp_on"},
+    "facing=north,is_on=true": {"model":"complex-logic:lamp/color_lamp_on"},
+    "facing=south,is_on=true": {"model":"complex-logic:lamp/color_lamp_on"},
+    "facing=up,is_on=false": {"model":"complex-logic:lamp/color_lamp_off"},
+    "facing=down,is_on=false": {"model":"complex-logic:lamp/color_lamp_off"},
+    "facing=east,is_on=false": {"model":"complex-logic:lamp/color_lamp_off"},
+    "facing=west,is_on=false": {"model":"complex-logic:lamp/color_lamp_off"},
+    "facing=north,is_on=false": {"model":"complex-logic:lamp/color_lamp_off"},
+    "facing=south,is_on=false": {"model":"complex-logic:lamp/color_lamp_off"}
+  }
 }

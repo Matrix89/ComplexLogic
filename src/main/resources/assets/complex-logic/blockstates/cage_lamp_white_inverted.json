@@ -1,0 +1,10 @@
+{
+  "variants":{
+    "is_on=false,facing=up": {"model":"complex-logic:lamp/cage_lamp"},
+    "is_on=true,facing=down": {"model":"complex-logic:lamp/cage_lamp"},
+    "is_on=true,facing=east": {"model":"complex-logic:lamp/cage_lamp"},
+    "is_on=false,facing=west": {"model":"complex-logic:lamp/cage_lamp"},
+    "is_on=false,facing=north": {"model":"complex-logic:lamp/cage_lamp"},
+    "is_on=false,facing=south": {"model":"complex-logic:lamp/cage_lamp"}
+  }
+}

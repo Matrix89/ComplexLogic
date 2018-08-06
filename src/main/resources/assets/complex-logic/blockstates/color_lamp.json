@@ -1,8 +1,0 @@
-{
- "variants":{
-   "inverted=true,is_on=false": {"model":"complex-logic:lamp/color_lamp_on"},
-   "inverted=true,is_on=true": {"model":"complex-logic:lamp/color_lamp_off"},
-   "inverted=false,is_on=true": {"model":"complex-logic:lamp/color_lamp_on"},
-   "inverted=false,is_on=false": {"model":"complex-logic:lamp/color_lamp_off"}
- }
-}

@@ -20,8 +20,8 @@
   },
   "result": {
     "type": "minecraft:item",
-    "item": "complex-logic:color_lamp_green",
-    "data": 2,
+    "item": "complex-logic:color_lamp_green_inverted",
+    "data": 0,
     "count": 1
   }
 }

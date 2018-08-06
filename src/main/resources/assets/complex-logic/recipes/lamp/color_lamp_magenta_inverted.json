@@ -20,8 +20,8 @@
   },
   "result": {
     "type": "minecraft:item",
-    "item": "complex-logic:color_lamp_magenta",
-    "data": 2,
+    "item": "complex-logic:color_lamp_magenta_inverted",
+    "data": 0,
     "count": 1
   }
 }

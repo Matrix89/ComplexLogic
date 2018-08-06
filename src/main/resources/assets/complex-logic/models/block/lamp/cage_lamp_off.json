@@ -1,0 +1,8 @@
+{
+  "parent": "complex-logic:block/lamp/cage_lamp",
+  "textures": {
+    "all": "complex-logic:blocks/lamp/red_lamp_off",
+    "particle": "complex-logic:blocks/lamp/red_lamp_off",
+    "alpha": "complex-logic:blocks/lamp/alpha_lamp_full"
+  }
+}

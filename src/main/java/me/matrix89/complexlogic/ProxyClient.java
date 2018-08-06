@@ -52,8 +52,7 @@ public class ProxyClient extends ProxyCommon {
     @Override
     public void registerModels(ModelRegistryEvent event){
         for (Map.Entry<Block, Item> entry : ColorLampBlock.LampRegistry.entrySet()){
-            ModelLoader.setCustomModelResourceLocation(entry.getValue(), 0, new ModelResourceLocation(entry.getValue().getRegistryName(), "inverted=false,is_on=false"));
-            ModelLoader.setCustomModelResourceLocation(entry.getValue(), 2, new ModelResourceLocation(entry.getValue().getRegistryName(), "inverted=true,is_on=false"));
+            ModelLoader.setCustomModelResourceLocation(entry.getValue(), 0, new ModelResourceLocation(entry.getValue().getRegistryName(), "facing=down,is_on=false"));
         }
     }
 
