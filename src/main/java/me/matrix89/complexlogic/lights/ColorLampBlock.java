@@ -39,7 +39,9 @@ public class ColorLampBlock extends Block {
             LampRegistry.put(bi, new ColorLampItem(bi));
         }
         Block b = new ColorLampBlock("cage_lamp_", EnumDyeColor.WHITE, false);
+        Block b2 = new ColorLampBlock("flat_lamp_", EnumDyeColor.WHITE, false);
         LampRegistry.put(b, new ColorLampItem(b));
+        LampRegistry.put(b2, new ColorLampItem(b2));
     }
 
     private boolean inverted;
