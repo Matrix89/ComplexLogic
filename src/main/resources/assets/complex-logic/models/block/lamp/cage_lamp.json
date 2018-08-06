@@ -1,16 +1,18 @@
 {
   "parent": "block/block",
-
+  "textures":{
+    "bottom": "complex-logic:blocks/lamp/cage_lamp_bottom"
+  },
   "elements": [
     {   "from": [ 0, 0, 0 ],
       "to": [ 16, 2, 16 ],
       "faces": {
-        "down":  { "texture": "#all", "tintindex": 0},
-        "up":    { "texture": "#all", "tintindex": 0},
-        "north": { "texture": "#all", "tintindex": 0},
-        "south": { "texture": "#all", "tintindex": 0},
-        "west":  { "texture": "#all", "tintindex": 0},
-        "east":  { "texture": "#all", "tintindex": 0}
+        "down":  { "texture": "#bottom"},
+        "up":    { "texture": "#bottom"},
+        "north": { "texture": "#bottom"},
+        "south": { "texture": "#bottom"},
+        "west":  { "texture": "#bottom"},
+        "east":  { "texture": "#bottom"}
       }
     },
     {   "from": [ 3, 2, 3 ],
