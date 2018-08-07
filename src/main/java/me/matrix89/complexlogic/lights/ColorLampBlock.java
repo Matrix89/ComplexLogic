@@ -5,9 +5,11 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -16,13 +18,16 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ColorLampBlock extends Block {
@@ -33,26 +38,74 @@ public class ColorLampBlock extends Block {
 
     static {
         for (EnumDyeColor color : EnumDyeColor.values()) {
-            Block b = new ColorLampBlock("color_lamp_", color, false);
-            Block bi = new ColorLampBlock("color_lamp_", color, true);
+            Block b = new ColorLampBlock("color_lamp_", color, false, true,0);
+            Block bi = new ColorLampBlock("color_lamp_", color, true,true,0);
             LampRegistry.put(b, new ColorLampItem(b));
             LampRegistry.put(bi, new ColorLampItem(bi));
+            //cage lamp
+            Block c = new ColorLampBlock("cage_lamp_", color, false,false,1);
+            Block ci = new ColorLampBlock("cage_lamp_", color, true,false,1);
+            LampRegistry.put(c, new ColorLampItem(c));
+            LampRegistry.put(ci, new ColorLampItem(ci));
+            //flat lamp
+            Block f = new ColorLampBlock("flat_lamp_", color, false,false,2);
+            Block fi = new ColorLampBlock("flat_lamp_", color, true,false,2);
+            LampRegistry.put(f, new ColorLampItem(f));
+            LampRegistry.put(fi, new ColorLampItem(fi));
         }
-        Block b = new ColorLampBlock("cage_lamp_", EnumDyeColor.WHITE, false);
-        Block b2 = new ColorLampBlock("flat_lamp_", EnumDyeColor.WHITE, false);
-        LampRegistry.put(b, new ColorLampItem(b));
-        LampRegistry.put(b2, new ColorLampItem(b2));
     }
 
     private boolean inverted;
+    private boolean isFull;
+    private int aabbIndex;
 
-    public ColorLampBlock(String prefix,EnumDyeColor color, boolean inverted) {
+            /*
+            DOWN
+            UP
+            NORTH
+            SOUTH
+            WEST
+            EAST
+            */
+    public static final AxisAlignedBB[][] boundingBox =
+    new AxisAlignedBB[][]{
+            new AxisAlignedBB[]{
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1)
+            },
+
+            new AxisAlignedBB[]{
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 1)
+            },
+
+            new AxisAlignedBB[]{
+                    new AxisAlignedBB(0, 12/16f, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 4/16f, 1),
+                    new AxisAlignedBB(0, 0, 12/16f, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 1, 1, 4/16f),
+                    new AxisAlignedBB(12/16f, 0, 0, 1, 1, 1),
+                    new AxisAlignedBB(0, 0, 0, 4/16f, 1, 1)
+            }
+    };
+
+    public ColorLampBlock(String prefix,EnumDyeColor color, boolean inverted, boolean isFull, int aabbIndex) {
         super(Material.REDSTONE_LIGHT, MapColor.getBlockColor(color));
         setDefaultState(this.blockState.getBaseState().withProperty(IS_ON, false).withProperty(FACING, EnumFacing.DOWN));
         setCreativeTab(CreativeTabs.REDSTONE);
         setTranslationKey(prefix + color.getTranslationKey() + (inverted?"_inverted":""));
         setRegistryName(prefix + color.getName() + (inverted?"_inverted":""));
         this.inverted = inverted;
+        this.isFull = isFull;
+        this.aabbIndex = aabbIndex;
     }
 
     @Override
@@ -68,6 +121,55 @@ public class ColorLampBlock extends Block {
         } else {
             worldIn.setBlockState(pos, state.withProperty(IS_ON, false), 2);
         }
+    }
+
+    @Override
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
+        super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
+    }
+
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return isFull || base_state.getValue(FACING).getOpposite()==side;
+    }
+
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        return state.getValue(FACING).getOpposite() == face?BlockFaceShape.SOLID:BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        switch (state.getValue(FACING)){
+            case SOUTH:
+                return boundingBox[aabbIndex][EnumFacing.SOUTH.getIndex()];
+            case NORTH:
+                return boundingBox[aabbIndex][EnumFacing.NORTH.getIndex()];
+            case EAST:
+                return boundingBox[aabbIndex][EnumFacing.EAST.getIndex()];
+            case WEST:
+                return boundingBox[aabbIndex][EnumFacing.WEST.getIndex()];
+            case DOWN:
+                return boundingBox[aabbIndex][EnumFacing.DOWN.getIndex()];
+            case UP:
+            default:
+                return boundingBox[aabbIndex][EnumFacing.UP.getIndex()];
+        }
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return isFull;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return isFull;
+    }
+
+    @Override
+    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return isFull;
     }
 
     @Override
