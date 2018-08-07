@@ -107,8 +107,8 @@ public abstract class BundledGateLogic extends GateLogic {
     }
 
     public void setBundledValue(EnumFacing side, byte[] value) {
+        shouldUpdate = !Arrays.equals(bundledValues.get(side), value);
         bundledValues.replace(side, value);
-        shouldUpdate = true;
     }
 
     public byte[] getInputValueBundled(EnumFacing side) {
