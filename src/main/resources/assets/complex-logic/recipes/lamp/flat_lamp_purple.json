@@ -1,0 +1,24 @@
+{
+  "type": "charset:shaped",
+  "group": "complex-logic:lamp",
+  "pattern": [
+    " d ",
+    "lll",
+    "   "
+  ],
+  "key": {
+    "d": {
+      "type": "forge:ore_dict",
+      "ore": "dyePurple"
+    },
+    "l": {
+      "item": "minecraft:redstone_lamp"
+    }
+  },
+  "result": {
+    "type": "minecraft:item",
+    "item": "complex-logic:flat_lamp_purple",
+    "data": 0,
+    "count": 6
+  }
+}

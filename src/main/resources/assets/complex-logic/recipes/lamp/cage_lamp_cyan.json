@@ -1,0 +1,27 @@
+{
+  "type": "charset:shaped",
+  "group": "complex-logic:lamp",
+  "pattern": [
+    " d ",
+    "flf",
+    "   "
+  ],
+  "key": {
+    "d": {
+      "type": "forge:ore_dict",
+      "ore": "dyeCyan"
+    },
+    "l": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "f": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "result": {
+    "type": "minecraft:item",
+    "item": "complex-logic:cage_lamp_cyan",
+    "data": 0,
+    "count": 1
+  }
+}

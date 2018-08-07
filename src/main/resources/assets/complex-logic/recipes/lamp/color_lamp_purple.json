@@ -9,7 +9,7 @@
   "key": {
     "d": {
       "type": "forge:ore_dict",
-      "ore": "dyePurPle"
+      "ore": "dyePurple"
     },
     "l": {
       "item": "minecraft:redstone_lamp"

@@ -1,0 +1,27 @@
+{
+  "type": "charset:shaped",
+  "group": "complex-logic:lamp",
+  "pattern": [
+    " d ",
+    "lll",
+    " t "
+  ],
+  "key": {
+    "d": {
+      "type": "forge:ore_dict",
+      "ore": "dyeLime"
+    },
+    "l": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
+    }
+  },
+  "result": {
+    "type": "minecraft:item",
+    "item": "complex-logic:flat_lamp_lime_inverted",
+    "data": 0,
+    "count": 6
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "charset:shaped",
+  "group": "complex-logic:lamp",
+  "pattern": [
+    " d ",
+    "flf",
+    " t "
+  ],
+  "key": {
+    "d": {
+      "type": "forge:ore_dict",
+      "ore": "dyeWhite"
+    },
+    "l": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
+    },
+    "f": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "result": {
+    "type": "minecraft:item",
+    "item": "complex-logic:cage_lamp_white_inverted",
+    "data": 0,
+    "count": 1
+  }
+}

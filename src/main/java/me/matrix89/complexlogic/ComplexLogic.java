@@ -1,15 +1,23 @@
 package me.matrix89.complexlogic;
 
+import me.matrix89.complexlogic.lights.ColorLampBlock;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 @Mod(
@@ -42,83 +50,223 @@ public class ComplexLogic {
     }
 
    public static void main(String[] args) throws IOException {
-       File dir = new File("src/main/resources/assets/complex-logic/blockstates/");
-       for (File f: dir.listFiles()) {
-           byte[] a = Files.readAllBytes(f.toPath());
-           String ne = f.getName().substring(0, f.getName().indexOf(".")) + "_inverted.json";
-           Files.write(dir.toPath().resolve(ne), a);
+       String recipeNormal = "{\n" +
+               "  \"type\": \"charset:shaped\",\n" +
+               "  \"group\": \"complex-logic:lamp\",\n" +
+               "  \"pattern\": [\n" +
+               "    \" d \",\n" +
+               "    \" l \",\n" +
+               "    \"   \"\n" +
+               "  ],\n" +
+               "  \"key\": {\n" +
+               "    \"d\": {\n" +
+               "      \"type\": \"forge:ore_dict\",\n" +
+               "      \"ore\": \"$dye\"\n" +
+               "    },\n" +
+               "    \"l\": {\n" +
+               "      \"item\": \"minecraft:redstone_lamp\"\n" +
+               "    }\n" +
+               "  },\n" +
+               "  \"result\": {\n" +
+               "    \"type\": \"minecraft:item\",\n" +
+               "    \"item\": \"complex-logic:$gateuuid\",\n" +
+               "    \"data\": 0,\n" +
+               "    \"count\": 1\n" +
+               "  }\n" +
+               "}";
+       String recipeInverted = "{\n" +
+               "  \"type\": \"charset:shaped\",\n" +
+               "  \"group\": \"complex-logic:lamp\",\n" +
+               "  \"pattern\": [\n" +
+               "    \" d \",\n" +
+               "    \" l \",\n" +
+               "    \" t \"\n" +
+               "  ],\n" +
+               "  \"key\": {\n" +
+               "    \"d\": {\n" +
+               "      \"type\": \"forge:ore_dict\",\n" +
+               "      \"ore\": \"$dye\"\n" +
+               "    },\n" +
+               "    \"l\": {\n" +
+               "      \"item\": \"minecraft:redstone_lamp\"\n" +
+               "    },\n" +
+               "    \"t\": {\n" +
+               "      \"item\": \"minecraft:redstone_torch\"\n" +
+               "    }\n" +
+               "  },\n" +
+               "  \"result\": {\n" +
+               "    \"type\": \"minecraft:item\",\n" +
+               "    \"item\": \"complex-logic:$gateuuid\",\n" +
+               "    \"data\": 0,\n" +
+               "    \"count\": 1\n" +
+               "  }\n" +
+               "}";
+
+       String recipeNormalCage = "{\n" +
+               "  \"type\": \"charset:shaped\",\n" +
+               "  \"group\": \"complex-logic:lamp\",\n" +
+               "  \"pattern\": [\n" +
+               "    \" d \",\n" +
+               "    \"flf\",\n" +
+               "    \"   \"\n" +
+               "  ],\n" +
+               "  \"key\": {\n" +
+               "    \"d\": {\n" +
+               "      \"type\": \"forge:ore_dict\",\n" +
+               "      \"ore\": \"$dye\"\n" +
+               "    },\n" +
+               "    \"l\": {\n" +
+               "      \"item\": \"minecraft:redstone_lamp\"\n" +
+               "    },\n" +
+               "    \"f\": {\n" +
+               "      \"item\": \"minecraft:iron_bars\"\n" +
+               "    }\n" +
+               "  },\n" +
+               "  \"result\": {\n" +
+               "    \"type\": \"minecraft:item\",\n" +
+               "    \"item\": \"complex-logic:$gateuuid\",\n" +
+               "    \"data\": 0,\n" +
+               "    \"count\": 1\n" +
+               "  }\n" +
+               "}";
+       String recipeInvertedCage = "{\n" +
+               "  \"type\": \"charset:shaped\",\n" +
+               "  \"group\": \"complex-logic:lamp\",\n" +
+               "  \"pattern\": [\n" +
+               "    \" d \",\n" +
+               "    \"flf\",\n" +
+               "    \" t \"\n" +
+               "  ],\n" +
+               "  \"key\": {\n" +
+               "    \"d\": {\n" +
+               "      \"type\": \"forge:ore_dict\",\n" +
+               "      \"ore\": \"$dye\"\n" +
+               "    },\n" +
+               "    \"l\": {\n" +
+               "      \"item\": \"minecraft:redstone_lamp\"\n" +
+               "    },\n" +
+               "    \"t\": {\n" +
+               "      \"item\": \"minecraft:redstone_torch\"\n" +
+               "    },\n" +
+               "    \"f\": {\n" +
+               "      \"item\": \"minecraft:iron_bars\"\n" +
+               "    }\n" +
+               "  },\n" +
+               "  \"result\": {\n" +
+               "    \"type\": \"minecraft:item\",\n" +
+               "    \"item\": \"complex-logic:$gateuuid\",\n" +
+               "    \"data\": 0,\n" +
+               "    \"count\": 1\n" +
+               "  }\n" +
+               "}";
+
+       String recipeNormalFlat = "{\n" +
+               "  \"type\": \"charset:shaped\",\n" +
+               "  \"group\": \"complex-logic:lamp\",\n" +
+               "  \"pattern\": [\n" +
+               "    \" d \",\n" +
+               "    \"lll\",\n" +
+               "    \"   \"\n" +
+               "  ],\n" +
+               "  \"key\": {\n" +
+               "    \"d\": {\n" +
+               "      \"type\": \"forge:ore_dict\",\n" +
+               "      \"ore\": \"$dye\"\n" +
+               "    },\n" +
+               "    \"l\": {\n" +
+               "      \"item\": \"minecraft:redstone_lamp\"\n" +
+               "    }\n" +
+               "  },\n" +
+               "  \"result\": {\n" +
+               "    \"type\": \"minecraft:item\",\n" +
+               "    \"item\": \"complex-logic:$gateuuid\",\n" +
+               "    \"data\": 0,\n" +
+               "    \"count\": 6\n" +
+               "  }\n" +
+               "}";
+       String recipeInvertedFlat = "{\n" +
+               "  \"type\": \"charset:shaped\",\n" +
+               "  \"group\": \"complex-logic:lamp\",\n" +
+               "  \"pattern\": [\n" +
+               "    \" d \",\n" +
+               "    \"lll\",\n" +
+               "    \" t \"\n" +
+               "  ],\n" +
+               "  \"key\": {\n" +
+               "    \"d\": {\n" +
+               "      \"type\": \"forge:ore_dict\",\n" +
+               "      \"ore\": \"$dye\"\n" +
+               "    },\n" +
+               "    \"l\": {\n" +
+               "      \"item\": \"minecraft:redstone_lamp\"\n" +
+               "    },\n" +
+               "    \"t\": {\n" +
+               "      \"item\": \"minecraft:redstone_torch\"\n" +
+               "    }\n" +
+               "  },\n" +
+               "  \"result\": {\n" +
+               "    \"type\": \"minecraft:item\",\n" +
+               "    \"item\": \"complex-logic:$gateuuid\",\n" +
+               "    \"data\": 0,\n" +
+               "    \"count\": 6\n" +
+               "  }\n" +
+               "}";
+
+        Map<String, String[]> lamps = new HashMap<>();
+        lamps.put("color_lamp_", new String[]{recipeNormal, recipeInverted});
+        lamps.put("cage_lamp_", new String[]{recipeNormalCage, recipeInvertedCage});
+        lamps.put("flat_lamp_", new String[]{recipeNormalFlat, recipeInvertedFlat});
+
+       File blockStateDir = new File("src/main/resources/assets/complex-logic/blockstates/");
+       File recipeDir = new File("src/main/resources/assets/complex-logic/recipes/lamp/");
+       String blockStateTemplate =  "{\n" +
+               "  \"variants\":{\n" +
+               "    \"facing=up,is_on=true\": {\"model\":\"complex-logic:lamp/$lamp_$on\"},\n" +
+               "    \"facing=down,is_on=true\": {\"model\":\"complex-logic:lamp/$lamp_$on\", \"x\":180},\n" +
+               "    \"facing=east,is_on=true\": {\"model\":\"complex-logic:lamp/$lamp_$on\", \"x\":90, \"y\":90},\n" +
+               "    \"facing=west,is_on=true\": {\"model\":\"complex-logic:lamp/$lamp_$on\", \"x\":90, \"y\":270},\n" +
+               "    \"facing=north,is_on=true\": {\"model\":\"complex-logic:lamp/$lamp_$on\", \"x\":90},\n" +
+               "    \"facing=south,is_on=true\": {\"model\":\"complex-logic:lamp/$lamp_$on\", \"x\":270},\n" +
+               "    \"facing=up,is_on=false\": {\"model\":\"complex-logic:lamp/$lamp_$off\"},\n" +
+               "    \"facing=down,is_on=false\": {\"model\":\"complex-logic:lamp/$lamp_$off\", \"x\":180},\n" +
+               "    \"facing=east,is_on=false\": {\"model\":\"complex-logic:lamp/$lamp_$off\", \"x\":90, \"y\":90},\n" +
+               "    \"facing=west,is_on=false\": {\"model\":\"complex-logic:lamp/$lamp_$off\", \"x\":90, \"y\":270},\n" +
+               "    \"facing=north,is_on=false\": {\"model\":\"complex-logic:lamp/$lamp_$off\", \"x\":90},\n" +
+               "    \"facing=south,is_on=false\": {\"model\":\"complex-logic:lamp/$lamp_$off\", \"x\":270}\n" +
+               "  }\n" +
+               "}";
+
+
+       for (Map.Entry<String, String[]> lamp: lamps.entrySet()){
+           for (EnumDyeColor c: EnumDyeColor.values()) {
+                String filenameNormal = lamp.getKey() + c.getName() + ".json";
+                String filenameInverted = lamp.getKey() + c.getName() + "_inverted.json";
+               Path blockStateNormalPath = blockStateDir.toPath().resolve(filenameNormal);
+               Path blockStateInvertedPath = blockStateDir.toPath().resolve(filenameInverted);
+               Path recipeInvertedPath = recipeDir.toPath().resolve(filenameInverted);
+               Path recipeNormalPath = recipeDir.toPath().resolve(filenameNormal);
+               FileWriter FWblockStateNormal = new FileWriter(blockStateNormalPath.toFile());
+               FileWriter FWblockStateInverted = new FileWriter(blockStateInvertedPath.toFile());
+               FileWriter FWrecipeInverted = new FileWriter(recipeInvertedPath.toFile());
+               FileWriter FWrecipeNormal = new FileWriter(recipeNormalPath.toFile());
+               String lampUUID = lamp.getKey() + c.getName();
+               String lampUUIDInverted = lampUUID + "_inverted";
+               String lampON = lamp.getKey() + "on";
+               String lampOFF = lamp.getKey() + "off";
+               String color = "dye" + StringUtils.capitalize(c.getTranslationKey().replace("silver", "lightGray"));
+               String lampBlockStateNormal = blockStateTemplate.replace("$lamp_$off", lampOFF).replace("$lamp_$on", lampON);
+               String lampBlockStateInverted = blockStateTemplate.replace("$lamp_$off", lampON).replace("$lamp_$on", lampOFF);
+               FWblockStateNormal.write(lampBlockStateNormal);
+               FWblockStateInverted.write(lampBlockStateInverted);
+               FWblockStateNormal.close();
+               FWblockStateInverted.close();
+               String lampRecipeNormal = lamp.getValue()[0].replace("$gateuuid", lampUUID).replace("$dye", color);
+               String lampRecipeInverted = lamp.getValue()[1].replace("$gateuuid", lampUUIDInverted).replace("$dye", color);
+               FWrecipeNormal.write(lampRecipeNormal);
+               FWrecipeInverted.write(lampRecipeInverted);
+               FWrecipeNormal.close();
+               FWrecipeInverted.close();
+           }
        }
    }
-////        System.out.println(new File(".").getAbsolutePath());
-//        File dir = new File("src/main/resources/assets/complex-logic/recipes/lamp");
-//        StringBuilder sb = new StringBuilder();
-//        for (EnumDyeColor c: EnumDyeColor.values()) {
-//            File dest = dir.toPath().resolve("color_lamp_" + c.getName() + ".json").toFile();
-//            File dest2 = dir.toPath().resolve("color_lamp_" + c.getName() + "_inverted.json").toFile();
-//            try {
-//                FileWriter fw = new FileWriter(dest);
-//                FileWriter fw2 = new FileWriter(dest2);
-//                fw.write("{\n" +
-//                        "  \"type\": \"charset:shaped\",\n" +
-//                        "  \"group\": \"complex-logic:lamp\",\n" +
-//                        "  \"pattern\": [\n" +
-//                        "    \" d \",\n" +
-//                        "    \" l \",\n" +
-//                        "    \"   \"\n" +
-//                        "  ],\n" +
-//                        "  \"key\": {\n" +
-//                        "    \"d\": {\n" +
-//                        "      \"type\": \"forge:ore_dict\",\n" +
-//                        "      \"ore\": \"dye"+ c.getTranslationKey().replace(c.getTranslationKey().substring(0,1), c.getTranslationKey().substring(0,1).toUpperCase())  +"\"\n" +
-//                        "    },\n" +
-//                        "    \"l\": {\n" +
-//                        "      \"item\": \"minecraft:redstone_lamp\"\n" +
-//                        "    }\n" +
-//                        "  },\n" +
-//                        "  \"result\": {\n" +
-//                        "    \"type\": \"minecraft:item\",\n" +
-//                        "    \"item\": \"complex-logic:color_lamp_" + c.getName()+ "\",\n" +
-//                        "    \"data\": 0,\n" +
-//                        "    \"count\": 1\n" +
-//                        "  }\n" +
-//                        "}");
-//                fw.close();
-//                fw2.write(
-//                        "{\n" +
-//                                "  \"type\": \"charset:shaped\",\n" +
-//                                "  \"group\": \"complex-logic:lamp\",\n" +
-//                                "  \"pattern\": [\n" +
-//                                "    \" d \",\n" +
-//                                "    \" l \",\n" +
-//                                "    \" t \"\n" +
-//                                "  ],\n" +
-//                                "  \"key\": {\n" +
-//                                "    \"d\": {\n" +
-//                                "      \"type\": \"forge:ore_dict\",\n" +
-//                                "      \"ore\": \"dye"+ c.getTranslationKey().replace(c.getTranslationKey().substring(0,1), c.getTranslationKey().substring(0,1).toUpperCase()) +"\"\n" +
-//                                "    },\n" +
-//                                "    \"l\": {\n" +
-//                                "      \"item\": \"minecraft:redstone_lamp\"\n" +
-//                                "    },\n" +
-//                                "    \"t\": {\n" +
-//                                "      \"item\": \"minecraft:redstone_torch\"\n" +
-//                                "    }\n" +
-//                                "  },\n" +
-//                                "  \"result\": {\n" +
-//                                "    \"type\": \"minecraft:item\",\n" +
-//                                "    \"item\": \"complex-logic:color_lamp_" + c.getName()+ "\",\n" +
-//                                "    \"data\": 2,\n" +
-//                                "    \"count\": 1\n" +
-//                                "  }\n" +
-//                                "}"
-//                );
-//                fw2.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//
-//        System.out.println(sb.toString());
-//    }
 }
