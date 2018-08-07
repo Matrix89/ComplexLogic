@@ -1,5 +1,5 @@
 {
-  "parent": "complex-logic:block/lamp/cage_lamp",
+  "parent": "complex-logic:block/lamp/flat_lamp",
   "textures": {
     "2": "complex-logic:blocks/lamp/cage/core_on",
     "4": "complex-logic:blocks/lamp/cage/light_on"
