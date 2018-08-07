@@ -1,0 +1,20 @@
+{
+  "textures": {
+    "top": "simplelogic:blocks/empty"
+  },
+  "models": {
+    "blob": "complex-logic:block/bintobcd"
+  },
+  "layers": [
+    {
+      "type": "color",
+      "color_mask": "FF0000"
+    }
+  ],
+  "torches": [
+    {
+      "pos": [7.5, 7.5],
+      "model_on": "blob"
+    }
+  ]
+}

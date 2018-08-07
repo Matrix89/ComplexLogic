@@ -1,0 +1,40 @@
+{
+  "textures": {
+    "memory": "complex-logic:blocks/gate_bintobcd_blob"
+  },
+  "elements": [
+    {
+      "from": [1,  2, 1 ],
+      "to":   [15, 5, 15],
+      "faces": {
+        "up":    { "uv": [1, 1, 15, 15], "texture": "#memory" },
+        "north": { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "south": { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "west":  { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "east":  { "uv": [1, 1, 2, 2], "texture": "#memory" }
+      }
+    },
+    {
+      "from": [5,  2, 0 ],
+      "to":   [11, 4, 16],
+      "faces": {
+        "up":    { "uv": [5, 0, 11, 16], "texture": "#memory" },
+        "north": { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "south": { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "west":  { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "east":  { "uv": [1, 1, 2, 2], "texture": "#memory" }
+      }
+    },
+    {
+      "from": [0,  2, 5 ],
+      "to":   [16, 4, 11],
+      "faces": {
+        "up":    { "uv": [0, 5, 16, 11], "texture": "#memory" },
+        "north": { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "south": { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "west":  { "uv": [1, 1, 2, 2], "texture": "#memory" },
+        "east":  { "uv": [1, 1, 2, 2], "texture": "#memory" }
+      }
+    }
+  ]
+}
