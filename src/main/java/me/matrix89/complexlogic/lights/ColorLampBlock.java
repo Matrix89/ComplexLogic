@@ -109,11 +109,6 @@ public class ColorLampBlock extends Block {
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        items.add(new ItemStack(this, 1, 0));
-    }
-
-    @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         if (worldIn.isRemote) return;
         if (worldIn.isBlockPowered(pos)) {
@@ -121,11 +116,6 @@ public class ColorLampBlock extends Block {
         } else {
             worldIn.setBlockState(pos, state.withProperty(IS_ON, false), 2);
         }
-    }
-
-    @Override
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
-        super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
     }
 
     @Override
@@ -216,5 +206,8 @@ public class ColorLampBlock extends Block {
         return getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta >> 1)).withProperty(IS_ON, (meta & 1) == 1);
     }
 
-
+    @Override
+    public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        return super.getMapColor(state, worldIn, pos);
+    }
 }
