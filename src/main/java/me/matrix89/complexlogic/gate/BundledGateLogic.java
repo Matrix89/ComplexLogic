@@ -122,7 +122,7 @@ public abstract class BundledGateLogic extends GateLogic {
 
     @Override
     protected byte calculateOutputInside(EnumFacing enumFacing) {
-        return outputValues[enumFacing.getIndex() - 1];
+        return outputValues[enumFacing.getIndex() - 2];
     }
 
     public byte[] calculateBundledOutput(EnumFacing facing) {
