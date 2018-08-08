@@ -38,6 +38,7 @@ public class ProxyCommon {
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "bintobcd"), BinToBCDLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "globalor"), GlobalORLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "bitreorderer"), BitReordererLogic.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "subtractor"), SubtractorLogic.class);
 
         event.registerPartForCreativeTab(new PartGate(new AdderLogic()));
         event.registerPartForCreativeTab(new PartGate(new BundledViewerLogic()));
@@ -55,6 +56,7 @@ public class ProxyCommon {
         event.registerPartForCreativeTab(new PartGate(new BinToBCDLogic()));
         event.registerPartForCreativeTab(new PartGate(new GlobalORLogic()));
         event.registerPartForCreativeTab(new PartGate(new BitReordererLogic()));
+        event.registerPartForCreativeTab(new PartGate(new SubtractorLogic()));
     }
 
     @SideOnly(Side.CLIENT)
