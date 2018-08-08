@@ -24,7 +24,7 @@ public class GlobalORLogic extends BundledGateLogic {
         for (byte i : in) {
             out |= i;
         }
-        outputValues[1] = out;
+        outputValues[0] = out;
         return super.tick(parent) || inputChange;
     }
 
