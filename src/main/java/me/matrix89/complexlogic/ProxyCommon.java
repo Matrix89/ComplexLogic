@@ -41,6 +41,7 @@ public class ProxyCommon {
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "subtractor"), SubtractorLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "hexdriver"), HexDriverLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "multiplexer"), MultiplexerLogic.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "nand"), NAndLogic.class);
 
         event.registerPartForCreativeTab(new PartGate(new AdderLogic()));
         event.registerPartForCreativeTab(new PartGate(new BundledViewerLogic()));
@@ -61,6 +62,7 @@ public class ProxyCommon {
         event.registerPartForCreativeTab(new PartGate(new SubtractorLogic()));
         event.registerPartForCreativeTab(new PartGate(new HexDriverLogic()));
         event.registerPartForCreativeTab(new PartGate(new MultiplexerLogic()));
+        event.registerPartForCreativeTab(new PartGate(new NAndLogic()));
     }
 
     @SideOnly(Side.CLIENT)
