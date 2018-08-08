@@ -18,14 +18,14 @@ public class GlobalORLogic extends BundledGateLogic {
 
     @Override
     public boolean tick(PartGate parent) {
-        byte[] in = getInputValueBundled(EnumFacing.SOUTH);
+        byte[] in = parent.getBundledInput(EnumFacing.SOUTH);
         boolean inputChange = parent.updateInputs(this.inputValues);
         byte out = 0;
         for (byte i : in) {
             out |= i;
         }
         outputValues[1] = out;
-        return inputChange || super.tick(parent);
+        return super.tick(parent) || inputChange;
     }
 
     @Override
