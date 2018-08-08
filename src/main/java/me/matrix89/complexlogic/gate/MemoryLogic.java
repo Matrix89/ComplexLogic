@@ -12,6 +12,7 @@ public class MemoryLogic extends BundledGateLogic {
 
     private int address = 0;
     private Map<Integer, Integer> memory = new Int2IntOpenHashMap();
+    private boolean updateSignalOn = false;
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
@@ -20,12 +21,18 @@ public class MemoryLogic extends BundledGateLogic {
             NBTTagCompound mapTag = new NBTTagCompound();
             memory.forEach((k,v) -> mapTag.setInteger(k.toString(), v));
             tag.setTag("memory", mapTag);
+            tag.setBoolean("updateSignalOn", updateSignalOn);
+            tag.setInteger("newAddress", newAddress);
+            tag.setInteger("newValue", newValue);
         }
         return super.writeToNBT(tag, isClient);
     }
 
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
+        boolean oldValue = updateSignalOn;
+        int newAddressOld = newAddress;
+        int newValueOld = newValue;
         if(!isClient){
             if(compound.hasKey("address")) {
                 address = compound.getInteger("address");
@@ -34,8 +41,17 @@ public class MemoryLogic extends BundledGateLogic {
                 NBTTagCompound tag = compound.getCompoundTag("memory");
                 tag.getKeySet().forEach((k)-> memory.put(Integer.parseInt(k), tag.getInteger(k)));
             }
+            if(compound.hasKey("updateSignalOn")){
+                updateSignalOn = compound.getBoolean("updateSignalOn");
+            }
+            if(compound.hasKey("newAddress")){
+                newAddress = compound.getInteger("newAddress");
+            }
+            if(compound.hasKey("newValue")){
+                newValue = compound.getInteger("newValue");
+            }
         }
-        return super.readFromNBT(compound, isClient);
+        return super.readFromNBT(compound, isClient) || updateSignalOn!=oldValue;
     }
 
     @Override
@@ -48,19 +64,28 @@ public class MemoryLogic extends BundledGateLogic {
             default: return Connection.NONE;
         }
     }
-
+    int newAddress = 0;
+    int newValue = 0;
     @Override
     public boolean tick(PartGate parent) {
         address = bundledRsToDigi(parent.getBundledInput(EnumFacing.WEST));
+        boolean updateSignalOnOld = updateSignalOn;
         if(getInputValueInside(EnumFacing.EAST) != 0) {
-            int value = bundledRsToDigi(parent.getBundledInput(EnumFacing.SOUTH));
-            if(value==0) {
-                memory.remove(address);
-            }else {
-                memory.put(address, value);
+            if(!updateSignalOn) {
+                updateSignalOn = true;
+                int value = bundledRsToDigi(parent.getBundledInput(EnumFacing.SOUTH));
+                newAddress = address;
+                newValue = value;
+            }
+        }else {
+            updateSignalOn = false;
+            if (newValue == 0) {
+                memory.remove(newAddress);
+            } else {
+                memory.put(newAddress, newValue);
             }
         }
-        return super.tick(parent);
+        return super.tick(parent) || updateSignalOnOld!=updateSignalOn;
     }
 
     @Override
