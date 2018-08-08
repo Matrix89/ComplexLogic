@@ -1,0 +1,7 @@
+{
+  "parent": "complex-logic:block/basebundledgate",
+  "textures": {
+    "blob": "complex-logic:blocks/gate_multiplexer_blob",
+    "side": "simplelogic:blocks/wire/wire_bundled_side"
+  }
+}

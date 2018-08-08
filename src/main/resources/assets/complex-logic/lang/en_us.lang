@@ -16,6 +16,7 @@ tile.complex-logic.gate.globalor.name=Global OR Gate
 tile.complex-logic.gate.bitreorderer.name=Bit Mirror Gate
 tile.complex-logic.gate.subtractor.name=Subtractor Gate
 tile.complex-logic.gate.hexdriver.name=Hex Driver
+tile.complex-logic.gate.multiplexer.name=Multiplexer Gate
 
 #LAMPS
 tile.color_lamp_white.name=White Lamp
