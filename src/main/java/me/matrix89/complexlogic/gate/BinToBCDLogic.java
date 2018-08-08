@@ -35,7 +35,7 @@ public class BinToBCDLogic extends BundledGateLogic {
 
     @Override
     public boolean tick(PartGate parent) {
-        int in = bundledRsToDigi(getInputValueBundled(EnumFacing.SOUTH));
+        int in = bundledRsToDigi(parent.getBundledInput(EnumFacing.SOUTH));
         int[] lcd = new int[5];
         int i = 0;
         while (in > 0 && i < 5) {
