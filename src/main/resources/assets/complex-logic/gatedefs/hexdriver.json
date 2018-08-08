@@ -1,0 +1,15 @@
+{
+  "textures": {
+    "top": "simplelogic:blocks/empty"
+  },
+  "models": {
+    "blob": "complex-logic:block/hexdriver"
+  },
+  "layers": [],
+  "torches": [
+    {
+      "pos": [7.5, 7.5],
+      "model_off": "blob"
+    }
+  ]
+}
