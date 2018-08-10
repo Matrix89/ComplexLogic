@@ -73,7 +73,7 @@ public class MemoryLogic extends BundledGateLogic {
     int newValue = 0;
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         address = bundledRsToDigi(getInputValueBundled(EnumFacing.WEST));
         boolean updateSignalOnOld = updateSignalOn;
         if (getInputValueInside(EnumFacing.EAST) != 0) {
@@ -92,7 +92,6 @@ public class MemoryLogic extends BundledGateLogic {
             }
         }
         setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(memory.getOrDefault(address, 0)));
-        return updateSignalOnOld != updateSignalOn;
     }
 
     @Override

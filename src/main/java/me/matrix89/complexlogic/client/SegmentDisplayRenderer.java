@@ -34,7 +34,7 @@ public class SegmentDisplayRenderer extends GateDynamicRenderer<SegmentDisplayLo
         }
 
         float[][] tints = new float[16][4];
-        byte[] data = segmentDisplayLogic.getOutputValueBundled(EnumFacing.NORTH);
+        byte[] data = segmentDisplayLogic.value;
         for (int i = 0; i < 16; i++) {
             int v = data[i]!=0?1:0;
             tints[i][0] = 1f;

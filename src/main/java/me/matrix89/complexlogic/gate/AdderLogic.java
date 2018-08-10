@@ -21,7 +21,7 @@ public class AdderLogic extends BundledGateLogic {
     }
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         byte[] inA = getInputValueBundled(EnumFacing.EAST);
         byte[] inB = getInputValueBundled(EnumFacing.WEST);
         int a = bundledRsToDigi(inA);
@@ -29,7 +29,6 @@ public class AdderLogic extends BundledGateLogic {
         int v = a + b;
         setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(v));
         setRedstoneOutputValue(EnumFacing.SOUTH, (byte) (v >>> 16 != 0 ? 15 : 0)); // carry
-        return false;
     }
 
     @Override

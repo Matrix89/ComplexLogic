@@ -18,19 +18,20 @@ public class BundledViewerLogic extends BundledGateLogic {
         }
     }
 
-//    @Override
-//    public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-//        super.writeToNBT(tag, isClient);
-//        tag.setByteArray("v", getOutputValueBundled(EnumFacing.NORTH));
-//        return tag;
-//    }
-//
-//    @Override
-//    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
-//        if (compound.hasKey("v"))
-//            setBundledOutputValue(EnumFacing.NORTH, compound.getByteArray("v"));
-//        return super.readFromNBT(compound, isClient);
-//    }
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
+        super.writeToNBT(tag, isClient);
+        if(isClient)
+            tag.setByteArray("v", getOutputValueBundled(EnumFacing.NORTH));
+        return tag;
+    }
+
+    @Override
+    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
+        if (isClient && compound.hasKey("v"))
+            setBundledOutputValue(EnumFacing.NORTH, compound.getByteArray("v"));
+        return super.readFromNBT(compound, isClient);
+    }
 
 
 
@@ -40,9 +41,8 @@ public class BundledViewerLogic extends BundledGateLogic {
     }
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         setBundledOutputValue(EnumFacing.NORTH, getInputValueBundled(EnumFacing.SOUTH));
-        return false;
     }
 
     @Override

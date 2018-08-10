@@ -21,7 +21,7 @@ public class ShifterLogic extends BundledGateLogic {
     }
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         byte[] input = parent.getBundledInput(EnumFacing.SOUTH);
         byte[] shifted = new byte[16];
         parent.updateInputs(this.inputValues);
@@ -31,7 +31,6 @@ public class ShifterLogic extends BundledGateLogic {
             System.arraycopy(input, 1, shifted, 0, 15);
         }
         setBundledOutputValue(EnumFacing.NORTH, shifted);
-        return false;
     }
 
     @Override

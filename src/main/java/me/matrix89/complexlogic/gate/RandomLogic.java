@@ -46,7 +46,7 @@ public class RandomLogic extends BundledGateLogic {
 
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         if (getInputValueInside(EnumFacing.SOUTH) != 0) {
             if (!updateSignalOn) {
                 updateSignalOn = true;
@@ -55,7 +55,6 @@ public class RandomLogic extends BundledGateLogic {
         } else {
             updateSignalOn = false;
         }
-        return false;
     }
 
 

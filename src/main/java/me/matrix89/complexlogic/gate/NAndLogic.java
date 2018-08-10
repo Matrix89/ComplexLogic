@@ -17,12 +17,16 @@ public class NAndLogic extends BundledGateLogic {
         }
     }
 
+    public NAndLogic(){
+        super();
+        setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(~(0)));
+    }
+
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         int a = bundledRsToDigi(getInputValueBundled(EnumFacing.WEST));
         int b = bundledRsToDigi(getInputValueBundled(EnumFacing.EAST));
         setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(~(a & b)));
-        return false;
     }
 
     @Override

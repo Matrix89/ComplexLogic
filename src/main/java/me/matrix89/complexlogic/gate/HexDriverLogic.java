@@ -36,8 +36,23 @@ public class HexDriverLogic extends BundledGateLogic {
         }
     }
 
+    public HexDriverLogic(){
+        super();
+        byte[] outWest = new byte[16];
+        byte[] outNorth = new byte[16];
+
+        System.arraycopy(decoder[0], 0, outNorth, 0, 7);
+        System.arraycopy(decoder[0], 0, outNorth, 7, 7);
+
+        System.arraycopy(decoder[0], 0, outWest, 0, 7);
+        System.arraycopy(decoder[0], 0, outWest, 7, 7);
+
+        setBundledOutputValue(EnumFacing.WEST, outWest);
+        setBundledOutputValue(EnumFacing.NORTH, outNorth);
+    }
+
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         int in = bundledRsToDigi(getInputValueBundled(EnumFacing.SOUTH));
         int[] lcd = new int[4];
         int i = 0;
@@ -58,7 +73,6 @@ public class HexDriverLogic extends BundledGateLogic {
         setBundledOutputValue(EnumFacing.WEST, outWest);
         setBundledOutputValue(EnumFacing.NORTH, outNorth);
 
-        return false;
     }
 
 

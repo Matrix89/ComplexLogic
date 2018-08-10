@@ -19,8 +19,13 @@ public class DivisionLogic extends BundledGateLogic {
         }
     }
 
+    public DivisionLogic(){
+        super();
+        setRedstoneOutputValue(EnumFacing.SOUTH, (byte) 15);
+    }
+
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         byte[] inA = getInputValueBundled(EnumFacing.WEST);
         byte[] inB = getInputValueBundled(EnumFacing.EAST);
         int a = bundledRsToDigi(inA);
@@ -32,7 +37,6 @@ public class DivisionLogic extends BundledGateLogic {
             setRedstoneOutputValue(EnumFacing.SOUTH, (byte) 15);
         }
         setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(v));
-        return false;
     }
 
     @Override

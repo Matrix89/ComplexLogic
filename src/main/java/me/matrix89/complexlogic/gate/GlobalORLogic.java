@@ -18,14 +18,13 @@ public class GlobalORLogic extends BundledGateLogic {
     }
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         byte[] in = getInputValueBundled(EnumFacing.SOUTH);
         byte out = 0;
         for (byte i : in) {
             out |= i;
         }
         setRedstoneOutputValue(EnumFacing.NORTH, out);
-        return false;
     }
 
     @Override

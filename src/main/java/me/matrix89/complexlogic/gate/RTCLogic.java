@@ -38,7 +38,7 @@ public class RTCLogic extends BundledGateLogic {
 
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         if (getInputValueInside(EnumFacing.SOUTH) != 0) {
             if (!updateSignalOn) {
                 updateSignalOn = true;
@@ -47,7 +47,6 @@ public class RTCLogic extends BundledGateLogic {
         } else {
             updateSignalOn = false;
         }
-        return false;
     }
 
     @Override

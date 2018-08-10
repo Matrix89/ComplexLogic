@@ -51,7 +51,7 @@ public class CounterLogic extends BundledGateLogic {
 
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         boolean updateSignalOnOld = updateSignalOn;
         boolean incSignalOnOld = incSignalOn;
         if (getInputValueInside(EnumFacing.WEST) != 0) {
@@ -70,7 +70,6 @@ public class CounterLogic extends BundledGateLogic {
         } else {
             incSignalOn = false;
         }
-        return updateSignalOnOld != updateSignalOn || incSignalOnOld != incSignalOn;
     }
 
     @Override

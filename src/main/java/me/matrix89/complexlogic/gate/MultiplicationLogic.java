@@ -21,7 +21,7 @@ public class MultiplicationLogic extends BundledGateLogic {
     }
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         byte[] inA = getInputValueBundled(EnumFacing.WEST);
         byte[] inB = getInputValueBundled(EnumFacing.EAST);
         int a = bundledRsToDigi(inA);
@@ -30,7 +30,6 @@ public class MultiplicationLogic extends BundledGateLogic {
         int v = a * b;
         setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(v));
         setRedstoneOutputValue(EnumFacing.SOUTH, (byte) (v >>> 16 != 0 ? 15 : 0)); // carry
-        return false;
     }
 
     @Override

@@ -8,22 +8,23 @@ import java.util.Arrays;
 
 public class SegmentDisplayLogic extends BundledGateLogic {
 
-   // public byte[] value = new byte[16];
+    public byte[] value = new byte[16];
 
-//    @Override
-//    public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-//        super.writeToNBT(tag, isClient);
-//        tag.setByteArray("v", getInputValueBundled(EnumFacing.SOUTH));
-//        return tag;
-//    }
-//
-//    @Override
-//    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
-//        byte[] valueOld = value;
-//        if (compound.hasKey("v"))
-//            value = compound.getByteArray("v");
-//        return super.readFromNBT(compound, isClient) || !Arrays.equals(valueOld, value);
-//    }
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
+        super.writeToNBT(tag, isClient);
+        if(isClient)
+            tag.setByteArray("v", getInputValueBundled(EnumFacing.SOUTH));
+        return tag;
+    }
+
+    @Override
+    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
+        byte[] valueOld = value;
+        if (isClient && compound.hasKey("v"))
+            value = compound.getByteArray("v");
+        return super.readFromNBT(compound, isClient) || !Arrays.equals(valueOld, value);
+    }
 
     @Override
     public Connection getType(EnumFacing dir) {
@@ -31,9 +32,7 @@ public class SegmentDisplayLogic extends BundledGateLogic {
     }
 
     @Override
-    boolean calculateOutput(PartGate parent) {
-        setBundledOutputValue(EnumFacing.NORTH, getInputValueBundled(EnumFacing.SOUTH));
-        return false;
+    void calculateOutput(PartGate parent) {
     }
 
     @Override

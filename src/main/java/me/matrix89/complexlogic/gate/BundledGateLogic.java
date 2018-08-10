@@ -14,7 +14,7 @@ public abstract class BundledGateLogic extends GateLogic {
     private final Map<EnumFacing, byte[]> bundledInputValues = new EnumMap<>(EnumFacing.class);
     private final Map<EnumFacing, byte[]> bundledOutputValues = new EnumMap<>(EnumFacing.class);
     private EnumFacing[] horizontals = EnumFacing.HORIZONTALS;
-    private boolean shouldUpdate = false;
+   // private boolean shouldUpdate = false;
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
@@ -29,7 +29,7 @@ public abstract class BundledGateLogic extends GateLogic {
             tag.setTag("bundledOutputValues", bundledOutputValuesTag);
 
 
-            tag.setBoolean("shouldUpdate", shouldUpdate);
+           // tag.setBoolean("shouldUpdate", shouldUpdate);
         }
 
         return super.writeToNBT(tag, isClient);
@@ -49,12 +49,12 @@ public abstract class BundledGateLogic extends GateLogic {
 
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
-        boolean oldShouldUpdate = shouldUpdate;
+       // boolean oldShouldUpdate = shouldUpdate;
         AtomicBoolean update = new AtomicBoolean(false);
         //if (!isClient) {
-            if (compound.hasKey("shouldUpdate")) {
-                shouldUpdate = compound.getBoolean("shouldUpdate");
-            }
+           // if (compound.hasKey("shouldUpdate")) {
+              //  shouldUpdate = compound.getBoolean("shouldUpdate");
+           // }
             if (compound.hasKey("bundledInputValues")) {
                 NBTTagCompound tag = compound.getCompoundTag("bundledInputValues");
                 readValues(update, tag, bundledInputValues);
@@ -65,7 +65,7 @@ public abstract class BundledGateLogic extends GateLogic {
             }
        // }
 
-        return super.readFromNBT(compound, isClient) || oldShouldUpdate != shouldUpdate || update.get();
+        return super.readFromNBT(compound, isClient) /*|| oldShouldUpdate != shouldUpdate*/ || update.get();
     }
 
     public BundledGateLogic() {
@@ -78,7 +78,7 @@ public abstract class BundledGateLogic extends GateLogic {
         }
     }
 
-    abstract boolean calculateOutput(PartGate parent);
+    abstract void calculateOutput(PartGate parent);
 
     @Override
     public final boolean tick(PartGate parent) {
@@ -94,8 +94,8 @@ public abstract class BundledGateLogic extends GateLogic {
         }
 
         if (!change) return false;
-
-        return calculateOutput(parent) || shouldUpdate;
+        calculateOutput(parent);
+        return true;
     }
 
     public int bundledRsToDigi(byte[] values) {
@@ -118,7 +118,7 @@ public abstract class BundledGateLogic extends GateLogic {
      * can use
      */
     public void setBundledInputValue(EnumFacing side, byte[] value) {
-        shouldUpdate = !Arrays.equals(bundledInputValues.get(side), value) || shouldUpdate;
+        //shouldUpdate = !Arrays.equals(bundledInputValues.get(side), value) || shouldUpdate;
         bundledInputValues.replace(side, value);
     }
 
@@ -126,7 +126,7 @@ public abstract class BundledGateLogic extends GateLogic {
      * can use
      */
     public void setBundledOutputValue(EnumFacing side, byte[] value) {
-        shouldUpdate = !Arrays.equals(bundledOutputValues.get(side), value) || shouldUpdate;
+        //shouldUpdate = !Arrays.equals(bundledOutputValues.get(side), value) || shouldUpdate;
         bundledOutputValues.replace(side, value);
     }
 
@@ -134,7 +134,7 @@ public abstract class BundledGateLogic extends GateLogic {
      * can use
      */
     public void setRedstoneInputValue(EnumFacing side, byte value) {
-        shouldUpdate = inputValues[side.getIndex() - 2] != value || shouldUpdate;
+        //shouldUpdate = inputValues[side.getIndex() - 2] != value || shouldUpdate;
         inputValues[side.getIndex() - 2] = value;
     }
 
@@ -142,7 +142,7 @@ public abstract class BundledGateLogic extends GateLogic {
      * can use
      */
     public void setRedstoneOutputValue(EnumFacing side, byte value) {
-        shouldUpdate = outputValues[side.getIndex() - 2] != value || shouldUpdate;
+        //shouldUpdate = outputValues[side.getIndex() - 2] != value || shouldUpdate;
         outputValues[side.getIndex() - 2] = value;
     }
 

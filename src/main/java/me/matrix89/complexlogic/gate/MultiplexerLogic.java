@@ -21,13 +21,12 @@ public class MultiplexerLogic extends BundledGateLogic {
     }
 
     @Override
-    boolean calculateOutput(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         if (getInputValueInside(EnumFacing.SOUTH) != 0) {
             setBundledOutputValue(EnumFacing.NORTH, getInputValueBundled(EnumFacing.EAST));
         } else {
             setBundledOutputValue(EnumFacing.NORTH, getInputValueBundled(EnumFacing.WEST));
         }
-        return false;
     }
 
     @Override
