@@ -10,7 +10,7 @@ public class CounterLogic extends BundledGateLogic {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-        if(!isClient){
+        if (!isClient) {
             tag.setBoolean("incSignalOn", incSignalOn);
             tag.setBoolean("updateSignalOn", updateSignalOn);
         }
@@ -21,13 +21,13 @@ public class CounterLogic extends BundledGateLogic {
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
         boolean updateSignalOnOld = updateSignalOn;
         boolean incSignalOnOld = incSignalOn;
-            if(compound.hasKey("updateSignalOn")){
-                updateSignalOn = compound.getBoolean("updateSignalOn");
-            }
-            if(compound.hasKey("incSignalOn")){
-                incSignalOn = compound.getBoolean("incSignalOn");
-            }
-        return super.readFromNBT(compound, isClient) || updateSignalOnOld!=updateSignalOn || incSignalOnOld!=incSignalOn;
+        if (compound.hasKey("updateSignalOn")) {
+            updateSignalOn = compound.getBoolean("updateSignalOn");
+        }
+        if (compound.hasKey("incSignalOn")) {
+            incSignalOn = compound.getBoolean("incSignalOn");
+        }
+        return super.readFromNBT(compound, isClient) || updateSignalOnOld != updateSignalOn || incSignalOnOld != incSignalOn;
     }
 
     @Override
@@ -45,55 +45,59 @@ public class CounterLogic extends BundledGateLogic {
         }
     }
 
-    private int counter(){
-        return isSideInverted(EnumFacing.EAST)? -1: 1;
+    private int counter() {
+        return isSideInverted(EnumFacing.EAST) ? -1 : 1;
     }
 
+
     @Override
-    public boolean tick(PartGate parent) {
-        boolean update = parent.updateInputs(this.inputValues);
+    boolean calculateOutput(PartGate parent) {
         boolean updateSignalOnOld = updateSignalOn;
         boolean incSignalOnOld = incSignalOn;
         if (getInputValueInside(EnumFacing.WEST) != 0) {
-            if(!updateSignalOn){
+            if (!updateSignalOn) {
                 updateSignalOn = true;
-                setBundledValue(EnumFacing.NORTH, getInputValueBundled(EnumFacing.SOUTH));
+                setBundledOutputValue(EnumFacing.NORTH, getInputValueBundled(EnumFacing.SOUTH));
             }
-        }else{
+        } else {
             updateSignalOn = false;
         }
         if (getInputValueOutside(EnumFacing.EAST) != 0) {
             if (!incSignalOn) {
                 incSignalOn = true;
-                setBundledValue(EnumFacing.NORTH, bundledDigiToRs(bundledRsToDigi(getOutputValueBundled(EnumFacing.NORTH)) + counter()));
+                setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(bundledRsToDigi(getOutputValueBundled(EnumFacing.NORTH)) + counter()));
             }
         } else {
             incSignalOn = false;
         }
-
-        return super.tick(parent) || update || updateSignalOnOld!=updateSignalOn || incSignalOnOld!=incSignalOn;
+        return updateSignalOnOld != updateSignalOn || incSignalOnOld != incSignalOn;
     }
 
     @Override
     public State getLayerState(int i) {
         switch (i) {
-            case 0: return getInputValueInside(EnumFacing.EAST)!=0? State.ON: State.OFF;
-            case 1: return getInputValueInside(EnumFacing.WEST)!=0? State.ON: State.OFF;
-            default: return State.ON;
+            case 0:
+                return getInputValueInside(EnumFacing.EAST) != 0 ? State.ON : State.OFF;
+            case 1:
+                return getInputValueInside(EnumFacing.WEST) != 0 ? State.ON : State.OFF;
+            default:
+                return State.ON;
         }
     }
 
     @Override
     public boolean canInvertSide(EnumFacing side) {
-        return side==EnumFacing.EAST;
+        return side == EnumFacing.EAST;
     }
 
     @Override
     public State getTorchState(int i) {
-        switch (i){
-            case 1: return getInputValueInside(EnumFacing.EAST)!=0? State.ON :State.OFF;
+        switch (i) {
+            case 1:
+                return getInputValueInside(EnumFacing.EAST) != 0 ? State.ON : State.OFF;
             case 0:
-            default: return State.ON;
+            default:
+                return State.ON;
         }
     }
 }

@@ -11,83 +11,91 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class BundledGateLogic extends GateLogic {
-    private final Map<EnumFacing, byte[]> bundledValues = new EnumMap<>(EnumFacing.class);
+    private final Map<EnumFacing, byte[]> bundledInputValues = new EnumMap<>(EnumFacing.class);
+    private final Map<EnumFacing, byte[]> bundledOutputValues = new EnumMap<>(EnumFacing.class);
     private EnumFacing[] horizontals = EnumFacing.HORIZONTALS;
     private boolean shouldUpdate = false;
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-        if(!isClient){
-            NBTTagCompound bundledValuesTag = new NBTTagCompound();
-            bundledValues.forEach( (k,v) -> bundledValuesTag.setByteArray(k.getName(), v));
-            tag.setTag("bundledValues", bundledValuesTag);
+        if (!isClient) {
+            NBTTagCompound bundledIntputValuesTag = new NBTTagCompound();
+            bundledInputValues.forEach((k, v) -> bundledIntputValuesTag.setByteArray(k.getName(), v));
+            tag.setTag("bundledInputValues", bundledIntputValuesTag);
+
+
+            NBTTagCompound bundledOutputValuesTag = new NBTTagCompound();
+            bundledOutputValues.forEach((k, v) -> bundledOutputValuesTag.setByteArray(k.getName(), v));
+            tag.setTag("bundledOutputValues", bundledOutputValuesTag);
+
+
             tag.setBoolean("shouldUpdate", shouldUpdate);
         }
 
         return super.writeToNBT(tag, isClient);
     }
 
+    private void readValues(AtomicBoolean update, NBTTagCompound tag, Map<EnumFacing, byte[]> map) {
+        Arrays.stream(horizontals).map(EnumFacing::getName).filter(tag::hasKey).forEach(i -> {
+            EnumFacing dir = EnumFacing.byName(i);
+            byte[] oldArray = map.get(dir);
+            byte[] newArray = tag.getByteArray(i);
+            if (!Arrays.equals(newArray, oldArray)) {
+                map.put(dir, tag.getByteArray(i));
+                update.set(true);
+            }
+        });
+    }
+
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
-        boolean oldSshouldUpdate  = shouldUpdate;
+        boolean oldShouldUpdate = shouldUpdate;
         AtomicBoolean update = new AtomicBoolean(false);
-        if(!isClient){
-            if(compound.hasKey("shouldUpdate")){
+        //if (!isClient) {
+            if (compound.hasKey("shouldUpdate")) {
                 shouldUpdate = compound.getBoolean("shouldUpdate");
             }
-            if(compound.hasKey("bundledValues")){
-                 NBTTagCompound tag = compound.getCompoundTag("bundledValues");
-                 Arrays.stream(horizontals).map(EnumFacing::getName).filter(tag::hasKey).forEach(i -> {
-                     EnumFacing dir = EnumFacing.byName(i);
-                     byte[] oldArray = bundledValues.get(dir);
-                     byte[] newArray = tag.getByteArray(i);
-                     if(!Arrays.equals(newArray, oldArray)) {
-                         bundledValues.put(dir, tag.getByteArray(i));
-                         update.set(true);
-                     }
-                 } );
+            if (compound.hasKey("bundledInputValues")) {
+                NBTTagCompound tag = compound.getCompoundTag("bundledInputValues");
+                readValues(update, tag, bundledInputValues);
             }
-        }
+            if (compound.hasKey("bundledOutputValues")) {
+                NBTTagCompound tag = compound.getCompoundTag("bundledOutputValues");
+                readValues(update, tag, bundledOutputValues);
+            }
+       // }
 
-        return super.readFromNBT(compound, isClient) || oldSshouldUpdate != shouldUpdate || update.get();
+        return super.readFromNBT(compound, isClient) || oldShouldUpdate != shouldUpdate || update.get();
     }
 
     public BundledGateLogic() {
         for (EnumFacing horizontal : horizontals) {
-            if (getType(horizontal) == Connection.OUTPUT_BUNDLED || getType(horizontal) == Connection.INPUT_BUNDLED) {
-                bundledValues.put(horizontal, new byte[16]);
+            if (getType(horizontal) == Connection.OUTPUT_BUNDLED) {
+                bundledOutputValues.put(horizontal, new byte[16]);
+            } else if (getType(horizontal) == Connection.INPUT_BUNDLED) {
+                bundledInputValues.put(horizontal, new byte[16]);
             }
         }
     }
 
-    @Override
-    public boolean tick(PartGate parent) {
-        boolean change = false;
+    abstract boolean calculateOutput(PartGate parent);
 
-        for (EnumFacing facing : horizontals) {
+    @Override
+    public final boolean tick(PartGate parent) {
+        boolean change = parent.updateInputs(this.inputValues); //Update redstone inputs
+
+        for (EnumFacing facing : horizontals) { //Update bundled inputs
             if (getType(facing) != Connection.INPUT_BUNDLED) continue;
             byte[] newValue = parent.getBundledInput(facing);
-            if (!Arrays.equals(bundledValues.get(facing), newValue)) {
+            if (!Arrays.equals(bundledInputValues.get(facing), newValue)) {
                 change = true;
-                bundledValues.replace(facing, newValue);
+                bundledInputValues.replace(facing, newValue);
             }
         }
 
-        for (EnumFacing facing : horizontals) {
-            if (getType(facing) != Connection.OUTPUT_BUNDLED) continue;
-            byte[] newValue = calculateBundledOutput(facing);
-            if (!Arrays.equals(bundledValues.get(facing), newValue)) {
-                change = true;
-                bundledValues.replace(facing, newValue);
-            }
-        }
+        if (!change) return false;
 
-        boolean update = super.tick(parent);
-        if (shouldUpdate) {
-            shouldUpdate = false;
-            return true;
-        }
-        return change || update;
+        return calculateOutput(parent) || shouldUpdate;
     }
 
     public int bundledRsToDigi(byte[] values) {
@@ -106,26 +114,56 @@ public abstract class BundledGateLogic extends GateLogic {
         return out;
     }
 
-    public void setBundledValue(EnumFacing side, byte[] value) {
-        shouldUpdate = !Arrays.equals(bundledValues.get(side), value);
-        bundledValues.replace(side, value);
+    /**
+     * can use
+     */
+    public void setBundledInputValue(EnumFacing side, byte[] value) {
+        shouldUpdate = !Arrays.equals(bundledInputValues.get(side), value) || shouldUpdate;
+        bundledInputValues.replace(side, value);
     }
 
+    /**
+     * can use
+     */
+    public void setBundledOutputValue(EnumFacing side, byte[] value) {
+        shouldUpdate = !Arrays.equals(bundledOutputValues.get(side), value) || shouldUpdate;
+        bundledOutputValues.replace(side, value);
+    }
+
+    /**
+     * can use
+     */
+    public void setRedstoneInputValue(EnumFacing side, byte value) {
+        shouldUpdate = inputValues[side.getIndex() - 2] != value || shouldUpdate;
+        inputValues[side.getIndex() - 2] = value;
+    }
+
+    /**
+     * can use
+     */
+    public void setRedstoneOutputValue(EnumFacing side, byte value) {
+        shouldUpdate = outputValues[side.getIndex() - 2] != value || shouldUpdate;
+        outputValues[side.getIndex() - 2] = value;
+    }
+
+    /**
+     * can use
+     */
     public byte[] getInputValueBundled(EnumFacing side) {
-        return bundledValues.getOrDefault(side, new byte[16]);
+        return bundledInputValues.getOrDefault(side, new byte[16]);
     }
 
+    /**
+     * can use
+     */
     @Override
     public byte[] getOutputValueBundled(EnumFacing side) {
-        return bundledValues.getOrDefault(side, new byte[16]);
+        return bundledOutputValues.getOrDefault(side, new byte[16]);
     }
+
 
     @Override
     protected byte calculateOutputInside(EnumFacing enumFacing) {
-        return outputValues[enumFacing.getIndex() - 2];
-    }
-
-    public byte[] calculateBundledOutput(EnumFacing facing) {
-        return bundledValues.getOrDefault(facing, new byte[16]);
+        return 0;
     }
 }
