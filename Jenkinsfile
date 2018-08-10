@@ -1,15 +1,12 @@
-pipeline {
-	agent any
+node('master') {
 	stages {
 		stage('Prepare') {
 			checkout scm
 			sh './gradlew setupCiWorkspace clean --refresh-dependencies'
 		}
 		stage('Build') {
-			steps {
-				sh './gradlew build'
-				archive 'build/libs/*jar'
-			}
+			sh './gradlew build'
+			archive 'build/libs/*jar'
 		}
 	}
 }
