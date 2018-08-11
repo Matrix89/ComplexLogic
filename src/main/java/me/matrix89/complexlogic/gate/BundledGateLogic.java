@@ -80,7 +80,7 @@ public abstract class BundledGateLogic extends GateLogic {
 
     abstract void calculateOutput(PartGate parent);
 
-    final void forceUpdate(){
+    public final void forceUpdate(){
         shouldUpdate = true;
     }
 
