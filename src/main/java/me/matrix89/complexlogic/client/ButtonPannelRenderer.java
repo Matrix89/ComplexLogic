@@ -3,6 +3,7 @@ package me.matrix89.complexlogic.client;
 import me.matrix89.complexlogic.gate.ButtonPanelLogic;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.world.IBlockAccess;
@@ -13,12 +14,37 @@ import pl.asie.charset.lib.render.model.ModelTransformer;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.render.GateDynamicRenderer;
 
+import javax.vecmath.Vector3f;
+
 public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> {
     public static final ButtonPannelRenderer INSTANCE = new ButtonPannelRenderer();
     public IModel buttonPanelModelOn;
     public IModel buttonPanelModelOff;
     public IBakedModel buttonPanelBakedModelOn;
     public IBakedModel buttonPanelBakedModelOff;
+
+
+    private static ModelTransformer.IVertexTransformer[] transformations = new ModelTransformer.IVertexTransformer[16];
+    private static float[][][] colors = new float[16][2][4];
+
+    static {
+
+        for (int i = 0; i < 16; i++) {
+            float[] color = EnumDyeColor.values()[i].getColorComponentValues();
+            colors[i][0][0] = 1;
+            colors[i][0][1] = color[0] * 0.3f;
+            colors[i][0][2] = color[1] * 0.3f;
+            colors[i][0][3] = color[2] * 0.3f;
+
+            colors[i][1][0] = 1;
+            colors[i][1][1] = color[0];
+            colors[i][1][2] = color[1];
+            colors[i][1][3] = color[2];
+
+            TRSRTransformation transformation = new TRSRTransformation(new Vector3f(((i % 4) * 3f + 2.5f) / 16f, 0, ((i / 4) * 3f + 2.5f) / 16f), null, null, null);
+            transformations[i] = ModelTransformer.IVertexTransformer.transform(transformation, (ItemCameraTransforms.TransformType) null);
+        }
+    }
 
     @Override
     public Class<ButtonPanelLogic> getLogicClass() {
@@ -46,19 +72,15 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
         byte[] data = buttonPanelLogic.value;
         for (int i = 0; i < 16; i++) {
             boolean v = data[i] != 0;
-            float[] color = new float[4];
-            System.arraycopy(EnumDyeColor.values()[i].getColorComponentValues(), 0, color, 1, 3);
-            if (!v) {
-                color[1] *= 0.3;
-                color[2] *= 0.3;
-                color[3] *= 0.3;
-            }
-            color[0] = 1;
+
             renderTransformedModel(
                     v ? buttonPanelBakedModelOn : buttonPanelBakedModelOff,
-                    ModelTransformer.IVertexTransformer.tint(color),
+                    ModelTransformer.IVertexTransformer.compose(
+                            transformations[i],
+                            ModelTransformer.IVertexTransformer.tint(v ? colors[i][1] : colors[i][0])
+                    ),
                     partGate,
-                    iBlockAccess, x + ((i % 4) * 3 + 2.5) / 16, y, z + ((i / 4) * 3 + 2.5) / 16, bufferBuilder
+                    iBlockAccess, x, y, z, bufferBuilder
             );
         }
 
