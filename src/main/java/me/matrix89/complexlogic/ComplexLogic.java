@@ -25,7 +25,7 @@ import java.util.Map;
         modid = ComplexLogic.MOD_ID,
         name = ComplexLogic.MOD_NAME,
         version = ComplexLogic.VERSION,
-        dependencies = "after:charset"
+        dependencies = "required-after:charset@[0.5.4.7,)"
 )
 public class ComplexLogic {
 
