@@ -1,25 +1,25 @@
 package me.matrix89.complexlogic.gui;
 
+import me.matrix89.complexlogic.ComplexLogic;
 import me.matrix89.complexlogic.gate.PatchPanelLogic;
-import me.matrix89.complexlogic.network.PacketRegistry;
-import me.matrix89.complexlogic.network.packets.PatchPanelPacket;
-import net.minecraft.entity.player.EntityPlayer;
+import me.matrix89.complexlogic.network.PatchPanelPacket;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.TileEntity;
-import org.lwjgl.Sys;
+import pl.asie.charset.lib.inventory.ContainerBase;
 import pl.asie.simplelogic.gates.PartGate;
 
 import java.util.Arrays;
 
-public class PatchPanelContainer extends Container {
+public class PatchPanelContainer extends ContainerBase {
     PatchPanelLogic logic;
     PartGate partGate;
     byte[][] oldCo0nnections = new byte[16][16];
     public byte[][] connectionGrid = new byte[16][16];
-    public PatchPanelContainer(PatchPanelLogic logic, PartGate partGate){
+
+    public PatchPanelContainer(InventoryPlayer player, PatchPanelLogic logic, PartGate partGate){
+        super(player);
         if(logic!=null) {
             for (int i = 0; i < 16; i++) {
                 System.arraycopy(logic.getConnectionGrid()[i], 0, connectionGrid[i], 0, 16);
@@ -28,11 +28,6 @@ public class PatchPanelContainer extends Container {
         this.logic = logic;
         this.partGate = partGate;
         System.out.println("new class: " + (logic==null?"CLIENT":"SERVER"));
-    }
-
-    @Override
-    public void addListener(IContainerListener listener) {
-        super.addListener(listener);
     }
 
     public void updateFromServer(byte[][] connectionGrid){
@@ -65,7 +60,7 @@ public class PatchPanelContainer extends Container {
                 }
                 for (IContainerListener p : listeners) {
                     if(p instanceof EntityPlayerMP)
-                        PacketRegistry.INSTANCE.packetHandler.sendTo(new PatchPanelPacket(logic.getConnectionGrid()), (EntityPlayerMP) p);
+                        ComplexLogic.registry.sendTo(new PatchPanelPacket(logic.getConnectionGrid()), (EntityPlayerMP) p);
                     System.out.println("UPDATE");
                 }
                 break;
@@ -80,7 +75,7 @@ public class PatchPanelContainer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
+    public boolean isOwnerPresent() {
         return true;
     }
 }

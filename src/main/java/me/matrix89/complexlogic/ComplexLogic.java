@@ -1,8 +1,6 @@
 package me.matrix89.complexlogic;
 
-import me.matrix89.complexlogic.lights.ColorLampBlock;
-import me.matrix89.complexlogic.network.PacketRegistry;
-import me.matrix89.complexlogic.network.packets.PatchPanelPacket;
+import me.matrix89.complexlogic.network.PatchPanelPacket;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -14,17 +12,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pl.asie.charset.lib.network.PacketRegistry;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 @Mod(
         modid = ComplexLogic.MOD_ID,
@@ -41,6 +36,8 @@ public class ComplexLogic {
     @SidedProxy(modId = MOD_ID, clientSide = "me.matrix89.complexlogic.ProxyClient", serverSide = "me.matrix89.complexlogic.ProxyCommon")
     public static ProxyCommon PROXY;
 
+    public static PacketRegistry registry;
+
     @Mod.Instance(MOD_ID)
     public static ComplexLogic INSTANCE;
 
@@ -50,13 +47,13 @@ public class ComplexLogic {
     public void preinit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(PROXY);
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, new GUIHandler());
-        PacketRegistry.INSTANCE.init();
-        PacketRegistry.INSTANCE.registerPacket(1, PatchPanelPacket.class, Side.SERVER);
-        PacketRegistry.INSTANCE.registerPacket(2, PatchPanelPacket.class, Side.CLIENT);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        registry = new PacketRegistry("complexlogic");
+        registry.registerPacket(0x01, PatchPanelPacket.class);
+
         PROXY.init();
         PROXY.registerColor();
     }
