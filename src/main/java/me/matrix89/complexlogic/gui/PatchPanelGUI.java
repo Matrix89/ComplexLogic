@@ -1,31 +1,30 @@
 package me.matrix89.complexlogic.gui;
 
 import me.matrix89.complexlogic.ComplexLogic;
-import me.matrix89.complexlogic.network.PacketRegistry;
-import me.matrix89.complexlogic.network.packets.PatchPanelPacket;
+import me.matrix89.complexlogic.network.PatchPanelPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+import pl.asie.charset.lib.inventory.GuiContainerCharset;
 
 import java.io.IOException;
 
-public class PatchPanelGUI extends GuiContainer {
+public class PatchPanelGUI extends GuiContainerCharset<PatchPanelContainer> {
     private ResourceLocation guiTexture = new ResourceLocation(ComplexLogic.MOD_ID, "textures/gui/patch_panel_gui_huge.png");
-    private int texWidth = 228, texHeight = 228;
     private PatchPanelContainer container;
 
     public PatchPanelGUI(PatchPanelContainer inventorySlotsIn) {
-        super(inventorySlotsIn);
+        super(inventorySlotsIn, 228, 228);
         this.container = inventorySlotsIn;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        int marginLeft = (width - texWidth) / 2 + 33;
-        int marginTop = (height - texHeight) / 2 + 33;
+
+        int marginLeft = ((width - xSize) / 2) + 33;
+        int marginTop = ((height - ySize) / 2) + 33;
 
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
@@ -37,15 +36,16 @@ public class PatchPanelGUI extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getMinecraft().renderEngine.bindTexture(guiTexture);
-        drawTexturedModalRect((width - texWidth) / 2, (height - texHeight) / 2, 0, 0, texWidth, texHeight);
-
+        drawTexturedModalRect(xBase, yBase, 0, 0, xSize, ySize);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        PacketRegistry.INSTANCE.packetHandler.sendToServer(new PatchPanelPacket(container.connectionGrid));
+        ComplexLogic.registry.sendToServer(new PatchPanelPacket(container.connectionGrid));
         super.actionPerformed(button);
     }
 

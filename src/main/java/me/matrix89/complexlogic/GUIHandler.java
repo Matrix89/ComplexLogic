@@ -21,12 +21,12 @@ public class GUIHandler implements IGuiHandler {
             PartGate pg = (PartGate) te;
             if (pg.logic instanceof PatchPanelLogic) {
                 PatchPanelLogic logic = (PatchPanelLogic) pg.logic;
-                return new PatchPanelContainer(logic, pg);
+                return new PatchPanelContainer(player.inventory, logic, pg);
             }
         }
         return null;
     }
-    static final PatchPanelContainer container = new PatchPanelContainer(null, null);
+
     @Nullable
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -34,7 +34,8 @@ public class GUIHandler implements IGuiHandler {
         if (ID == 0 && te instanceof PartGate) {
             PartGate pg = (PartGate) te;
             if (pg.logic instanceof PatchPanelLogic) {
-                return new PatchPanelGUI(container);
+                PatchPanelLogic logic = (PatchPanelLogic) pg.logic;
+                return new PatchPanelGUI(new PatchPanelContainer(player.inventory, logic, pg));
             }
         }
         return null;
