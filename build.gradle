@@ -38,19 +38,19 @@ minecraft {
 }
 
 download {
-    src 'https://media.forgecdn.net/files/2595/955/SimpleLogic-Wires-0.5.4.0.jar'
+    src 'https://media.forgecdn.net/files/2601/169/SimpleLogic-Wires-0.5.4.6.jar'
     dest file('libs/SimpleLogic-Wires.jar')
     overwrite true
 }
 
 download {
-    src 'https://media.forgecdn.net/files/2597/201/SimpleLogic-Gates-0.5.4.1.jar'
+    src 'https://media.forgecdn.net/files/2601/170/SimpleLogic-Gates-0.5.4.6.jar'
     dest file('libs/SimpleLogic-Gates.jar')
     overwrite true
-}/**/
+}
 
 download {
-    src 'https://media.forgecdn.net/files/2597/248/Charset-Lib-0.5.4.2.jar'
+    src 'https://media.forgecdn.net/files/2601/168/Charset-Lib-0.5.4.6.jar'
     dest file('libs/Charset-Lib.jar')
     overwrite true
 }
