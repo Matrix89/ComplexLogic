@@ -105,7 +105,7 @@ public class ColorLampBlock extends Block {
         setDefaultState(this.blockState.getBaseState().withProperty(IS_ON, false).withProperty(FACING, EnumFacing.DOWN));
         setCreativeTab(CreativeTabs.REDSTONE);
         setTranslationKey(prefix + (inverted?"_inverted":""));
-        setRegistryName(prefix + color.getName() + (inverted?"_inverted":""));
+        setRegistryName(prefix + "_" + color.getName() + (inverted?"_inverted":""));
         this.color = color;
         this.inverted = inverted;
         this.isFull = isFull;
