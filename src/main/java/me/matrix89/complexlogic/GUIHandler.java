@@ -34,7 +34,6 @@ public class GUIHandler implements IGuiHandler {
         if (ID == 0 && te instanceof PartGate) {
             PartGate pg = (PartGate) te;
             if (pg.logic instanceof PatchPanelLogic) {
-                System.out.println("ASD" + world.isRemote);
                 PatchPanelLogic logic = (PatchPanelLogic) pg.logic;
                 return new PatchPanelGUI(new PatchPanelContainer(player.inventory, logic, pg));
             }
