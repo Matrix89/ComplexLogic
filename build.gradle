@@ -37,24 +37,6 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
-download {
-    src 'https://media.forgecdn.net/files/2601/169/SimpleLogic-Wires-0.5.4.6.jar'
-    dest file('libs/SimpleLogic-Wires.jar')
-    overwrite true
-}
-
-download {
-    src 'https://media.forgecdn.net/files/2601/170/SimpleLogic-Gates-0.5.4.6.jar'
-    dest file('libs/SimpleLogic-Gates.jar')
-    overwrite true
-}
-
-download {
-    src 'https://media.forgecdn.net/files/2601/168/Charset-Lib-0.5.4.6.jar'
-    dest file('libs/Charset-Lib.jar')
-    overwrite true
-}
-
 repositories {
     mavenCentral()
     maven {
@@ -65,12 +47,23 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    ivy {
+        name 'CharsetLib'
+        artifactPattern "http://asie.pl/files/mods/Charset/LibOnly/[module]-[revision](-[classifier]).[ext]"
+    }
+    ivy {
+        name 'SimpleLogic'
+        artifactPattern "http://asie.pl/files/mods/SimpleLogic/[module]-[revision](-[classifier]).[ext]"
+    }
 }
 
 dependencies {
     deobfCompile "MCMultiPart2:MCMultiPart-exp:2.5.1_66"
-
+    deobfCompile name: "Charset-Lib", version: "0.5.4.6"
+    deobfCompile name: "SimpleLogic", version: "0.5.4.6"
 }
+
+
 
 processResources {
     // this will ensure that this task is redone when the versions change.
