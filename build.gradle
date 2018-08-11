@@ -55,12 +55,17 @@ repositories {
         name 'SimpleLogic'
         artifactPattern "https://img.bymarcin.com/[module]-[revision](-[classifier]).[ext]"
     }
+    ivy {
+        name 'CharsetFull'
+        artifactPattern 'https://img.bymarcin.com/[module]-[revision].[ext]'
+    }
 }
 
 dependencies {
     deobfCompile "MCMultiPart2:MCMultiPart-exp:2.5.1_66"
-    deobfCompile name: "Charset-Lib", version: "deobf"
-    deobfCompile name: "SimpleLogic", version: "deobf"
+    deobfCompile name: "Charset", version: "0.5.4.7.5-full-deobf"
+    // deobfCompile name: "Charset-Lib", version: "deobf"
+    // deobfCompile name: "SimpleLogic", version: "deobf"
 }
 
 clean.doFirst {
