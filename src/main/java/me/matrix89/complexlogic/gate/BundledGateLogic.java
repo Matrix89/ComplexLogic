@@ -14,7 +14,7 @@ public abstract class BundledGateLogic extends GateLogic {
     private final Map<EnumFacing, byte[]> bundledInputValues = new EnumMap<>(EnumFacing.class);
     private final Map<EnumFacing, byte[]> bundledOutputValues = new EnumMap<>(EnumFacing.class);
     private EnumFacing[] horizontals = EnumFacing.HORIZONTALS;
-   // private boolean shouldUpdate = false;
+    private boolean shouldUpdate = false;
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
@@ -29,7 +29,7 @@ public abstract class BundledGateLogic extends GateLogic {
             tag.setTag("bundledOutputValues", bundledOutputValuesTag);
 
 
-           // tag.setBoolean("shouldUpdate", shouldUpdate);
+            tag.setBoolean("shouldUpdate", shouldUpdate);
         }
 
         return super.writeToNBT(tag, isClient);
@@ -52,9 +52,9 @@ public abstract class BundledGateLogic extends GateLogic {
        // boolean oldShouldUpdate = shouldUpdate;
         AtomicBoolean update = new AtomicBoolean(false);
         //if (!isClient) {
-           // if (compound.hasKey("shouldUpdate")) {
-              //  shouldUpdate = compound.getBoolean("shouldUpdate");
-           // }
+            if (compound.hasKey("shouldUpdate")) {
+                shouldUpdate = compound.getBoolean("shouldUpdate");
+            }
             if (compound.hasKey("bundledInputValues")) {
                 NBTTagCompound tag = compound.getCompoundTag("bundledInputValues");
                 readValues(update, tag, bundledInputValues);
@@ -80,6 +80,10 @@ public abstract class BundledGateLogic extends GateLogic {
 
     abstract void calculateOutput(PartGate parent);
 
+    final void forceUpdate(){
+        shouldUpdate = true;
+    }
+
     @Override
     public final boolean tick(PartGate parent) {
         boolean change = parent.updateInputs(this.inputValues); //Update redstone inputs
@@ -92,9 +96,10 @@ public abstract class BundledGateLogic extends GateLogic {
                 bundledInputValues.replace(facing, newValue);
             }
         }
-
+        change = change || shouldUpdate;
         if (!change) return false;
         calculateOutput(parent);
+        shouldUpdate = false;
         return true;
     }
 
