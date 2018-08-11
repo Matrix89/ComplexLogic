@@ -11,6 +11,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.model.TRSRTransformation;
 import pl.asie.charset.lib.render.model.ModelTransformer;
+import pl.asie.charset.lib.render.model.SimpleBakedModel;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.SimpleLogicGates;
 import pl.asie.simplelogic.gates.render.GateDynamicRenderer;
@@ -25,6 +26,19 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
 
     private static ModelTransformer.IVertexTransformer[] transformations = new ModelTransformer.IVertexTransformer[16];
     private static float[][][] colors = new float[16][2][4];
+
+    @Override
+    public void appendModelsToItem(PartGate gate, SimpleBakedModel model) {
+        if(buttonModels==null){
+            initModels();
+        }
+
+        for (int i = 0; i < 16; i++) {
+            model.addModel(getTransformedModel(buttonModels[i], gate));
+        }
+
+        super.appendModelsToItem(gate, model);
+    }
 
     static {
         for (int i = 0; i < 16; i++) {
@@ -47,6 +61,35 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
     public void invalidateModels() {
         buttonModels = null;
     }
+    public void initModels(){
+        IBakedModel buttonPanelBakedModelOn = buttonPanelModelOn.bake(
+                TRSRTransformation.identity(),
+                DefaultVertexFormats.BLOCK,
+                ModelLoader.defaultTextureGetter()
+        );
+
+        IBakedModel buttonPanelBakedModelOff = buttonPanelModelOff.bake(
+                TRSRTransformation.identity(),
+                DefaultVertexFormats.BLOCK,
+                ModelLoader.defaultTextureGetter()
+        );
+
+        buttonModels = new IBakedModel[32];
+        for (int i = 0; i < buttonModels.length; i++) {
+            int color = i & 15;
+            boolean v = (i & 16) != 0;
+
+            buttonModels[i] = ModelTransformer.transform(
+                    v ? buttonPanelBakedModelOn : buttonPanelBakedModelOff,
+                    SimpleLogicGates.blockGate.getDefaultState(),
+                    0L,
+                    ModelTransformer.IVertexTransformer.compose(
+                            transformations[color],
+                            ModelTransformer.IVertexTransformer.tint(v ? colors[color][1] : colors[color][0])
+                    )
+            );
+        }
+    }
 
     @Override
     public Class<ButtonPanelLogic> getLogicClass() {
@@ -56,33 +99,7 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
     @Override
     public void render(PartGate partGate, ButtonPanelLogic buttonPanelLogic, IBlockAccess iBlockAccess, double x, double y, double z, float v3, int h, float v4, BufferBuilder bufferBuilder) {
         if (buttonModels == null) {
-            IBakedModel buttonPanelBakedModelOn = buttonPanelModelOn.bake(
-                    TRSRTransformation.identity(),
-                    DefaultVertexFormats.BLOCK,
-                    ModelLoader.defaultTextureGetter()
-            );
-
-            IBakedModel buttonPanelBakedModelOff = buttonPanelModelOff.bake(
-                    TRSRTransformation.identity(),
-                    DefaultVertexFormats.BLOCK,
-                    ModelLoader.defaultTextureGetter()
-            );
-
-            buttonModels = new IBakedModel[32];
-            for (int i = 0; i < buttonModels.length; i++) {
-                int color = i & 15;
-                boolean v = (i & 16) != 0;
-
-                buttonModels[i] = ModelTransformer.transform(
-                        v ? buttonPanelBakedModelOn : buttonPanelBakedModelOff,
-                        SimpleLogicGates.blockGate.getDefaultState(),
-                        0L,
-                        ModelTransformer.IVertexTransformer.compose(
-                                transformations[color],
-                                ModelTransformer.IVertexTransformer.tint(v ? colors[color][1] : colors[color][0])
-                        )
-                );
-            }
+            initModels();
         }
 
         byte[] data = buttonPanelLogic.value;

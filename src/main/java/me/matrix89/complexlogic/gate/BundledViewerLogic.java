@@ -4,6 +4,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
 
+import java.util.Arrays;
+
 public class BundledViewerLogic extends BundledGateLogic {
 
     @Override
@@ -28,9 +30,13 @@ public class BundledViewerLogic extends BundledGateLogic {
 
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
-        if (isClient && compound.hasKey("v"))
+        boolean change = false;
+        if (isClient && compound.hasKey("v")) {
+            byte[] old = getOutputValueBundled(EnumFacing.NORTH);
             setBundledOutputValue(EnumFacing.NORTH, compound.getByteArray("v"));
-        return super.readFromNBT(compound, isClient);
+            change = !Arrays.equals(old, getOutputValueBundled(EnumFacing.NORTH));
+        }
+        return super.readFromNBT(compound, isClient) || change;
     }
 
 

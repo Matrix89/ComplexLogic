@@ -12,6 +12,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.model.TRSRTransformation;
 import pl.asie.charset.lib.render.model.ModelTransformer;
+import pl.asie.charset.lib.render.model.SimpleBakedModel;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.render.GateDynamicRenderer;
 
@@ -30,13 +31,26 @@ public class BundledViewerRenderer extends GateDynamicRenderer<BundledViewerLogi
     }
 
     @Override
+    public void appendModelsToItem(PartGate gate, SimpleBakedModel model) {
+        if(viewerLampsBakedModel==null){
+            initModels();
+        }
+        model.addModel(getTransformedModel(viewerLampsBakedModel, gate));
+        super.appendModelsToItem(gate, model);
+    }
+
+    public void initModels(){
+        viewerLampsBakedModel = viewerLampsModel.bake(
+                TRSRTransformation.identity(),
+                DefaultVertexFormats.BLOCK,
+                ModelLoader.defaultTextureGetter()
+        );
+    }
+
+    @Override
     public void render(PartGate partGate, BundledViewerLogic bundledViewerLogic, IBlockAccess iBlockAccess, double x, double y, double z, float v3, int v5, float v4, BufferBuilder bufferBuilder) {
         if (viewerLampsBakedModel == null) {
-            viewerLampsBakedModel = viewerLampsModel.bake(
-                    TRSRTransformation.identity(),
-                    DefaultVertexFormats.BLOCK,
-                    ModelLoader.defaultTextureGetter()
-            );
+            initModels();
         }
 
         float[][] tints = new float[16][4];
