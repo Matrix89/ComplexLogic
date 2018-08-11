@@ -55,14 +55,12 @@ public class ProxyClient extends ProxyCommon {
                         new ResourceLocation("complex-logic:block/buttonindicator_on"),
                         event.getMap()
                 );
-        ButtonPannelRenderer.INSTANCE.buttonPanelBakedModelOn = null;
-
         ButtonPannelRenderer.INSTANCE.buttonPanelModelOff =
                 RenderUtils.getModelWithTextures(
                         new ResourceLocation("complex-logic:block/buttonindicator_off"),
                         event.getMap()
                 );
-        ButtonPannelRenderer.INSTANCE.buttonPanelBakedModelOff = null;
+        ButtonPannelRenderer.INSTANCE.invalidateModels();
 
         TextDisplayRenderer.INSTANCE.font = event.getMap().registerSprite(new ResourceLocation(
                 "minecraft", "font/ascii"

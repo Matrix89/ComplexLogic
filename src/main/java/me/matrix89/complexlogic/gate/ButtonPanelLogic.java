@@ -1,9 +1,11 @@
 package me.matrix89.complexlogic.gate;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import pl.asie.simplelogic.gates.PartGate;
 
@@ -46,6 +48,8 @@ public class ButtonPanelLogic extends BundledGateLogic {
             if(index>=0 && index<16){
                 byte[] currentOut = getOutputValueBundled(EnumFacing.NORTH);
                 currentOut[index] = (byte)(currentOut[index]>0?0:15);
+                boolean isSet = currentOut[index] != 0;
+                gate.getWorld().playSound(null, gate.getPos(), isSet ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 0.5f, isSet ? 1.0f : 1.0f);
                 setBundledOutputValue(EnumFacing.NORTH, currentOut);
                 forceUpdate();
                 gate.scheduleTick();
