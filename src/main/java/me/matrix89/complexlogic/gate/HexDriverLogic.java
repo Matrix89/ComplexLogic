@@ -3,7 +3,7 @@ package me.matrix89.complexlogic.gate;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
 
-public class HexDriverLogic extends BundledGateLogic{
+public class HexDriverLogic extends BundledGateLogic {
     private static final byte[][] decoder = new byte[][]{
             new byte[]{15, 0, 15, 15, 15, 15, 15},//0
             new byte[]{0, 0, 0, 0, 15, 0, 15},//1
@@ -36,9 +36,24 @@ public class HexDriverLogic extends BundledGateLogic{
         }
     }
 
+    public HexDriverLogic(){
+        super();
+        byte[] outWest = new byte[16];
+        byte[] outNorth = new byte[16];
+
+        System.arraycopy(decoder[0], 0, outNorth, 0, 7);
+        System.arraycopy(decoder[0], 0, outNorth, 7, 7);
+
+        System.arraycopy(decoder[0], 0, outWest, 0, 7);
+        System.arraycopy(decoder[0], 0, outWest, 7, 7);
+
+        setBundledOutputValue(EnumFacing.WEST, outWest);
+        setBundledOutputValue(EnumFacing.NORTH, outNorth);
+    }
+
     @Override
-    public boolean tick(PartGate parent) {
-        int in = bundledRsToDigi(parent.getBundledInput(EnumFacing.SOUTH));
+    void calculateOutput(PartGate parent) {
+        int in = bundledRsToDigi(getInputValueBundled(EnumFacing.SOUTH));
         int[] lcd = new int[4];
         int i = 0;
         while (in > 0 && i < 4) {
@@ -55,10 +70,11 @@ public class HexDriverLogic extends BundledGateLogic{
         System.arraycopy(decoder[lcd[3]], 0, outWest, 0, 7);
         System.arraycopy(decoder[lcd[2]], 0, outWest, 7, 7);
 
-        setBundledValue(EnumFacing.WEST, outWest);
-        setBundledValue(EnumFacing.NORTH, outNorth);
-        return super.tick(parent);
+        setBundledOutputValue(EnumFacing.WEST, outWest);
+        setBundledOutputValue(EnumFacing.NORTH, outNorth);
+
     }
+
 
     @Override
     public State getLayerState(int i) {

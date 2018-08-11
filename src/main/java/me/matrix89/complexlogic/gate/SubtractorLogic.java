@@ -19,16 +19,15 @@ public class SubtractorLogic extends BundledGateLogic {
     }
 
     @Override
-    public boolean tick(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         byte[] inA = parent.getBundledInput(EnumFacing.EAST);
         byte[] inB = parent.getBundledInput(EnumFacing.WEST);
         int a = bundledRsToDigi(inA);
         int b = bundledRsToDigi(inB);
 
         int v = b - a;
-        setBundledValue(EnumFacing.NORTH, bundledDigiToRs(v));
+        setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(v));
 
-        return super.tick(parent);
     }
 
     @Override

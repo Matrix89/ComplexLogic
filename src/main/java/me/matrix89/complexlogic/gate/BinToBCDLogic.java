@@ -3,8 +3,6 @@ package me.matrix89.complexlogic.gate;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
 
-import java.util.Arrays;
-
 public class BinToBCDLogic extends BundledGateLogic {
     private static final byte[][] decoder = new byte[][]{
             new byte[]{15, 0, 15, 15, 15, 15, 15},//0
@@ -18,6 +16,24 @@ public class BinToBCDLogic extends BundledGateLogic {
             new byte[]{15, 15, 15, 15, 15, 15, 15},//8
             new byte[]{15, 15, 15, 15, 15, 0, 15},//9
     };
+
+    public BinToBCDLogic(){
+        super();
+        byte[] outWest = new byte[16];
+        byte[] outNorth = new byte[16];
+        byte[] outEast = new byte[16];
+        System.arraycopy(decoder[0], 0, outEast, 0, 7);
+        System.arraycopy(decoder[0], 0, outEast, 7, 7);
+
+        System.arraycopy(decoder[0], 0, outNorth, 0, 7);
+        System.arraycopy(decoder[0], 0, outNorth, 7, 7);
+
+        System.arraycopy(decoder[0], 0, outWest, 7, 7);
+
+        setBundledOutputValue(EnumFacing.WEST, outWest);
+        setBundledOutputValue(EnumFacing.NORTH, outNorth);
+        setBundledOutputValue(EnumFacing.EAST, outEast);
+    }
 
     @Override
     public Connection getType(EnumFacing dir) {
@@ -34,8 +50,8 @@ public class BinToBCDLogic extends BundledGateLogic {
     }
 
     @Override
-    public boolean tick(PartGate parent) {
-        int in = bundledRsToDigi(parent.getBundledInput(EnumFacing.SOUTH));
+    void calculateOutput(PartGate parent) {
+        int in = bundledRsToDigi(getInputValueBundled(EnumFacing.SOUTH));
         int[] lcd = new int[5];
         int i = 0;
         while (in > 0 && i < 5) {
@@ -54,10 +70,10 @@ public class BinToBCDLogic extends BundledGateLogic {
 
         System.arraycopy(decoder[lcd[4]], 0, outWest, 7, 7);
 
-        setBundledValue(EnumFacing.WEST, outWest);
-        setBundledValue(EnumFacing.NORTH, outNorth);
-        setBundledValue(EnumFacing.EAST, outEast);
-        return super.tick(parent);
+        setBundledOutputValue(EnumFacing.WEST, outWest);
+        setBundledOutputValue(EnumFacing.NORTH, outNorth);
+        setBundledOutputValue(EnumFacing.EAST, outEast);
+
     }
 
     @Override

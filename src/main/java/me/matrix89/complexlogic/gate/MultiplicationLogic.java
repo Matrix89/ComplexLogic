@@ -4,7 +4,7 @@ import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.logic.GateLogic;
 
-public class MultiplicationLogic extends BundledGateLogic{
+public class MultiplicationLogic extends BundledGateLogic {
     @Override
     public GateLogic.Connection getType(EnumFacing dir) {
         switch (dir) {
@@ -21,17 +21,15 @@ public class MultiplicationLogic extends BundledGateLogic{
     }
 
     @Override
-    public boolean tick(PartGate parent) {
-        byte[] inA = parent.getBundledInput(EnumFacing.WEST);
-        byte[] inB = parent.getBundledInput(EnumFacing.EAST);
+    void calculateOutput(PartGate parent) {
+        byte[] inA = getInputValueBundled(EnumFacing.WEST);
+        byte[] inB = getInputValueBundled(EnumFacing.EAST);
         int a = bundledRsToDigi(inA);
         int b = bundledRsToDigi(inB);
 
         int v = a * b;
-        setBundledValue(EnumFacing.NORTH, bundledDigiToRs(v));
-        outputValues[2] = (byte) (v >>> 16 != 0 ? 15 : 0); // carry
-
-        return super.tick(parent);
+        setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(v));
+        setRedstoneOutputValue(EnumFacing.SOUTH, (byte) (v >>> 16 != 0 ? 15 : 0)); // carry
     }
 
     @Override

@@ -1,24 +1,27 @@
 package me.matrix89.complexlogic.gate;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
 
 public class RTCLogic extends BundledGateLogic {
     private boolean updateSignalOn = false;
+
     @Override
     public Connection getType(EnumFacing dir) {
         switch (dir) {
-            case NORTH: return Connection.OUTPUT_BUNDLED;
-            case SOUTH: return Connection.INPUT;
-            default: return Connection.NONE;
+            case NORTH:
+                return Connection.OUTPUT_BUNDLED;
+            case SOUTH:
+                return Connection.INPUT;
+            default:
+                return Connection.NONE;
         }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-        if(!isClient){
+        if (!isClient) {
             tag.setBoolean("updateSignalOn", updateSignalOn);
         }
         return super.writeToNBT(tag, isClient);
@@ -27,25 +30,23 @@ public class RTCLogic extends BundledGateLogic {
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
         boolean updateSignalOnOld = updateSignalOn;
-        if(compound.hasKey("updateSignalOn")){
+        if (compound.hasKey("updateSignalOn")) {
             updateSignalOn = compound.getBoolean("updateSignalOn");
         }
-        return super.readFromNBT(compound, isClient) || updateSignalOnOld!=updateSignalOn;
+        return super.readFromNBT(compound, isClient) || updateSignalOnOld != updateSignalOn;
     }
 
-    @Override
-    public boolean tick(PartGate parent) {
 
+    @Override
+    void calculateOutput(PartGate parent) {
         if (getInputValueInside(EnumFacing.SOUTH) != 0) {
-            if(!updateSignalOn){
+            if (!updateSignalOn) {
                 updateSignalOn = true;
-                setBundledValue(EnumFacing.NORTH, bundledDigiToRs((int) parent.getWorld().getWorldTime()));
+                setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs((int) parent.getWorld().getWorldTime()));
             }
-        }else{
+        } else {
             updateSignalOn = false;
         }
-
-        return super.tick(parent);
     }
 
     @Override

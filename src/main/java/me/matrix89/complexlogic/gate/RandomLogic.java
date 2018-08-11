@@ -12,7 +12,7 @@ public class RandomLogic extends BundledGateLogic {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-        if(!isClient){
+        if (!isClient) {
             tag.setBoolean("updateSignalOn", updateSignalOn);
         }
         return super.writeToNBT(tag, isClient);
@@ -21,18 +21,21 @@ public class RandomLogic extends BundledGateLogic {
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
         boolean updateSignalOnOld = updateSignalOn;
-        if(compound.hasKey("updateSignalOn")){
+        if (compound.hasKey("updateSignalOn")) {
             updateSignalOn = compound.getBoolean("updateSignalOn");
         }
-        return super.readFromNBT(compound, isClient) || updateSignalOnOld!=updateSignalOn;
+        return super.readFromNBT(compound, isClient) || updateSignalOnOld != updateSignalOn;
     }
 
     @Override
     public Connection getType(EnumFacing dir) {
         switch (dir) {
-            case NORTH: return Connection.OUTPUT_BUNDLED;
-            case SOUTH: return Connection.INPUT;
-            default: return Connection.NONE;
+            case NORTH:
+                return Connection.OUTPUT_BUNDLED;
+            case SOUTH:
+                return Connection.INPUT;
+            default:
+                return Connection.NONE;
         }
     }
 
@@ -41,19 +44,19 @@ public class RandomLogic extends BundledGateLogic {
         return getInputValueInside(EnumFacing.SOUTH) != 0 ? State.ON : State.OFF;
     }
 
-    @Override
-    public boolean tick(PartGate parent) {
 
+    @Override
+    void calculateOutput(PartGate parent) {
         if (getInputValueInside(EnumFacing.SOUTH) != 0) {
-            if(!updateSignalOn){
+            if (!updateSignalOn) {
                 updateSignalOn = true;
-                setBundledValue(EnumFacing.NORTH, bundledDigiToRs(prng.nextInt()));
+                setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(prng.nextInt()));
             }
-        }else{
+        } else {
             updateSignalOn = false;
         }
-        return super.tick(parent);
     }
+
 
     @Override
     public State getTorchState(int i) {

@@ -1,0 +1,19 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "blob": "complex-logic:blocks/gate_adder_blob"
+  },
+  "elements": [
+    {
+      "from": [0, 2, 0],
+      "to":   [2, 3, 2],
+      "faces": {
+        "up": {"uv": [0, 0, 3, 3], "texture": "#blob"},
+        "east": {"uv": [0, 0, 3, 3], "texture": "#blob"},
+        "west": {"uv": [0, 0, 3, 3], "texture": "#blob"},
+        "north": {"uv": [0, 0, 3, 3], "texture": "#blob"},
+        "south": {"uv": [0, 0, 3, 3], "texture": "#blob"}
+      }
+    }
+  ]
+}

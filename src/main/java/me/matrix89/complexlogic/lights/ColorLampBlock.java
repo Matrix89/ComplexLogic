@@ -20,10 +20,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import pl.asie.charset.lib.utils.ColorUtils;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -38,23 +40,24 @@ public class ColorLampBlock extends Block {
 
     static {
         for (EnumDyeColor color : EnumDyeColor.values()) {
-            Block b = new ColorLampBlock("color_lamp_", color, false, true,0);
-            Block bi = new ColorLampBlock("color_lamp_", color, true,true,0);
+            Block b = new ColorLampBlock("color_lamp", color, false, true,0);
+            Block bi = new ColorLampBlock("color_lamp", color, true,true,0);
             LampRegistry.put(b, new ColorLampItem(b));
             LampRegistry.put(bi, new ColorLampItem(bi));
             //cage lamp
-            Block c = new ColorLampBlock("cage_lamp_", color, false,false,1);
-            Block ci = new ColorLampBlock("cage_lamp_", color, true,false,1);
+            Block c = new ColorLampBlock("cage_lamp", color, false,false,1);
+            Block ci = new ColorLampBlock("cage_lamp", color, true,false,1);
             LampRegistry.put(c, new ColorLampItem(c));
             LampRegistry.put(ci, new ColorLampItem(ci));
             //flat lamp
-            Block f = new ColorLampBlock("flat_lamp_", color, false,false,2);
-            Block fi = new ColorLampBlock("flat_lamp_", color, true,false,2);
+            Block f = new ColorLampBlock("flat_lamp", color, false,false,2);
+            Block fi = new ColorLampBlock("flat_lamp", color, true,false,2);
             LampRegistry.put(f, new ColorLampItem(f));
             LampRegistry.put(fi, new ColorLampItem(fi));
         }
     }
 
+    private final EnumDyeColor color;
     private boolean inverted;
     private boolean isFull;
     private int aabbIndex;
@@ -97,15 +100,21 @@ public class ColorLampBlock extends Block {
             }
     };
 
-    public ColorLampBlock(String prefix,EnumDyeColor color, boolean inverted, boolean isFull, int aabbIndex) {
+    public ColorLampBlock(String prefix, EnumDyeColor color, boolean inverted, boolean isFull, int aabbIndex) {
         super(Material.REDSTONE_LIGHT, MapColor.getBlockColor(color));
         setDefaultState(this.blockState.getBaseState().withProperty(IS_ON, false).withProperty(FACING, EnumFacing.DOWN));
         setCreativeTab(CreativeTabs.REDSTONE);
-        setTranslationKey(prefix + color.getTranslationKey() + (inverted?"_inverted":""));
-        setRegistryName(prefix + color.getName() + (inverted?"_inverted":""));
+        setTranslationKey(prefix + (inverted?"_inverted":""));
+        setRegistryName(prefix + "_" + color.getName() + (inverted?"_inverted":""));
+        this.color = color;
         this.inverted = inverted;
         this.isFull = isFull;
         this.aabbIndex = aabbIndex;
+    }
+
+    @Override
+    public String getLocalizedName() {
+        return I18n.translateToLocalFormatted(getTranslationKey() + ".name", I18n.translateToLocal(ColorUtils.getLangEntry("charset.color.", color)));
     }
 
     @Override

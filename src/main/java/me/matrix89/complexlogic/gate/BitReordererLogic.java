@@ -18,15 +18,13 @@ public class BitReordererLogic extends BundledGateLogic {
     }
 
     @Override
-    public boolean tick(PartGate parent) {
+    void calculateOutput(PartGate parent) {
         byte[] in = getInputValueBundled(EnumFacing.SOUTH);
         byte[] out = new byte[16];
         for (int i = 0; i < in.length; i++) {
             out[15 - i] = in[i];
         }
-        setBundledValue(EnumFacing.NORTH, out);
-
-        return super.tick(parent);
+        setBundledOutputValue(EnumFacing.NORTH, out);
     }
 
     @Override

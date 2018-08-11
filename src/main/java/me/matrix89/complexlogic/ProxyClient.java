@@ -1,7 +1,9 @@
 package me.matrix89.complexlogic;
 
 import me.matrix89.complexlogic.client.BundledViewerRenderer;
+import me.matrix89.complexlogic.client.ButtonPannelRenderer;
 import me.matrix89.complexlogic.client.SegmentDisplayRenderer;
+import me.matrix89.complexlogic.client.TextDisplayRenderer;
 import me.matrix89.complexlogic.lights.ColorLampBlock;
 import me.matrix89.complexlogic.lights.LampBlockColorHandler;
 import net.minecraft.block.Block;
@@ -28,6 +30,8 @@ public class ProxyClient extends ProxyCommon {
         super.init();
         SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(BundledViewerRenderer.INSTANCE);
         SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(SegmentDisplayRenderer.INSTANCE);
+        SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(ButtonPannelRenderer.INSTANCE);
+        SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(TextDisplayRenderer.INSTANCE);
     }
 
     @SubscribeEvent
@@ -45,6 +49,22 @@ public class ProxyClient extends ProxyCommon {
                         event.getMap()
                 );
         SegmentDisplayRenderer.INSTANCE.segmentBakedModel = null;
+
+        ButtonPannelRenderer.INSTANCE.buttonPanelModelOn =
+                RenderUtils.getModelWithTextures(
+                        new ResourceLocation("complex-logic:block/buttonindicator_on"),
+                        event.getMap()
+                );
+        ButtonPannelRenderer.INSTANCE.buttonPanelModelOff =
+                RenderUtils.getModelWithTextures(
+                        new ResourceLocation("complex-logic:block/buttonindicator_off"),
+                        event.getMap()
+                );
+        ButtonPannelRenderer.INSTANCE.invalidateModels();
+
+        TextDisplayRenderer.INSTANCE.font = event.getMap().registerSprite(new ResourceLocation(
+                "minecraft", "font/ascii"
+        ));
     }
 
     @SubscribeEvent

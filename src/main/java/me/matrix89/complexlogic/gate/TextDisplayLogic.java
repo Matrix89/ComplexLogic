@@ -6,33 +6,43 @@ import pl.asie.simplelogic.gates.PartGate;
 
 import java.util.Arrays;
 
-public class SegmentDisplayLogic extends BundledGateLogic {
+public class TextDisplayLogic extends BundledGateLogic {
 
     public byte[] value = new byte[16];
+    public int codepointClient;
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
         super.writeToNBT(tag, isClient);
-        if(isClient)
-            tag.setByteArray("v", getInputValueBundled(EnumFacing.SOUTH));
+        tag.setByteArray("v", getInputValueBundled(EnumFacing.SOUTH));
         return tag;
     }
 
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
         byte[] valueOld = value;
-        if (isClient && compound.hasKey("v"))
+        if (compound.hasKey("v"))
             value = compound.getByteArray("v");
-        return super.readFromNBT(compound, isClient) || !Arrays.equals(valueOld, value);
-    }
-
-    @Override
-    public Connection getType(EnumFacing dir) {
-        return dir == EnumFacing.SOUTH ? Connection.INPUT_BUNDLED : Connection.NONE;
+        boolean valueChanged = !Arrays.equals(valueOld, value);
+        if (valueChanged && isClient) {
+            codepointClient = 0;
+            for (int i = 0; i < 16; i++) {
+                if (value[i] != 0) {
+                    codepointClient |= 1 << i;
+                }
+            }
+        }
+        return super.readFromNBT(compound, isClient) || valueChanged;
     }
 
     @Override
     void calculateOutput(PartGate parent) {
+
+    }
+
+    @Override
+    public Connection getType(EnumFacing dir) {
+         return dir == EnumFacing.SOUTH ? Connection.INPUT_BUNDLED : Connection.NONE;
     }
 
     @Override

@@ -1,0 +1,13 @@
+{
+  "models": {
+    "indicator0": "complex-logic:block/buttonindicator_off",
+    "indicator1": "complex-logic:block/buttonindicator_on"
+  },
+  "textures": {
+    "top": "simplelogic:blocks/empty"
+  },
+  "layers": [],
+  "torches": [
+
+  ]
+}

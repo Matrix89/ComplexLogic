@@ -3,7 +3,7 @@ package me.matrix89.complexlogic.gate;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
 
-public class MultiplexerLogic extends BundledGateLogic{
+public class MultiplexerLogic extends BundledGateLogic {
 
     @Override
     public Connection getType(EnumFacing dir) {
@@ -21,14 +21,12 @@ public class MultiplexerLogic extends BundledGateLogic{
     }
 
     @Override
-    public boolean tick(PartGate parent) {
-        boolean inputChange = parent.updateInputs(this.inputValues);
-        if(getInputValueInside(EnumFacing.SOUTH)!=0){
-            setBundledValue(EnumFacing.NORTH, parent.getBundledInput(EnumFacing.EAST));
-        }else {
-            setBundledValue(EnumFacing.NORTH, parent.getBundledInput(EnumFacing.WEST));
+    void calculateOutput(PartGate parent) {
+        if (getInputValueInside(EnumFacing.SOUTH) != 0) {
+            setBundledOutputValue(EnumFacing.NORTH, getInputValueBundled(EnumFacing.EAST));
+        } else {
+            setBundledOutputValue(EnumFacing.NORTH, getInputValueBundled(EnumFacing.WEST));
         }
-        return  super.tick(parent) || inputChange;
     }
 
     @Override

@@ -7,30 +7,29 @@ public class GlobalORLogic extends BundledGateLogic {
 
     @Override
     public Connection getType(EnumFacing dir) {
-        switch (dir){
+        switch (dir) {
             case SOUTH:
                 return Connection.INPUT_BUNDLED;
             case NORTH:
                 return Connection.OUTPUT;
-            default: return Connection.NONE;
+            default:
+                return Connection.NONE;
         }
     }
 
     @Override
-    public boolean tick(PartGate parent) {
-        byte[] in = parent.getBundledInput(EnumFacing.SOUTH);
-        boolean inputChange = parent.updateInputs(this.inputValues);
+    void calculateOutput(PartGate parent) {
+        byte[] in = getInputValueBundled(EnumFacing.SOUTH);
         byte out = 0;
         for (byte i : in) {
             out |= i;
         }
-        outputValues[0] = out;
-        return super.tick(parent) || inputChange;
+        setRedstoneOutputValue(EnumFacing.NORTH, out);
     }
 
     @Override
     public State getLayerState(int i) {
-        return i==0 && getOutputValueInside(EnumFacing.NORTH)!=0? State.ON: State.OFF;
+        return i == 0 && getOutputValueInside(EnumFacing.NORTH) != 0 ? State.ON : State.OFF;
     }
 
     @Override

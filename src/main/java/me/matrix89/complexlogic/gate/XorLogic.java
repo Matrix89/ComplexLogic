@@ -1,6 +1,7 @@
 package me.matrix89.complexlogic.gate;
 
 import net.minecraft.util.EnumFacing;
+import pl.asie.simplelogic.gates.PartGate;
 
 public class XorLogic extends BundledGateLogic {
     @Override
@@ -17,10 +18,10 @@ public class XorLogic extends BundledGateLogic {
     }
 
     @Override
-    public byte[] calculateBundledOutput(EnumFacing facing) {
+    void calculateOutput(PartGate parent) {
         int a = bundledRsToDigi(getInputValueBundled(EnumFacing.WEST));
         int b = bundledRsToDigi(getInputValueBundled(EnumFacing.EAST));
-        return bundledDigiToRs(a ^ b);
+        setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(a ^ b));
     }
 
     @Override
