@@ -12,6 +12,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.model.TRSRTransformation;
 import pl.asie.charset.lib.render.model.ModelTransformer;
 import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.SimpleLogicGates;
 import pl.asie.simplelogic.gates.render.GateDynamicRenderer;
 
 import javax.vecmath.Vector3f;
@@ -20,15 +21,12 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
     public static final ButtonPannelRenderer INSTANCE = new ButtonPannelRenderer();
     public IModel buttonPanelModelOn;
     public IModel buttonPanelModelOff;
-    public IBakedModel buttonPanelBakedModelOn;
-    public IBakedModel buttonPanelBakedModelOff;
-
+    private IBakedModel[] buttonModels;
 
     private static ModelTransformer.IVertexTransformer[] transformations = new ModelTransformer.IVertexTransformer[16];
     private static float[][][] colors = new float[16][2][4];
 
     static {
-
         for (int i = 0; i < 16; i++) {
             float[] color = EnumDyeColor.values()[i].getColorComponentValues();
             colors[i][0][0] = 1;
@@ -46,6 +44,10 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
         }
     }
 
+    public void invalidateModels() {
+        buttonModels = null;
+    }
+
     @Override
     public Class<ButtonPanelLogic> getLogicClass() {
         return ButtonPanelLogic.class;
@@ -53,20 +55,34 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
 
     @Override
     public void render(PartGate partGate, ButtonPanelLogic buttonPanelLogic, IBlockAccess iBlockAccess, double x, double y, double z, float v3, int h, float v4, BufferBuilder bufferBuilder) {
-        if (buttonPanelBakedModelOn == null) {
-            buttonPanelBakedModelOn = buttonPanelModelOn.bake(
+        if (buttonModels == null) {
+            IBakedModel buttonPanelBakedModelOn = buttonPanelModelOn.bake(
                     TRSRTransformation.identity(),
                     DefaultVertexFormats.BLOCK,
                     ModelLoader.defaultTextureGetter()
             );
-        }
 
-        if (buttonPanelBakedModelOff == null) {
-            buttonPanelBakedModelOff = buttonPanelModelOff.bake(
+            IBakedModel buttonPanelBakedModelOff = buttonPanelModelOff.bake(
                     TRSRTransformation.identity(),
                     DefaultVertexFormats.BLOCK,
                     ModelLoader.defaultTextureGetter()
             );
+
+            buttonModels = new IBakedModel[32];
+            for (int i = 0; i < buttonModels.length; i++) {
+                int color = i & 15;
+                boolean v = (i & 16) != 0;
+
+                buttonModels[i] = ModelTransformer.transform(
+                        v ? buttonPanelBakedModelOn : buttonPanelBakedModelOff,
+                        SimpleLogicGates.blockGate.getDefaultState(),
+                        0L,
+                        ModelTransformer.IVertexTransformer.compose(
+                                transformations[color],
+                                ModelTransformer.IVertexTransformer.tint(v ? colors[color][1] : colors[color][0])
+                        )
+                );
+            }
         }
 
         byte[] data = buttonPanelLogic.value;
@@ -74,11 +90,7 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
             boolean v = data[i] != 0;
 
             renderTransformedModel(
-                    v ? buttonPanelBakedModelOn : buttonPanelBakedModelOff,
-                    ModelTransformer.IVertexTransformer.compose(
-                            transformations[i],
-                            ModelTransformer.IVertexTransformer.tint(v ? colors[i][1] : colors[i][0])
-                    ),
+                    buttonModels[i | (v ? 16 : 0)],
                     partGate,
                     iBlockAccess, x, y, z, bufferBuilder
             );
