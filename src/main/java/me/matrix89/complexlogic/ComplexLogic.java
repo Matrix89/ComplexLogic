@@ -1,13 +1,19 @@
 package me.matrix89.complexlogic;
 
 import me.matrix89.complexlogic.lights.ColorLampBlock;
+import me.matrix89.complexlogic.network.PacketRegistry;
+import me.matrix89.complexlogic.network.packets.PatchPanelPacket;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,9 +44,15 @@ public class ComplexLogic {
     @Mod.Instance(MOD_ID)
     public static ComplexLogic INSTANCE;
 
+    public static Logger logger = LogManager.getLogger(ComplexLogic.MOD_ID);
+
     @Mod.EventHandler
     public void preinit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(PROXY);
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, new GUIHandler());
+        PacketRegistry.INSTANCE.init();
+        PacketRegistry.INSTANCE.registerPacket(1, PatchPanelPacket.class, Side.SERVER);
+        PacketRegistry.INSTANCE.registerPacket(2, PatchPanelPacket.class, Side.CLIENT);
     }
 
     @Mod.EventHandler
