@@ -49,18 +49,18 @@ repositories {
     }
     ivy {
         name 'CharsetLib'
-        artifactPattern "http://asie.pl/files/mods/Charset/LibOnly/[module]-[revision](-[classifier]).[ext]"
+        artifactPattern "https://img.bymarcin.com/[module]-[revision](-[classifier]).[ext]"
     }
     ivy {
         name 'SimpleLogic'
-        artifactPattern "http://asie.pl/files/mods/SimpleLogic/[module]-[revision](-[classifier]).[ext]"
+        artifactPattern "https://img.bymarcin.com/[module]-[revision](-[classifier]).[ext]"
     }
 }
 
 dependencies {
     deobfCompile "MCMultiPart2:MCMultiPart-exp:2.5.1_66"
-    deobfCompile name: "Charset-Lib", version: "0.5.4.6"
-    deobfCompile name: "SimpleLogic", version: "0.5.4.6"
+    deobfCompile name: "Charset-Lib", version: "deobf"
+    deobfCompile name: "SimpleLogic", version: "deobf"
 }
 
 
