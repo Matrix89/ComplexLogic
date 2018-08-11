@@ -3,6 +3,7 @@ package me.matrix89.complexlogic;
 import me.matrix89.complexlogic.client.BundledViewerRenderer;
 import me.matrix89.complexlogic.client.ButtonPannelRenderer;
 import me.matrix89.complexlogic.client.SegmentDisplayRenderer;
+import me.matrix89.complexlogic.client.TextDisplayRenderer;
 import me.matrix89.complexlogic.lights.ColorLampBlock;
 import me.matrix89.complexlogic.lights.LampBlockColorHandler;
 import net.minecraft.block.Block;
@@ -30,6 +31,7 @@ public class ProxyClient extends ProxyCommon {
         SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(BundledViewerRenderer.INSTANCE);
         SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(SegmentDisplayRenderer.INSTANCE);
         SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(ButtonPannelRenderer.INSTANCE);
+        SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(TextDisplayRenderer.INSTANCE);
     }
 
     @SubscribeEvent
@@ -61,6 +63,10 @@ public class ProxyClient extends ProxyCommon {
                         event.getMap()
                 );
         ButtonPannelRenderer.INSTANCE.buttonPanelBakedModelOff = null;
+
+        TextDisplayRenderer.INSTANCE.font = event.getMap().registerSprite(new ResourceLocation(
+                "minecraft", "font/ascii"
+        ));
     }
 
     @SubscribeEvent
