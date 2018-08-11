@@ -30,7 +30,6 @@ public class PatchPanelGUI extends GuiContainer {
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
                 PatchPanelCheckBox checkBox = new PatchPanelCheckBox(i + j * 16, marginLeft + i * 12, marginTop + j * 12);
-                //checkBox.setIsChecked(connectionGrid[i][j]!=0);
                 buttonList.add(checkBox);
             }
         }
