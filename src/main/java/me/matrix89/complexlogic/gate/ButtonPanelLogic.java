@@ -16,10 +16,9 @@ public class ButtonPanelLogic extends BundledGateLogic {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-        super.writeToNBT(tag, isClient);
         if(isClient)
             tag.setByteArray("v", getOutputValueBundled(EnumFacing.NORTH));
-        return tag;
+        return super.writeToNBT(tag, isClient);
     }
 
     @Override

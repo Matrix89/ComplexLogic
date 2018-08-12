@@ -49,23 +49,21 @@ public abstract class BundledGateLogic extends GateLogic {
 
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
-       // boolean oldShouldUpdate = shouldUpdate;
         AtomicBoolean update = new AtomicBoolean(false);
-        //if (!isClient) {
-            if (compound.hasKey("shouldUpdate")) {
-                shouldUpdate = compound.getBoolean("shouldUpdate");
-            }
-            if (compound.hasKey("bundledInputValues")) {
-                NBTTagCompound tag = compound.getCompoundTag("bundledInputValues");
-                readValues(update, tag, bundledInputValues);
-            }
-            if (compound.hasKey("bundledOutputValues")) {
-                NBTTagCompound tag = compound.getCompoundTag("bundledOutputValues");
-                readValues(update, tag, bundledOutputValues);
-            }
-       // }
-
-        return super.readFromNBT(compound, isClient) /*|| oldShouldUpdate != shouldUpdate*/ || update.get();
+        if (compound.hasKey("shouldUpdate")) {
+            boolean oldShouldUpdate = shouldUpdate;
+            shouldUpdate = compound.getBoolean("shouldUpdate");
+            update.set(shouldUpdate != oldShouldUpdate);
+        }
+        if (compound.hasKey("bundledInputValues")) {
+            NBTTagCompound tag = compound.getCompoundTag("bundledInputValues");
+            readValues(update, tag, bundledInputValues);
+        }
+        if (compound.hasKey("bundledOutputValues")) {
+            NBTTagCompound tag = compound.getCompoundTag("bundledOutputValues");
+            readValues(update, tag, bundledOutputValues);
+        }
+        return super.readFromNBT(compound, isClient) || update.get();
     }
 
     public BundledGateLogic() {
@@ -80,7 +78,7 @@ public abstract class BundledGateLogic extends GateLogic {
 
     abstract void calculateOutput(PartGate parent);
 
-    public final void forceUpdate(){
+    public final void forceUpdate() {
         shouldUpdate = true;
     }
 
@@ -93,9 +91,13 @@ public abstract class BundledGateLogic extends GateLogic {
             byte[] newValue = parent.getBundledInput(facing);
             if (!Arrays.equals(bundledInputValues.get(facing), newValue)) {
                 change = true;
-                bundledInputValues.replace(facing, newValue);
+                if (!bundledInputValues.containsKey(facing)) {
+                    bundledInputValues.put(facing, new byte[16]);
+                }
+                System.arraycopy(newValue, 0, bundledInputValues.get(facing), 0, 16);
             }
         }
+
         change = change || shouldUpdate;
         if (!change) return false;
         calculateOutput(parent);
