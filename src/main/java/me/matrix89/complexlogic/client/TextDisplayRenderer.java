@@ -23,6 +23,7 @@ import pl.asie.simplelogic.gates.render.GateDynamicRenderer;
 public class TextDisplayRenderer extends GateDynamicRenderer<TextDisplayLogic> {
     public static final TextDisplayRenderer INSTANCE = new TextDisplayRenderer();
     public TextureAtlasSprite font;
+    private float[][] color = new float[][]{{1f, 0, 0, 0}};
 
     @Override
     public Class<TextDisplayLogic> getLogicClass() {
@@ -46,7 +47,7 @@ public class TextDisplayRenderer extends GateDynamicRenderer<TextDisplayLogic> {
             float cy = (charLeft >> 4);
             model.addQuad(null, CharsetFaceBakery.INSTANCE.makeBakedQuad(
                     new Vector3f(0.5f, height, 4), new Vector3f(7.5f, height, 12),
-                    -1, new float[] {
+                    0, new float[] {
                             cx, cy, cx+(7/8f), cy+1
                     }, font, EnumFacing.UP, TRSRTransformation.identity(), false
             ));
@@ -57,14 +58,17 @@ public class TextDisplayRenderer extends GateDynamicRenderer<TextDisplayLogic> {
             float cy = (charRight >> 4);
             model.addQuad(null, CharsetFaceBakery.INSTANCE.makeBakedQuad(
                     new Vector3f(8.5f, height, 4), new Vector3f(15.5f, height, 12),
-                    -1, new float[] {
+                    0, new float[] {
                             cx, cy, cx+(7/8f), cy+1
                     }, font, EnumFacing.UP, TRSRTransformation.identity(), false
             ));
         }
 
+        System.arraycopy(logic.color.getColorComponentValues(), 0, color[0], 1, 3);
+
         renderTransformedModel(
                 model,
+                ModelTransformer.IVertexTransformer.tintByIndex(color),
                 partGate,
                 iBlockAccess, x, y, z, bufferBuilder
         );
