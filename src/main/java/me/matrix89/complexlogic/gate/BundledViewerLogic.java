@@ -53,6 +53,6 @@ public class BundledViewerLogic extends BundledGateLogic {
 
     @Override
     public State getTorchState(int i) {
-        return getOutputValueBundled(EnumFacing.NORTH)[i] != 0 ? State.ON : State.OFF;
+        return State.OFF;
     }
 }
