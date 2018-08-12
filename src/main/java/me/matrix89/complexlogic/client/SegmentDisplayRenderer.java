@@ -4,7 +4,6 @@ import me.matrix89.complexlogic.gate.SegmentDisplayLogic;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -13,6 +12,7 @@ import pl.asie.charset.lib.render.model.ModelTransformer;
 import pl.asie.charset.lib.render.model.SimpleBakedModel;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.render.GateDynamicRenderer;
+
 
 public class SegmentDisplayRenderer extends GateDynamicRenderer<SegmentDisplayLogic> {
     public static final SegmentDisplayRenderer INSTANCE = new SegmentDisplayRenderer();
@@ -38,8 +38,6 @@ public class SegmentDisplayRenderer extends GateDynamicRenderer<SegmentDisplayLo
     }
 
 
-
-
     @Override
     public void render(PartGate partGate, SegmentDisplayLogic segmentDisplayLogic, IBlockAccess iBlockAccess, double x, double y, double z, float v3, int v5, float v4, BufferBuilder bufferBuilder) {
         if (segmentBakedModel == null) {
@@ -52,12 +50,13 @@ public class SegmentDisplayRenderer extends GateDynamicRenderer<SegmentDisplayLo
 
         float[][] tints = new float[16][4];
         byte[] data = segmentDisplayLogic.value;
+        float[] color = segmentDisplayLogic.color.getColorComponentValues();
         for (int i = 0; i < 16; i++) {
             int v = data[i]!=0?1:0;
             tints[i][0] = 1f;
-            tints[i][1] = v*113/255f;
-            tints[i][2] = v*235/255f;
-            tints[i][3] = v*14/255f;
+            tints[i][1] = v*color[0];
+            tints[i][2] = v*color[1];
+            tints[i][3] = v*color[2];
         }
 
         renderTransformedModel(
