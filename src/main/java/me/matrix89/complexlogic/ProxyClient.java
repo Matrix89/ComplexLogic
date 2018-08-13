@@ -4,6 +4,7 @@ import me.matrix89.complexlogic.client.BundledViewerRenderer;
 import me.matrix89.complexlogic.client.ButtonPannelRenderer;
 import me.matrix89.complexlogic.client.SegmentDisplayRenderer;
 import me.matrix89.complexlogic.client.TextDisplayRenderer;
+import me.matrix89.complexlogic.item.HexBook;
 import me.matrix89.complexlogic.lights.ColorLampBlock;
 import me.matrix89.complexlogic.lights.LampBlockColorHandler;
 import net.minecraft.block.Block;
@@ -74,6 +75,7 @@ public class ProxyClient extends ProxyCommon {
         for (Map.Entry<Block, Item> entry : ColorLampBlock.LampRegistry.entrySet()){
             ModelLoader.setCustomModelResourceLocation(entry.getValue(), 0, new ModelResourceLocation(entry.getValue().getRegistryName(), "facing=up,is_on=false"));
         }
+        ModelLoader.setCustomModelResourceLocation(HexBook.INSTANCE, 0, new ModelResourceLocation(HexBook.INSTANCE.getRegistryName(), "inventory"));
     }
 
     @SubscribeEvent

@@ -1,6 +1,7 @@
 package me.matrix89.complexlogic;
 
 import me.matrix89.complexlogic.gate.*;
+import me.matrix89.complexlogic.item.HexBook;
 import me.matrix89.complexlogic.lights.ColorLampBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -88,6 +89,7 @@ public class ProxyCommon {
         for (Map.Entry<Block, Item> entry : ColorLampBlock.LampRegistry.entrySet()) {
             register.getRegistry().register(entry.getValue());
         }
+        register.getRegistry().register(HexBook.INSTANCE);
     }
 
 
