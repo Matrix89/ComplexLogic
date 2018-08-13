@@ -28,10 +28,10 @@ import java.util.Map;
 public class ProxyClient extends ProxyCommon {
     public void init() {
         super.init();
-        SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(BundledViewerRenderer.INSTANCE);
-        SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(SegmentDisplayRenderer.INSTANCE);
-        SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(ButtonPannelRenderer.INSTANCE);
-        SimpleLogicGatesClient.INSTANCE.registerDynamicRenderer(TextDisplayRenderer.INSTANCE);
+        SimpleLogicGatesClient.INSTANCE.registerRenderer(BundledViewerRenderer.INSTANCE);
+        SimpleLogicGatesClient.INSTANCE.registerRenderer(SegmentDisplayRenderer.INSTANCE);
+        SimpleLogicGatesClient.INSTANCE.registerRenderer(ButtonPannelRenderer.INSTANCE);
+        SimpleLogicGatesClient.INSTANCE.registerRenderer(TextDisplayRenderer.INSTANCE);
     }
 
     @SubscribeEvent

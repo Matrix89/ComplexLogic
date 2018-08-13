@@ -3,24 +3,25 @@ package me.matrix89.complexlogic.client;
 import me.matrix89.complexlogic.gate.ButtonPanelLogic;
 import me.matrix89.complexlogic.utils.ColorUtils;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.model.TRSRTransformation;
 import pl.asie.charset.lib.render.model.ModelTransformer;
-import pl.asie.charset.lib.render.model.SimpleBakedModel;
-import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.SimpleLogicGates;
-import pl.asie.simplelogic.gates.render.GateDynamicRenderer;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
+import pl.asie.simplelogic.gates.render.GateCustomRenderer;
 
 import javax.vecmath.Vector3f;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> {
+public class ButtonPannelRenderer extends GateCustomRenderer<ButtonPanelLogic> {
     public static final ButtonPannelRenderer INSTANCE = new ButtonPannelRenderer();
     public IModel buttonPanelModelOn;
     public IModel buttonPanelModelOff;
@@ -69,23 +70,30 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
             transformations[i] = ModelTransformer.IVertexTransformer.transform(transformation, (ItemCameraTransforms.TransformType) null);
         }
     }
+
+
     @Override
-    public void appendModelsToItem(PartGate gate, SimpleBakedModel model) {
-        if(buttonModels==null){
-            initModels();
-        }
+    public void renderStatic(IGateContainer gate, ButtonPanelLogic logic, boolean isItem, Consumer<IBakedModel> modelConsumer, BiConsumer<BakedQuad, EnumFacing> quadConsumer) {
+        super.renderStatic(gate, logic, isItem, modelConsumer, quadConsumer);
+        if (isItem) {
+            if (buttonModels == null) {
+                initModels();
+            }
 
-        for (int i = 0; i < 16; i++) {
-            model.addModel(getTransformedModel(buttonModels[i], gate));
-        }
+            for (int i = 0; i < 16; i++) {
+                modelConsumer.accept(getTransformedModel(buttonModels[i], gate));
+            }
 
-        super.appendModelsToItem(gate, model);
+            super.renderStatic(gate, logic, isItem, modelConsumer, quadConsumer);
+        }
     }
+
 
     public void invalidateModels() {
         buttonModels = null;
     }
-    public void initModels(){
+
+    public void initModels() {
         IBakedModel buttonPanelBakedModelOn = buttonPanelModelOn.bake(
                 TRSRTransformation.identity(),
                 DefaultVertexFormats.BLOCK,
@@ -121,21 +129,22 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
     }
 
     @Override
-    public void render(PartGate partGate, ButtonPanelLogic buttonPanelLogic, IBlockAccess iBlockAccess, double x, double y, double z, float v3, int h, float v4, BufferBuilder bufferBuilder) {
+    public void renderDynamic(IGateContainer gate, ButtonPanelLogic logic, IBlockAccess world, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
+        super.renderDynamic(gate, logic, world, x, y, z, partialTicks, destroyStage, partial, buffer);
         if (buttonModels == null) {
             initModels();
         }
 
-        byte[] data = buttonPanelLogic.getOutputValueBundled(EnumFacing.NORTH);
+        byte[] data = logic.getOutputValueBundled(EnumFacing.NORTH);
         for (int i = 0; i < 16; i++) {
             boolean v = data != null && data[i] != 0;
 
             renderTransformedModel(
                     buttonModels[i | (v ? 16 : 0)],
-                    partGate,
-                    iBlockAccess, x, y, z, bufferBuilder
+                    gate,
+                    world, x, y, z, buffer
             );
         }
-
     }
+
 }

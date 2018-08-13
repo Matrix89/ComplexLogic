@@ -3,6 +3,7 @@ package me.matrix89.complexlogic.client;
 import me.matrix89.complexlogic.gate.BundledViewerLogic;
 import me.matrix89.complexlogic.utils.ColorUtils;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
@@ -11,11 +12,13 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.model.TRSRTransformation;
 import pl.asie.charset.lib.render.model.ModelTransformer;
-import pl.asie.charset.lib.render.model.SimpleBakedModel;
-import pl.asie.simplelogic.gates.PartGate;
-import pl.asie.simplelogic.gates.render.GateDynamicRenderer;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
+import pl.asie.simplelogic.gates.render.GateCustomRenderer;
 
-public class BundledViewerRenderer extends GateDynamicRenderer<BundledViewerLogic> {
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+public class BundledViewerRenderer extends GateCustomRenderer<BundledViewerLogic> {
     public static final BundledViewerRenderer INSTANCE = new BundledViewerRenderer();
     public IModel viewerLampsModel;
     public IBakedModel viewerLampsBakedModel;
@@ -68,29 +71,24 @@ public class BundledViewerRenderer extends GateDynamicRenderer<BundledViewerLogi
     }
 
     @Override
-    public void appendModelsToItem(PartGate gate, SimpleBakedModel model) {
-        if (viewerLampsBakedModel == null) {
-            initModels();
+    public void renderStatic(IGateContainer gate, BundledViewerLogic logic, boolean isItem, Consumer<IBakedModel> modelConsumer, BiConsumer<BakedQuad, EnumFacing> quadConsumer) {
+        if (isItem) {
+            if (viewerLampsBakedModel == null) {
+                initModels();
+            }
+            modelConsumer.accept(getTransformedModel(viewerLampsBakedModel, gate));
+            super.renderStatic(gate, logic, isItem, modelConsumer, quadConsumer);
         }
-        model.addModel(getTransformedModel(viewerLampsBakedModel, gate));
-        super.appendModelsToItem(gate, model);
-    }
-
-    public void initModels() {
-        viewerLampsBakedModel = viewerLampsModel.bake(
-                TRSRTransformation.identity(),
-                DefaultVertexFormats.BLOCK,
-                ModelLoader.defaultTextureGetter()
-        );
     }
 
     @Override
-    public void render(PartGate partGate, BundledViewerLogic bundledViewerLogic, IBlockAccess iBlockAccess, double x, double y, double z, float v3, int v5, float v4, BufferBuilder bufferBuilder) {
+    public void renderDynamic(IGateContainer gate, BundledViewerLogic logic, IBlockAccess world, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
+        super.renderDynamic(gate, logic, world, x, y, z, partialTicks, destroyStage, partial, buffer);
         if (viewerLampsBakedModel == null) {
             initModels();
         }
 
-        byte[] data = bundledViewerLogic.getInputValueBundled(EnumFacing.SOUTH);
+        byte[] data = logic.getInputValueBundled(EnumFacing.SOUTH);
         if (data != null) {
             for (int i = 0; i < 16; i++) {
                 int v = data[i];
@@ -103,8 +101,18 @@ public class BundledViewerRenderer extends GateDynamicRenderer<BundledViewerLogi
                 ModelTransformer.IVertexTransformer.tintByIndex(
                         tints
                 ),
-                partGate,
-                iBlockAccess, x, y, z, bufferBuilder
+                gate,
+                world, x, y, z, buffer
+        );
+
+    }
+
+    public void initModels() {
+        viewerLampsBakedModel = viewerLampsModel.bake(
+                TRSRTransformation.identity(),
+                DefaultVertexFormats.BLOCK,
+                ModelLoader.defaultTextureGetter()
         );
     }
+
 }
