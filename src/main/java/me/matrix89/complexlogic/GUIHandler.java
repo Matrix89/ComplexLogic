@@ -1,6 +1,9 @@
 package me.matrix89.complexlogic;
 
+import me.matrix89.complexlogic.gate.KeyboardLogic;
 import me.matrix89.complexlogic.gate.PatchPanelLogic;
+import me.matrix89.complexlogic.gui.KeyboardContainer;
+import me.matrix89.complexlogic.gui.KeyboardGUI;
 import me.matrix89.complexlogic.gui.PatchPanelContainer;
 import me.matrix89.complexlogic.gui.PatchPanelGUI;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +27,13 @@ public class GUIHandler implements IGuiHandler {
                 return new PatchPanelContainer(player.inventory, logic, pg);
             }
         }
+        if (ID == 1 && te instanceof PartGate) {
+            PartGate pg = (PartGate) te;
+            if (pg.logic instanceof KeyboardLogic) {
+                KeyboardLogic logic = (KeyboardLogic) pg.logic;
+                return new KeyboardContainer(player.inventory, logic, pg);
+            }
+        }
         return null;
     }
 
@@ -36,6 +46,13 @@ public class GUIHandler implements IGuiHandler {
             if (pg.logic instanceof PatchPanelLogic) {
                 PatchPanelLogic logic = (PatchPanelLogic) pg.logic;
                 return new PatchPanelGUI(new PatchPanelContainer(player.inventory, logic, pg));
+            }
+        }
+        if (ID == 1 && te instanceof PartGate) {
+            PartGate pg = (PartGate) te;
+            if (pg.logic instanceof KeyboardLogic) {
+                KeyboardLogic logic = (KeyboardLogic) pg.logic;
+                return new KeyboardGUI(new KeyboardContainer(player.inventory, logic, pg));
             }
         }
         return null;

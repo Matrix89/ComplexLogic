@@ -45,6 +45,7 @@ public class ProxyCommon {
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "buttonpanel"), ButtonPanelLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "patchpanel"), PatchPanelLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "textdisplay"), TextDisplayLogic.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "keyboard"), KeyboardLogic.class);
 
         event.registerPartForCreativeTab(new PartGate(new AdderLogic()));
         event.registerPartForCreativeTab(new PartGate(new BundledViewerLogic()));
@@ -69,6 +70,7 @@ public class ProxyCommon {
         event.registerPartForCreativeTab(new PartGate(new ButtonPanelLogic()));
         event.registerPartForCreativeTab(new PartGate(new PatchPanelLogic()));
         event.registerPartForCreativeTab(new PartGate(new TextDisplayLogic()));
+        event.registerPartForCreativeTab(new PartGate(new KeyboardLogic()));
     }
 
     @SideOnly(Side.CLIENT)

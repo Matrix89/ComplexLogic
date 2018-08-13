@@ -1,5 +1,6 @@
 package me.matrix89.complexlogic;
 
+import me.matrix89.complexlogic.network.KeyboardPacket;
 import me.matrix89.complexlogic.network.PatchPanelPacket;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.common.MinecraftForge;
@@ -53,6 +54,7 @@ public class ComplexLogic {
     public void init(FMLInitializationEvent event) {
         registry = new PacketRegistry("complexlogic");
         registry.registerPacket(0x01, PatchPanelPacket.class);
+        registry.registerPacket(0x02, KeyboardPacket.class);
 
         PROXY.init();
         PROXY.registerColor();
