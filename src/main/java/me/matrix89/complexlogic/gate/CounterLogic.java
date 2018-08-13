@@ -3,6 +3,9 @@ package me.matrix89.complexlogic.gate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.logic.GateConnection;
+import pl.asie.simplelogic.gates.logic.GateRenderState;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
 
 public class CounterLogic extends BundledGateLogic {
     private boolean incSignalOn = false;
@@ -31,17 +34,17 @@ public class CounterLogic extends BundledGateLogic {
     }
 
     @Override
-    public Connection getType(EnumFacing dir) {
+    public GateConnection getType(EnumFacing dir) {
         switch (dir) {
             case NORTH:
-                return Connection.OUTPUT_BUNDLED;
+                return GateConnection.OUTPUT_BUNDLED;
             case SOUTH:
-                return Connection.INPUT_BUNDLED;
+                return GateConnection.INPUT_BUNDLED;
             case EAST:
             case WEST:
-                return Connection.INPUT;
+                return GateConnection.INPUT;
             default:
-                return Connection.NONE;
+                return GateConnection.NONE;
         }
     }
 
@@ -51,7 +54,7 @@ public class CounterLogic extends BundledGateLogic {
 
 
     @Override
-    void calculateOutput(PartGate parent) {
+    public boolean updateOutputs(IGateContainer gate) {
         boolean updateSignalOnOld = updateSignalOn;
         boolean incSignalOnOld = incSignalOn;
         if (getInputValueInside(EnumFacing.WEST) != 0) {
@@ -70,17 +73,18 @@ public class CounterLogic extends BundledGateLogic {
         } else {
             incSignalOn = false;
         }
+        return true;
     }
 
     @Override
-    public State getLayerState(int i) {
+    public GateRenderState getLayerState(int i) {
         switch (i) {
             case 0:
-                return getInputValueInside(EnumFacing.EAST) != 0 ? State.ON : State.OFF;
+                return getInputValueInside(EnumFacing.EAST) != 0 ? GateRenderState.ON : GateRenderState.OFF;
             case 1:
-                return getInputValueInside(EnumFacing.WEST) != 0 ? State.ON : State.OFF;
+                return getInputValueInside(EnumFacing.WEST) != 0 ? GateRenderState.ON : GateRenderState.OFF;
             default:
-                return State.ON;
+                return GateRenderState.ON;
         }
     }
 
@@ -90,13 +94,13 @@ public class CounterLogic extends BundledGateLogic {
     }
 
     @Override
-    public State getTorchState(int i) {
+    public GateRenderState getTorchState(int i) {
         switch (i) {
             case 1:
-                return getInputValueInside(EnumFacing.EAST) != 0 ? State.ON : State.OFF;
+                return getInputValueInside(EnumFacing.EAST) != 0 ? GateRenderState.ON : GateRenderState.OFF;
             case 0:
             default:
-                return State.ON;
+                return GateRenderState.ON;
         }
     }
 }

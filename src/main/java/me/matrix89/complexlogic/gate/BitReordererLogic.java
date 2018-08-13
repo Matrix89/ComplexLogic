@@ -2,38 +2,44 @@ package me.matrix89.complexlogic.gate;
 
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.logic.GateConnection;
+import pl.asie.simplelogic.gates.logic.GateRenderState;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
 
 public class BitReordererLogic extends BundledGateLogic {
 
     @Override
-    public Connection getType(EnumFacing dir) {
+    public GateConnection getType(EnumFacing dir) {
         switch (dir) {
             case NORTH:
-                return Connection.OUTPUT_BUNDLED;
+                return GateConnection.OUTPUT_BUNDLED;
             case SOUTH:
-                return Connection.INPUT_BUNDLED;
+                return GateConnection.INPUT_BUNDLED;
             default:
-                return Connection.NONE;
+                return GateConnection.NONE;
         }
     }
 
     @Override
-    void calculateOutput(PartGate parent) {
+    public boolean updateOutputs(IGateContainer gate) {
         byte[] in = getInputValueBundled(EnumFacing.SOUTH);
         byte[] out = new byte[16];
-        for (int i = 0; i < in.length; i++) {
-            out[15 - i] = in[i];
+        if (in != null) {
+            for (int i = 0; i < in.length; i++) {
+                out[15 - i] = in[i];
+            }
         }
         setBundledOutputValue(EnumFacing.NORTH, out);
+        return true;
     }
 
     @Override
-    public State getLayerState(int i) {
-        return State.OFF;
+    public GateRenderState getLayerState(int i) {
+        return GateRenderState.OFF;
     }
 
     @Override
-    public State getTorchState(int i) {
-        return State.OFF;
+    public GateRenderState getTorchState(int i) {
+        return GateRenderState.OFF;
     }
 }

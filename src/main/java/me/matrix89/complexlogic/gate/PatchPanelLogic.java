@@ -7,16 +7,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
 import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.logic.GateConnection;
+import pl.asie.simplelogic.gates.logic.GateRenderState;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
 
 public class PatchPanelLogic extends BundledGateLogic {
-    byte[][] connectionGrid = new byte[16][16];
+    byte[][] GateConnectionGrid = new byte[16][16];
 
-    public void setConnectionGrid(byte[][] connectionGrid){
-        this.connectionGrid = connectionGrid;
+    public void setGateConnectionGrid(byte[][] GateConnectionGrid){
+        this.GateConnectionGrid = GateConnectionGrid;
     }
 
-    public byte[][] getConnectionGrid(){
-        return connectionGrid;
+    public byte[][] getGateConnectionGrid(){
+        return GateConnectionGrid;
     }
 
     @Override
@@ -24,19 +27,19 @@ public class PatchPanelLogic extends BundledGateLogic {
         if(!isClient){
             NBTTagCompound array = new NBTTagCompound();
             for (int i = 0; i < 16; i++) {
-                array.setByteArray(String.valueOf(i), connectionGrid[i]);
+                array.setByteArray(String.valueOf(i), GateConnectionGrid[i]);
             }
-            tag.setTag("connectionGrid", array);
+            tag.setTag("GateConnectionGrid", array);
         }
         return super.writeToNBT(tag, isClient);
     }
 
     @Override
     public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
-        if(compound.hasKey("connectionGrid")){
-            NBTTagCompound array = compound.getCompoundTag("connectionGrid");
+        if(compound.hasKey("GateConnectionGrid")){
+            NBTTagCompound array = compound.getCompoundTag("GateConnectionGrid");
             for (int i = 0; i < 16; i++) {
-                connectionGrid[i] = array.getByteArray(String.valueOf(i));
+                GateConnectionGrid[i] = array.getByteArray(String.valueOf(i));
             }
         }
 
@@ -44,45 +47,48 @@ public class PatchPanelLogic extends BundledGateLogic {
     }
 
     @Override
-    public Connection getType(EnumFacing dir) {
+    public GateConnection getType(EnumFacing dir) {
         switch (dir){
-            case SOUTH: return Connection.INPUT_BUNDLED;
-            case NORTH: return Connection.OUTPUT_BUNDLED;
-            default: return Connection.NONE;
+            case SOUTH: return GateConnection.INPUT_BUNDLED;
+            case NORTH: return GateConnection.OUTPUT_BUNDLED;
+            default: return GateConnection.NONE;
         }
     }
 
     @Override
-    public boolean onRightClick(PartGate gate, EntityPlayer player, Vec3d vec, EnumHand hand) {
+    public boolean onRightClick(IGateContainer gate, EntityPlayer player, Vec3d vec, EnumHand hand) {
         if (!player.isSneaking() && EnumHand.MAIN_HAND==hand) {
-            player.openGui(ComplexLogic.INSTANCE, 0, gate.getWorld(), gate.getPos().getX(), gate.getPos().getY(), gate.getPos().getZ());
+            player.openGui(ComplexLogic.INSTANCE, 0, gate.getGateWorld(), gate.getGatePos().getX(), gate.getGatePos().getY(), gate.getGatePos().getZ());
             return true;
         }
         return false;
     }
 
     @Override
-    void calculateOutput(PartGate parent) {
+    public void onChanged(IGateContainer gate) {
         byte[] in = getInputValueBundled(EnumFacing.SOUTH);
         byte[] out = new byte[16];
-        for (int i = 0; i < 16; i++) {
-            byte value = in[i];
-            for (int j = 0; j < 16; j++) {
-                if(connectionGrid[i][j]!=0){
-                    out[j] = (byte)(out[j] | value);
+        if (in != null) {
+            for (int i = 0; i < 16; i++) {
+                byte value = in[i];
+                for (int j = 0; j < 16; j++) {
+                    if (GateConnectionGrid[i][j] != 0) {
+                        out[j] = (byte) (out[j] | value);
+                    }
                 }
             }
         }
         setBundledOutputValue(EnumFacing.NORTH, out);
+        gate.markGateChanged(true);
     }
 
     @Override
-    public State getLayerState(int i) {
-        return State.OFF;
+    public GateRenderState getLayerState(int i) {
+        return GateRenderState.OFF;
     }
 
     @Override
-    public State getTorchState(int i) {
-        return State.OFF;
+    public GateRenderState getTorchState(int i) {
+        return GateRenderState.OFF;
     }
 }

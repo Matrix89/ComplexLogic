@@ -4,6 +4,9 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.logic.GateConnection;
+import pl.asie.simplelogic.gates.logic.GateRenderState;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
 
 import java.util.Map;
 
@@ -54,18 +57,18 @@ public class MemoryLogic extends BundledGateLogic {
     }
 
     @Override
-    public Connection getType(EnumFacing dir) {
+    public GateConnection getType(EnumFacing dir) {
         switch (dir) {
             case NORTH:
-                return Connection.OUTPUT_BUNDLED;
+                return GateConnection.OUTPUT_BUNDLED;
             case EAST:
-                return Connection.INPUT;
+                return GateConnection.INPUT;
             case WEST:
-                return Connection.INPUT_BUNDLED;
+                return GateConnection.INPUT_BUNDLED;
             case SOUTH:
-                return Connection.INPUT_BUNDLED;
+                return GateConnection.INPUT_BUNDLED;
             default:
-                return Connection.NONE;
+                return GateConnection.NONE;
         }
     }
 
@@ -73,7 +76,7 @@ public class MemoryLogic extends BundledGateLogic {
     int newValue = 0;
 
     @Override
-    void calculateOutput(PartGate parent) {
+    public boolean updateOutputs(IGateContainer gate) {
         address = bundledRsToDigi(getInputValueBundled(EnumFacing.WEST));
         boolean updateSignalOnOld = updateSignalOn;
         if (getInputValueInside(EnumFacing.EAST) != 0) {
@@ -92,15 +95,16 @@ public class MemoryLogic extends BundledGateLogic {
             }
         }
         setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(memory.getOrDefault(address, 0)));
+        return true;
     }
 
     @Override
-    public State getLayerState(int i) {
-        return i == 0 && getInputValueInside(EnumFacing.EAST) != 0 ? State.ON : State.OFF;
+    public GateRenderState getLayerState(int i) {
+        return i == 0 && getInputValueInside(EnumFacing.EAST) != 0 ? GateRenderState.ON : GateRenderState.OFF;
     }
 
     @Override
-    public State getTorchState(int i) {
-        return State.ON;
+    public GateRenderState getTorchState(int i) {
+        return GateRenderState.ON;
     }
 }

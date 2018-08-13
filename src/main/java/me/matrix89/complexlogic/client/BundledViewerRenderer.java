@@ -90,10 +90,12 @@ public class BundledViewerRenderer extends GateDynamicRenderer<BundledViewerLogi
             initModels();
         }
 
-        byte[] data = bundledViewerLogic.getOutputValueBundled(EnumFacing.NORTH);
-        for (int i = 0; i < 16; i++) {
-            int v = data[i];
-            tints[i] = colors[i][v!=0?1:0];
+        byte[] data = bundledViewerLogic.getInputValueBundled(EnumFacing.SOUTH);
+        if (data != null) {
+            for (int i = 0; i < 16; i++) {
+                int v = data[i];
+                tints[i] = colors[i][v != 0 ? 1 : 0];
+            }
         }
 
         renderTransformedModel(

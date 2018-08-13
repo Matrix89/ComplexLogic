@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -125,9 +126,9 @@ public class ButtonPannelRenderer extends GateDynamicRenderer<ButtonPanelLogic> 
             initModels();
         }
 
-        byte[] data = buttonPanelLogic.value;
+        byte[] data = buttonPanelLogic.getOutputValueBundled(EnumFacing.NORTH);
         for (int i = 0; i < 16; i++) {
-            boolean v = data[i] != 0;
+            boolean v = data != null && data[i] != 0;
 
             renderTransformedModel(
                     buttonModels[i | (v ? 16 : 0)],

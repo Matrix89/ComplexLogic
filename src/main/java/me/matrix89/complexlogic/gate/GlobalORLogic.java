@@ -2,38 +2,44 @@ package me.matrix89.complexlogic.gate;
 
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.logic.GateConnection;
+import pl.asie.simplelogic.gates.logic.GateRenderState;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
 
 public class GlobalORLogic extends BundledGateLogic {
 
     @Override
-    public Connection getType(EnumFacing dir) {
+    public GateConnection getType(EnumFacing dir) {
         switch (dir) {
             case SOUTH:
-                return Connection.INPUT_BUNDLED;
+                return GateConnection.INPUT_BUNDLED;
             case NORTH:
-                return Connection.OUTPUT;
+                return GateConnection.OUTPUT;
             default:
-                return Connection.NONE;
+                return GateConnection.NONE;
         }
     }
 
     @Override
-    void calculateOutput(PartGate parent) {
+    public boolean updateOutputs(IGateContainer gate) {
         byte[] in = getInputValueBundled(EnumFacing.SOUTH);
         byte out = 0;
-        for (byte i : in) {
-            out |= i;
+        if (in != null) {
+            for (byte i : in) {
+                out = (byte) Math.max(out, i);
+            }
         }
         setRedstoneOutputValue(EnumFacing.NORTH, out);
+        return true;
     }
 
     @Override
-    public State getLayerState(int i) {
-        return i == 0 && getOutputValueInside(EnumFacing.NORTH) != 0 ? State.ON : State.OFF;
+    public GateRenderState getLayerState(int i) {
+        return i == 0 && getOutputValueInside(EnumFacing.NORTH) != 0 ? GateRenderState.ON : GateRenderState.OFF;
     }
 
     @Override
-    public State getTorchState(int i) {
-        return State.ON;
+    public GateRenderState getTorchState(int i) {
+        return GateRenderState.ON;
     }
 }

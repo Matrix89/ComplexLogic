@@ -2,6 +2,9 @@ package me.matrix89.complexlogic.gate;
 
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.logic.GateConnection;
+import pl.asie.simplelogic.gates.logic.GateRenderState;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
 
 public class HexDriverLogic extends BundledGateLogic {
     private static final byte[][] decoder = new byte[][]{
@@ -24,15 +27,15 @@ public class HexDriverLogic extends BundledGateLogic {
     };
 
     @Override
-    public Connection getType(EnumFacing dir) {
+    public GateConnection getType(EnumFacing dir) {
         switch (dir) {
             case NORTH:
             case WEST:
-                return Connection.OUTPUT_BUNDLED;
+                return GateConnection.OUTPUT_BUNDLED;
             case SOUTH:
-                return Connection.INPUT_BUNDLED;
+                return GateConnection.INPUT_BUNDLED;
             default:
-                return Connection.NONE;
+                return GateConnection.NONE;
         }
     }
 
@@ -52,7 +55,7 @@ public class HexDriverLogic extends BundledGateLogic {
     }
 
     @Override
-    void calculateOutput(PartGate parent) {
+    public boolean updateOutputs(IGateContainer gate) {
         int in = bundledRsToDigi(getInputValueBundled(EnumFacing.SOUTH));
         int[] lcd = new int[4];
         int i = 0;
@@ -72,17 +75,17 @@ public class HexDriverLogic extends BundledGateLogic {
 
         setBundledOutputValue(EnumFacing.WEST, outWest);
         setBundledOutputValue(EnumFacing.NORTH, outNorth);
-
+        return true;
     }
 
 
     @Override
-    public State getLayerState(int i) {
-        return State.OFF;
+    public GateRenderState getLayerState(int i) {
+        return GateRenderState.OFF;
     }
 
     @Override
-    public State getTorchState(int i) {
-        return State.OFF;
+    public GateRenderState getTorchState(int i) {
+        return GateRenderState.OFF;
     }
 }

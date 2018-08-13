@@ -2,56 +2,49 @@ package me.matrix89.complexlogic.gate;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
-import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.logic.GateConnection;
+import pl.asie.simplelogic.gates.logic.GateRenderState;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
 
 import java.util.Arrays;
 
 public class ButtonPanelLogic extends BundledGateLogic {
-    public byte[] value = new byte[16];
-
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-        if(isClient)
-            tag.setByteArray("v", getOutputValueBundled(EnumFacing.NORTH));
-        return super.writeToNBT(tag, isClient);
+    protected boolean shouldSyncBundledWithClient() {
+        return true;
     }
 
     @Override
-    public boolean readFromNBT(NBTTagCompound compound, boolean isClient) {
-        byte[] valueOld = value;
-        if (isClient && compound.hasKey("v"))
-            value = compound.getByteArray("v");
-        return super.readFromNBT(compound, isClient) || !Arrays.equals(valueOld, value);
+    public GateConnection getType(EnumFacing dir) {
+        return EnumFacing.NORTH == dir ? GateConnection.OUTPUT_BUNDLED : GateConnection.NONE;
     }
 
-    @Override
-    public Connection getType(EnumFacing dir) {
-        return EnumFacing.NORTH == dir ? Connection.OUTPUT_BUNDLED : Connection.NONE;
-    }
 
     @Override
-    public boolean onRightClick(PartGate gate, EntityPlayer playerIn, Vec3d vec, EnumHand hand) {
-        if(EnumHand.MAIN_HAND!=hand) return false;
-        Vec3d click = vec.scale(16).add(-2.5,0,-2.5);
-        int clickModX = (int)Math.ceil(click.x%3);
-        int clickModY = (int)Math.ceil(click.z%3);
-        int clickDivX = (int)(click.x/3);
-        int clickDivY = (int)(click.z/3);
-        if(clickModX>0 && clickModY>0 && clickModX<3 && clickModY<3){
-            int index = clickDivX + clickDivY*4;
-            if(index>=0 && index<16){
+    public boolean onRightClick(IGateContainer gate, EntityPlayer playerIn, Vec3d vec, EnumHand hand) {
+        if (EnumHand.MAIN_HAND != hand) return false;
+        Vec3d click = vec.scale(16).add(-2.5, 0, -2.5);
+        int clickModX = (int) Math.ceil(click.x % 3);
+        int clickModY = (int) Math.ceil(click.z % 3);
+        int clickDivX = (int) (click.x / 3);
+        int clickDivY = (int) (click.z / 3);
+        if (clickModX > 0 && clickModY > 0 && clickModX < 3 && clickModY < 3) {
+            int index = clickDivX + clickDivY * 4;
+            if (index >= 0 && index < 16) {
                 byte[] currentOut = getOutputValueBundled(EnumFacing.NORTH);
-                currentOut[index] = (byte)(currentOut[index]>0?0:15);
+                if (currentOut == null)
+                    currentOut = new byte[16];
+                else
+                    currentOut = Arrays.copyOf(currentOut, 16);
+                currentOut[index] = (byte) (currentOut[index] > 0 ? 0 : 15);
                 boolean isSet = currentOut[index] != 0;
-                gate.getWorld().playSound(null, gate.getPos(), isSet ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 0.5f, isSet ? 1.0f : 1.0f);
+                gate.getGateWorld().playSound(null, gate.getGatePos(), isSet ? SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON : SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 0.5f, isSet ? 1.0f : 1.0f);
                 setBundledOutputValue(EnumFacing.NORTH, currentOut);
-                forceUpdate();
-                gate.scheduleTick();
+                gate.markGateChanged(true);
                 return true;
             }
         }
@@ -59,16 +52,17 @@ public class ButtonPanelLogic extends BundledGateLogic {
     }
 
     @Override
-    void calculateOutput(PartGate parent) {
+    public boolean updateOutputs(IGateContainer gate) {
+        return false;
     }
 
     @Override
-    public State getLayerState(int i) {
-        return State.OFF;
+    public GateRenderState getLayerState(int i) {
+        return GateRenderState.OFF;
     }
 
     @Override
-    public State getTorchState(int i) {
-        return State.OFF;
+    public GateRenderState getTorchState(int i) {
+        return GateRenderState.OFF;
     }
 }

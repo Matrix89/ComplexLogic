@@ -2,21 +2,24 @@ package me.matrix89.complexlogic.gate;
 
 import net.minecraft.util.EnumFacing;
 import pl.asie.simplelogic.gates.PartGate;
+import pl.asie.simplelogic.gates.logic.GateConnection;
 import pl.asie.simplelogic.gates.logic.GateLogic;
+import pl.asie.simplelogic.gates.logic.GateRenderState;
+import pl.asie.simplelogic.gates.logic.IGateContainer;
 
 public class ModuloLogic extends BundledGateLogic {
     @Override
-    public GateLogic.Connection getType(EnumFacing dir) {
+    public GateConnection getType(EnumFacing dir) {
         switch (dir) {
             case NORTH:
-                return GateLogic.Connection.OUTPUT_BUNDLED;
+                return GateConnection.OUTPUT_BUNDLED;
             case EAST:
             case WEST:
-                return GateLogic.Connection.INPUT_BUNDLED;
+                return GateConnection.INPUT_BUNDLED;
             case SOUTH:
-                return GateLogic.Connection.OUTPUT;
+                return GateConnection.OUTPUT;
             default:
-                return GateLogic.Connection.NONE;
+                return GateConnection.NONE;
         }
     }
 
@@ -26,7 +29,7 @@ public class ModuloLogic extends BundledGateLogic {
     }
 
     @Override
-    void calculateOutput(PartGate parent) {
+    public boolean updateOutputs(IGateContainer gate) {
         byte[] inA = getInputValueBundled(EnumFacing.WEST);
         byte[] inB = getInputValueBundled(EnumFacing.EAST);
         int a = bundledRsToDigi(inA);
@@ -38,16 +41,17 @@ public class ModuloLogic extends BundledGateLogic {
             setRedstoneOutputValue(EnumFacing.SOUTH, (byte) 15);
         }
         setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(v));
+        return true;
     }
 
     @Override
-    public GateLogic.State getTorchState(int i) {
-        return GateLogic.State.ON;
+    public GateRenderState getTorchState(int i) {
+        return GateRenderState.ON;
     }
 
     @Override
-    public GateLogic.State getLayerState(int i) {
-        return getOutputValueInside(EnumFacing.SOUTH) != 0 ? GateLogic.State.ON : GateLogic.State.OFF;
+    public GateRenderState getLayerState(int i) {
+        return getOutputValueInside(EnumFacing.SOUTH) != 0 ? GateRenderState.ON : GateRenderState.OFF;
     }
 
 }

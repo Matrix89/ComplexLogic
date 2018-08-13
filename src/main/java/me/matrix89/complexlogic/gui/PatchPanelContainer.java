@@ -21,7 +21,7 @@ public class PatchPanelContainer extends ContainerBase {
         super(player);
         if (logic != null) {
             for (int i = 0; i < 16; i++) {
-                System.arraycopy(logic.getConnectionGrid()[i], 0, connectionGrid[i], 0, 16);
+                System.arraycopy(logic.getGateConnectionGrid()[i], 0, connectionGrid[i], 0, 16);
             }
         }
         this.logic = logic;
@@ -37,21 +37,20 @@ public class PatchPanelContainer extends ContainerBase {
     public void updateFromClient(byte[][] connectionGrid) {
         if (logic == null || partGate == null) return;
         this.connectionGrid = connectionGrid;
-        logic.setConnectionGrid(connectionGrid);
-        logic.forceUpdate();
-        partGate.scheduleTick();
+        logic.setGateConnectionGrid(connectionGrid);
+        partGate.scheduleRedstoneTick();
     }
 
     public void detectAndSendChanges() {
         if (logic == null) return;
         for (int i = 0; i < 16; i++) {
-            if (!Arrays.equals(logic.getConnectionGrid()[i], oldCo0nnections[i])) {
+            if (!Arrays.equals(logic.getGateConnectionGrid()[i], oldCo0nnections[i])) {
                 for (int j = 0; j < 16; j++) {
-                    System.arraycopy(logic.getConnectionGrid()[j], 0, oldCo0nnections[j], 0, 16);
+                    System.arraycopy(logic.getGateConnectionGrid()[j], 0, oldCo0nnections[j], 0, 16);
                 }
                 for (IContainerListener p : listeners) {
                     if(p instanceof EntityPlayerMP)
-                        ComplexLogic.registry.sendTo(new PatchPanelPacket(logic.getConnectionGrid()), (EntityPlayerMP) p);
+                        ComplexLogic.registry.sendTo(new PatchPanelPacket(logic.getGateConnectionGrid()), (EntityPlayerMP) p);
                 }
                 break;
             }
