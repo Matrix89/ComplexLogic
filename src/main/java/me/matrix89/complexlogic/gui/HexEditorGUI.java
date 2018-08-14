@@ -57,7 +57,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 case LOWER:
                     data[cursor] &= 0xf0;
                     data[cursor] |= Byte.parseByte("" + typedChar, 16);
-                    cursor++;
+                    setCursor(cursor + 1);
                     cursorNibble = Nibble.UPPER;
             }
             return;
