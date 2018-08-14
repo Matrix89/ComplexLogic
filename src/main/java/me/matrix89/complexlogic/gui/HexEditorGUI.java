@@ -1,5 +1,6 @@
 package me.matrix89.complexlogic.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -26,8 +27,8 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     private int spacing = 2;
     private int charWidth;
 
-    private int selectionStart = 0;
-    private int selectionEnd = 0;
+    private static final int SELECTION_NONE = Integer.MAX_VALUE;
+    private int selectionAnchor = SELECTION_NONE;
 
     private Random rnd = new Random();
 
@@ -51,9 +52,10 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         rnd.nextBytes(data);
         spacing = 1;
 
-        GuiNumberField gplField = new GuiNumberField(3, fontRenderer, 10, 30, 30, fontRenderer.FONT_HEIGHT, mc);
+        GuiNumberField gplField = new GuiNumberField(3, fontRenderer, 200, 30, 30, fontRenderer.FONT_HEIGHT, mc);
+        gplField.setValue(groupsPerLine);
         gplField.setOnClick(integer -> {
-            if(integer <= 0 ) {
+            if (integer <= 0) {
                 gplField.setValue(1);
                 groupsPerLine = 1;
             } else {
@@ -62,9 +64,10 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         });
         textFields.add(gplField);
 
-        GuiNumberField grSzField = new GuiNumberField(3, fontRenderer, 10, 40, 30, fontRenderer.FONT_HEIGHT, mc);
+        GuiNumberField grSzField = new GuiNumberField(3, fontRenderer, 200, 40, 30, fontRenderer.FONT_HEIGHT, mc);
+        grSzField.setValue(groupSize);
         grSzField.setOnClick(integer -> {
-            if(integer <= 0 ) {
+            if (integer <= 0) {
                 grSzField.setValue(1);
                 groupSize = 1;
             } else {
@@ -110,57 +113,29 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     }
 
     private void handledMovement(int keyCode) {
+        if (isShiftKeyDown()) {
+            if(selectionAnchor == SELECTION_NONE) {
+                selectionAnchor = cursor;
+            }
+        }
         switch (keyCode) {
             case 205:
-                if (isShiftKeyDown()) {
-                    if (selectionStart == selectionEnd || (cursor < selectionStart || cursor > selectionEnd)) { // create new selection
-                        selectionStart = cursor;
-                        selectionEnd = cursor + 1;
-                    } else if (cursor == selectionStart) {
-                        selectionStart++;
-                    } else if (cursor == selectionEnd) {
-                        selectionEnd++;
-                    }
-                }
                 setCursor(++cursor);
                 break;
             case 203:
-                if (isShiftKeyDown()) {
-                    if (selectionStart == selectionEnd || (cursor < selectionStart || cursor > selectionEnd)) { // create new selection
-                        selectionStart = cursor - 1;
-                        selectionEnd = cursor;
-                    } else if (cursor == selectionEnd) {
-                        selectionEnd--;
-                    } else if (cursor == selectionStart) {
-                        selectionStart--;
-                    }
-                }
                 setCursor(--cursor);
                 break;
             case 200://up
-                int startPos = cursor;
-                if (isShiftKeyDown()) {
-                    if (cursor == selectionEnd) {
-                        selectionEnd -= groupSize * groupsPerLine;
-                    } else {
-                        selectionStart -= groupSize * groupsPerLine;
-                    }
-                }
                 setCursor(cursor - (groupSize * groupsPerLine));
                 break;
             case 208://down
                 setCursor(cursor + (groupSize * groupsPerLine));
-                if (isShiftKeyDown()) {
-                    if (cursor == selectionStart) {
-                        selectionStart += groupSize * groupsPerLine;
-                    } else {
-                        selectionEnd += groupSize * groupsPerLine;
-                    }
-                }
                 break;
             case 46: //copy
                 StringBuilder sb = new StringBuilder();
-                for (int i = selectionStart; i <= selectionEnd; i++) {
+                int start = Math.min(selectionAnchor, cursor);
+                int end = Math.max(selectionAnchor, cursor);
+                for (int i = start; i <= end; i++) {
                     sb.append(String.format("%02X", data[i]));
                 }
                 setClipboardString(sb.toString());
@@ -185,8 +160,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     public void setCursor(int cursor) {
         if (!isShiftKeyDown() && !isCtrlKeyDown()) {
-            selectionEnd = 0;
-            selectionStart = 0;
+            selectionAnchor = SELECTION_NONE;
         }
         this.cursor = Math.max(0, Math.min(cursor, data.length - 1));
     }
@@ -227,7 +201,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 x += spacing * charWidth;
             }
 
-            if (i >= selectionStart && i <= selectionEnd && selectionStart != selectionEnd) {
+            if (selectionAnchor != SELECTION_NONE && ((i >= selectionAnchor && i <= cursor) || (i <= selectionAnchor && i >= cursor))) {
                 drawRect(x, y * fontRenderer.FONT_HEIGHT, x + 2 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.GREEN.getColorValue());
             }
             if (i == cursor) {
