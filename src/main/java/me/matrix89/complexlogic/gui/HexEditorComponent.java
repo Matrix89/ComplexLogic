@@ -27,6 +27,7 @@ public class HexEditorComponent extends Gui {
     private int spacing = 2;
     private int charWidth;
     private int scroll = 0;
+    private int overScroll = 3;
 
     private static final int SELECTION_NONE = Integer.MAX_VALUE;
     private int selectionAnchor = SELECTION_NONE;
@@ -39,12 +40,16 @@ public class HexEditorComponent extends Gui {
     private Minecraft mc;
     private int posX;
     private int posY;
+    private int h;
+    private int w;
 
-    public HexEditorComponent(FontRenderer fontRenderer, int x, int y) {
+    public HexEditorComponent(FontRenderer fontRenderer, int x, int y, int w, int h) {
         this.fontRenderer = fontRenderer;
         charWidth = fontRenderer.getCharWidth('_');
         this.posX = x;
         this.posY = y;
+        this.w = w;
+        this.h = h;
     }
 
     public void setPos(int x, int y) {
@@ -88,7 +93,8 @@ public class HexEditorComponent extends Gui {
     public void draw() {
         int x = posX;
         int y = posY;
-        for (int i = scroll * groupSize * groupsPerLine; i < data.length; i++) {
+        int startIdx = scroll * groupSize * groupsPerLine;
+        for (int i = startIdx; i < Math.min(data.length, startIdx + h / fontRenderer.FONT_HEIGHT * groupSize * groupsPerLine); i++) {
             if (i % (groupSize * groupsPerLine) == 0) {
                 y += fontRenderer.FONT_HEIGHT;
                 x = posX;
@@ -107,7 +113,19 @@ public class HexEditorComponent extends Gui {
             fontRenderer.drawString(String.format("%02X", data[i]), x, y, EnumDyeColor.WHITE.getColorValue());
             x += 2 * charWidth;
         }
+        drawScrollBar();
+    }
+    public float getScrollPercentage() {
+        int lines = data.length / (groupSize * groupsPerLine) - ((h / fontRenderer.FONT_HEIGHT) - overScroll);
+        return scroll / (float) lines;
+    }
 
+    public void drawScrollBar() {
+        int rx = posX + w - 5;
+        drawRect(rx, posY, rx + 5, posY + h, 0xff000000| EnumDyeColor.RED.getColorValue());
+
+        int knobY = posY + (int) (h * getScrollPercentage());
+        drawRect(rx, knobY, rx + 5, knobY + 1, 0xff000000 | EnumDyeColor.BLACK.getColorValue()); // Knob
     }
 
     public void setCursor(int cursor) {
@@ -145,10 +163,14 @@ public class HexEditorComponent extends Gui {
             case 47: //paste
                 break;
             case 13: // +
-                scroll++;
+                if(getScrollPercentage() < 1) {
+                    scroll++;
+                }
                 break;
             case 12: //-
-                scroll = Math.max(scroll - 1, 0);
+                if(getScrollPercentage() > 0) {
+                    scroll--;
+                }
                 break;
 
         }

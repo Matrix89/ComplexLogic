@@ -33,6 +33,11 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     @Override
     public void initGui() {
+        w = this.width / 2;
+        h = (int) (this.height * .98);
+        y = (this.height - h) / 2;
+        x = (this.width - w) / 2;
+        /*
         editor = new HexEditorComponent(fontRenderer, x + 10, y + 10);
         GuiNumberField gplField = new GuiNumberField(3, fontRenderer, 200, 30, 30, fontRenderer.FONT_HEIGHT, mc);
         gplField.setValue(editor.groupsPerLine);
@@ -57,15 +62,13 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
             }
         });
         textFields.add(grSzField);
+*/
 
-        buttonList.add(new GuiButton(1, 200, 50, 60, 20, "insert byte"));
-        buttonList.add(new GuiButton(2, 200, 70, 60, 20, "delete byte"));
+        buttonList.add(new GuiButton(1, x + w - 150, y + 5, 70, 20, "insert byte"));
+        buttonList.add(new GuiButton(2, x + w - 75, y + 5, 70, 20, "delete byte"));
 
-        w = this.width / 2;
-        h = (int) (this.height * .98);
-        y = (this.height - h) / 2;
-        x = (this.width - w) / 2;
-        editor.setPos(x, y);
+        //editor.setPos(x, y);
+        editor = new HexEditorComponent(fontRenderer, x + 10, y + 30, w - 20, h - (5 + 30));
         super.initGui();
     }
 
