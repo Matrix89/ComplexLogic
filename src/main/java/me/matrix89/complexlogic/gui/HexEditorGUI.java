@@ -22,7 +22,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     private int groupSize = 2;
     private int groupsPerLine = 2;
     private int spacing = 2;
-    private int charWidth = 3;
+    private int charWidth;
 
     private int selectionStart = 0;
     private int selectionEnd = 0;
@@ -38,6 +38,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     @Override
     public void initGui() {
+        charWidth = fontRenderer.getCharWidth('_');
         super.initGui();
     }
 
