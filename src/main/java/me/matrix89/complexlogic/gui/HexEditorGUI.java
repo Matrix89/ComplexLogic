@@ -21,6 +21,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     private int groupSize = 2;
     private int groupsPerLine = 2;
+    //spacing size in character widths
     private int spacing = 2;
     private int charWidth;
 
@@ -130,7 +131,6 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        setCursor(mouseX / ((charWidth * 2 * groupSize) + spacing * (mouseX / ((charWidth * 2 * groupSize)) / groupSize)) + mouseY / fontRenderer.FONT_HEIGHT * groupSize * groupsPerLine);// inaccurate
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 
@@ -145,13 +145,17 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        int line = mouseY / fontRenderer.FONT_HEIGHT;
+        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
+        int column = mouseX / (charWidth * groupSize) - printedSpacingWidth;
+
+        setCursor(column + line * (groupSize * groupsPerLine));
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawRect(0, 0, 256, 256, 0xffC6C6C6);
         FontRenderer fontRenderer = mc.fontRenderer;
-
 
         int x = 0;
         int y = 0;
@@ -161,19 +165,19 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 x = 0;
             }
             if (x != 0 && i % groupSize == 0) {
-                x += spacing;
+                x += spacing * charWidth;
             }
 
             if (i >= selectionStart && i <= selectionEnd && selectionStart != selectionEnd) {
-                drawRect(x * charWidth, y * fontRenderer.FONT_HEIGHT, x * charWidth + 4 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.GREEN.getColorValue());
+                drawRect(x, y * fontRenderer.FONT_HEIGHT, x + 2 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.GREEN.getColorValue());
             }
             if (i == cursor) {
                 // drawRect(x * charWidth, y * fontRenderer.FONT_HEIGHT, x * charWidth + 4 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.RED.getColorValue());
-                int nx = x + (cursorNibble == Nibble.UPPER ? 0 : 1);
-                drawRect(nx * charWidth, (int) (y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT * 0.9f), nx * charWidth + 2 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.BLUE.getColorValue());
+                int nx = x + (cursorNibble == Nibble.UPPER ? 0 : charWidth);
+                drawRect(nx, (int) (y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT * 0.9f), nx + charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.BLUE.getColorValue());
             }
-            fontRenderer.drawString(String.format("%02x", data[i]), x * charWidth, y * fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
-            x += 4;
+            fontRenderer.drawString(String.format("%02x", data[i]), x, y * fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
+            x += 2 * charWidth;
         }
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
