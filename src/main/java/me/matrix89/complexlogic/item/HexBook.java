@@ -16,6 +16,7 @@ public class HexBook extends Item {
     public static final HexBook INSTANCE = new HexBook();
     public HexBook(){
         setRegistryName("hex_book");
+        setTranslationKey("complex-logic.hexbook");
         setCreativeTab(CreativeTabs.REDSTONE);
         setMaxStackSize(1);
     }
