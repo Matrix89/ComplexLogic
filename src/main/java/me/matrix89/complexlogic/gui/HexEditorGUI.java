@@ -2,6 +2,7 @@ package me.matrix89.complexlogic.gui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.EnumDyeColor;
 import pl.asie.charset.lib.inventory.GuiContainerCharset;
 
@@ -32,6 +33,9 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     private byte[] data = new byte[32];
 
+    private ArrayList<GuiNumberField> textFields = new ArrayList<>();
+    private GuiTextField focusedField = null;
+
     public HexEditorGUI(HexEditorContainer container, int xSize, int ySize) {
         super(container, xSize, ySize);
         rnd.nextBytes(data);
@@ -40,11 +44,33 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     @Override
     public void initGui() {
         charWidth = fontRenderer.getCharWidth('_');
+        groupsPerLine = 8;
+        groupSize = 4;
+        rnd.nextBytes(data);
+        spacing = 1;
+
+        GuiNumberField gplField = new GuiNumberField(3, fontRenderer, 10, 30, 30, fontRenderer.FONT_HEIGHT, mc);
+        gplField.setOnClick(integer -> groupsPerLine = integer);
+        textFields.add(gplField);
+
+        GuiNumberField grSzField = new GuiNumberField(3, fontRenderer, 10, 40, 30, fontRenderer.FONT_HEIGHT, mc);
+        grSzField.setOnClick(integer -> groupSize = integer);
+        textFields.add(grSzField);
+
         super.initGui();
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (focusedField != null) {
+            if (keyCode == 1) {
+                focusedField.setFocused(false);
+                focusedField = null;
+                return;
+            }
+            focusedField.textboxKeyTyped(typedChar, keyCode);
+            return;
+        }
         Pattern p = Pattern.compile("[a-fA-F0-9]");
         if (!isCtrlKeyDown() && p.matcher(String.valueOf(typedChar).toUpperCase()).find()) {
             switch (cursorNibble) {
@@ -145,6 +171,15 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        for (GuiTextField textField : textFields) {
+            if (textField.mouseClicked(mouseX, mouseY, mouseButton)) {
+                textField.setFocused(true);
+                focusedField = textField;
+                return;
+            }
+        }
+        focusedField = null;
+
         int line = mouseY / fontRenderer.FONT_HEIGHT;
         int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
         int column = mouseX / (charWidth * groupSize) - printedSpacingWidth;
@@ -155,6 +190,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawRect(0, 0, 256, 256, 0xffC6C6C6);
+        textFields.forEach(field -> field.draw(mouseX, mouseY, partialTicks));
         FontRenderer fontRenderer = mc.fontRenderer;
 
         int x = 0;
