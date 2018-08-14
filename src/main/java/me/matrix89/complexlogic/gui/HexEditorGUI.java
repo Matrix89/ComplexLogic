@@ -5,6 +5,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.EnumDyeColor;
+import org.lwjgl.Sys;
 import pl.asie.charset.lib.inventory.GuiContainerCharset;
 
 import java.io.IOException;
@@ -15,66 +16,62 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
-    private int cursor = 0;
-
-    private enum Nibble {UPPER, LOWER}
-
-    private Nibble cursorNibble = Nibble.UPPER;
-
-    private int groupSize = 2;
-    private int groupsPerLine = 4;
-    //spacing size in character widths
-    private int spacing = 2;
-    private int charWidth;
-
-    private static final int SELECTION_NONE = Integer.MAX_VALUE;
-    private int selectionAnchor = SELECTION_NONE;
-
-    private Random rnd = new Random();
-
-    private byte[] data = new byte[256];
 
     private ArrayList<GuiNumberField> textFields = new ArrayList<>();
     private GuiTextField focusedField = null;
 
-    private int scroll = 0;
+    private HexEditorComponent editor;
 
     public HexEditorGUI(HexEditorContainer container, int xSize, int ySize) {
         super(container, xSize, ySize);
-        rnd.nextBytes(data);
     }
+
+    private int w;
+    private int h;
+    private int y;
+    private int x;
 
     @Override
     public void initGui() {
-        charWidth = fontRenderer.getCharWidth('_');
-        rnd.nextBytes(data);
-        spacing = 1;
-
+        editor = new HexEditorComponent(fontRenderer, x + 10, y + 10);
         GuiNumberField gplField = new GuiNumberField(3, fontRenderer, 200, 30, 30, fontRenderer.FONT_HEIGHT, mc);
-        gplField.setValue(groupsPerLine);
+        gplField.setValue(editor.groupsPerLine);
         gplField.setOnClick(integer -> {
             if (integer <= 0) {
                 gplField.setValue(1);
-                groupsPerLine = 1;
+                editor.groupsPerLine = 1;
             } else {
-                groupsPerLine = integer;
+                editor.groupsPerLine = integer;
             }
         });
         textFields.add(gplField);
 
         GuiNumberField grSzField = new GuiNumberField(3, fontRenderer, 200, 40, 30, fontRenderer.FONT_HEIGHT, mc);
-        grSzField.setValue(groupSize);
+        grSzField.setValue(editor.groupSize);
         grSzField.setOnClick(integer -> {
             if (integer <= 0) {
                 grSzField.setValue(1);
-                groupSize = 1;
+                editor.groupSize = 1;
             } else {
-                groupSize = integer;
+                editor.groupSize = integer;
             }
         });
         textFields.add(grSzField);
 
+        buttonList.add(new GuiButton(1, 200, 50, 60, 20, "insert byte"));
+        buttonList.add(new GuiButton(2, 200, 70, 60, 20, "delete byte"));
+
+        w = this.width / 2;
+        h = (int) (this.height * .98);
+        y = (this.height - h) / 2;
+        x = (this.width - w) / 2;
+        editor.setPos(x, y);
         super.initGui();
+    }
+
+    @Override
+    public void onResize(Minecraft mcIn, int w, int h) {
+        super.onResize(mcIn, w, h);
     }
 
     @Override
@@ -88,93 +85,25 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
             focusedField.textboxKeyTyped(typedChar, keyCode);
             return;
         }
-        Pattern p = Pattern.compile("[a-fA-F0-9]");
-        if (!isCtrlKeyDown() && p.matcher(String.valueOf(typedChar).toUpperCase()).find()) {
-            switch (cursorNibble) {
-                case UPPER:
-                    data[cursor] &= (data[cursor] << 8 | 0x0f);
-                    data[cursor] |= Byte.parseByte("" + typedChar, 16) << 4;
-
-                    cursorNibble = Nibble.LOWER;
-                    return;
-                case LOWER:
-                    data[cursor] &= 0xf0;
-                    data[cursor] |= Byte.parseByte("" + typedChar, 16);
-                    setCursor(cursor + 1);
-                    cursorNibble = Nibble.UPPER;
-            }
-            return;
-        }
-
-        handledMovement(keyCode);
+        editor.keyTyped(typedChar, keyCode);
         super.keyTyped(typedChar, keyCode);
-    }
-
-    private void handledMovement(int keyCode) {
-        if (isShiftKeyDown()) {
-            if(selectionAnchor == SELECTION_NONE) {
-                selectionAnchor = cursor;
-            }
-        }
-        switch (keyCode) {
-            case 205:
-                setCursor(++cursor);
-                break;
-            case 203:
-                setCursor(--cursor);
-                break;
-            case 200://up
-                setCursor(cursor - (groupSize * groupsPerLine));
-                break;
-            case 208://down
-                setCursor(cursor + (groupSize * groupsPerLine));
-                break;
-            case 46: //copy
-                StringBuilder sb = new StringBuilder();
-                int start = Math.min(selectionAnchor, cursor);
-                int end = Math.max(selectionAnchor, cursor);
-                for (int i = start; i <= end; i++) {
-                    sb.append(String.format("%02X", data[i]));
-                }
-                setClipboardString(sb.toString());
-                break;
-            case 47: //paste
-                break;
-            case 13: // +
-                scroll++;
-                break;
-            case 12: //-
-                scroll = Math.max(scroll - 1, 0);
-                break;
-
-        }
-        cursorNibble = Nibble.UPPER;
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
-        if(selectionAnchor == cursor) {
-            selectionAnchor = SELECTION_NONE;
-        }
-    }
-
-    private void mouseUpdateCursor(int mouseX, int mouseY) {
-        int line = (mouseY / fontRenderer.FONT_HEIGHT) + scroll  -1;
-        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
-        int column = (mouseX / charWidth - printedSpacingWidth) / 2;
-
-        setCursor(column + line * (groupSize * groupsPerLine));
+        editor.mouseReleased(mouseX, mouseY, state);
     }
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        mouseUpdateCursor(mouseX,mouseY);
-    }
-
-    public void setCursor(int cursor) {
-        this.cursor = Math.max(0, Math.min(cursor, data.length - 1));
+        for (GuiButton button : buttonList) {
+            if (button.mousePressed(mc, mouseX, mouseY)) {
+                return;
+            }
+        }
+        editor.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 
 
@@ -187,43 +116,52 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 return;
             }
         }
-        mouseUpdateCursor(mouseX,mouseY);
-        selectionAnchor = cursor;
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        for (GuiButton button : buttonList) {
+            if (button.mousePressed(mc, mouseX, mouseY)) {
+                return;
+            }
+        }
+
+        editor.mouseClicked(mouseX, mouseY, mouseButton);
         focusedField = null;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawRect(0, 0, 256, 256, 0xffC6C6C6);
+        drawRect(x, y, x + w, y + h, 0xffC6C6C6);
         textFields.forEach(field -> field.draw(mouseX, mouseY, partialTicks));
-        FontRenderer fontRenderer = mc.fontRenderer;
 
-        int x = 0;
-        int y = 0;
-        for (int i = scroll * groupSize * groupsPerLine; i < data.length; i++) {
-            if (i % (groupSize * groupsPerLine) == 0) {
-                y += 1;
-                x = 0;
-            }
-            if (x != 0 && i % groupSize == 0) {
-                x += spacing * charWidth;
-            }
-
-            if (selectionAnchor != SELECTION_NONE && selectionAnchor != cursor && ((i >= selectionAnchor && i <= cursor) || (i <= selectionAnchor && i >= cursor))) {
-                drawRect(x, y * fontRenderer.FONT_HEIGHT, x + 2 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.GREEN.getColorValue());
-            }
-            if (i == cursor) {
-                int nx = x + (cursorNibble == Nibble.UPPER ? 0 : charWidth);
-                drawRect(nx, (int) (y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT * 0.9f), nx + charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.BLUE.getColorValue());
-            }
-            fontRenderer.drawString(String.format("%02X", data[i]), x, y * fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
-            x += 2 * charWidth;
-        }
+        editor.draw();
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
+        /*
+        byte[] newData;
+        try {
+            switch (button.id) {
+                case 1: // insert byte
+                    newData = new byte[data.length + 1];
+                    System.arraycopy(data, 0, newData, 0, Math.max(0, cursor - 1));
+                    System.arraycopy(data, cursor, newData, cursor + 1, data.length - cursor);
+                    data = newData;
+                    break;
+                case 2: // remove byte
+                    newData = new byte[data.length - 1];
+                    System.arraycopy(data, 0, newData, 0, cursor);
+                    System.arraycopy(data, cursor + 1, newData, cursor, data.length - cursor - 1);
+                    if (cursor >= data.length - 1) {
+                        setCursor(cursor - 1);
+                    }
+                    data = newData;
+                    break;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
         super.actionPerformed(button);
+        */
     }
 }
