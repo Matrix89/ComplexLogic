@@ -31,10 +31,12 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     private Random rnd = new Random();
 
-    private byte[] data = new byte[32];
+    private byte[] data = new byte[256];
 
     private ArrayList<GuiNumberField> textFields = new ArrayList<>();
     private GuiTextField focusedField = null;
+
+    private int scroll = 0;
 
     public HexEditorGUI(HexEditorContainer container, int xSize, int ySize) {
         super(container, xSize, ySize);
@@ -165,6 +167,13 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 break;
             case 47: //paste
                 break;
+            case 13: // +
+                scroll++;
+                break;
+            case 12: //-
+                scroll = Math.max(scroll - 1, 0);
+                break;
+
         }
         cursorNibble = Nibble.UPPER;
     }
@@ -195,7 +204,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         focusedField = null;
 
         int line = mouseY / fontRenderer.FONT_HEIGHT;
-        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
+        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth); // TODO: inaccurate
         int column = mouseX / (charWidth * groupSize) - printedSpacingWidth;
 
         setCursor(column + line * (groupSize * groupsPerLine));
@@ -209,8 +218,8 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
         int x = 0;
         int y = 0;
-        for (int i = 0; i < data.length; i++) {
-            if (i != 0 && i % (groupSize * groupsPerLine) == 0) {
+        for (int i = scroll * groupSize * groupsPerLine; i < data.length; i++) {
+            if (i % (groupSize * groupsPerLine) == 0) {
                 y += 1;
                 x = 0;
             }
