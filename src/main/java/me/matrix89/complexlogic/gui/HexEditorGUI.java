@@ -216,7 +216,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 int nx = x + (cursorNibble == Nibble.UPPER ? 0 : charWidth);
                 drawRect(nx, (int) (y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT * 0.9f), nx + charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.BLUE.getColorValue());
             }
-            fontRenderer.drawString(String.format("%02x", data[i]), x, y * fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
+            fontRenderer.drawString(String.format("%02X", data[i]), x, y * fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
             x += 2 * charWidth;
         }
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
