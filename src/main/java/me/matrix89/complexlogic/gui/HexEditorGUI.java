@@ -50,11 +50,25 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         spacing = 1;
 
         GuiNumberField gplField = new GuiNumberField(3, fontRenderer, 10, 30, 30, fontRenderer.FONT_HEIGHT, mc);
-        gplField.setOnClick(integer -> groupsPerLine = integer);
+        gplField.setOnClick(integer -> {
+            if(integer <= 0 ) {
+                gplField.setValue(1);
+                groupsPerLine = 1;
+            } else {
+                groupsPerLine = integer;
+            }
+        });
         textFields.add(gplField);
 
         GuiNumberField grSzField = new GuiNumberField(3, fontRenderer, 10, 40, 30, fontRenderer.FONT_HEIGHT, mc);
-        grSzField.setOnClick(integer -> groupSize = integer);
+        grSzField.setOnClick(integer -> {
+            if(integer <= 0 ) {
+                grSzField.setValue(1);
+                groupSize = 1;
+            } else {
+                groupSize = integer;
+            }
+        });
         textFields.add(grSzField);
 
         super.initGui();

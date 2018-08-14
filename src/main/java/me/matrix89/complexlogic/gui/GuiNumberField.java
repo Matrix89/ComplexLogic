@@ -58,4 +58,13 @@ public class GuiNumberField extends GuiTextField {
         }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
+
+    @Override
+    public final void setText(String textIn) {
+        super.setText(textIn);
+    }
+
+    public void setValue(int i) {
+        setText(""+i);
+    }
 }
