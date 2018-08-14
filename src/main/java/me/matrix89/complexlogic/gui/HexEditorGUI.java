@@ -153,9 +153,18 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         cursorNibble = Nibble.UPPER;
     }
 
+    private void mouseUpdateCursor(int mouseX, int mouseY) {
+        int line = (mouseY / fontRenderer.FONT_HEIGHT) + scroll  -1;
+        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
+        int column = (mouseX / charWidth - printedSpacingWidth) / 2;
+
+        setCursor(column + line * (groupSize * groupsPerLine));
+    }
+
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        mouseUpdateCursor(mouseX,mouseY);
     }
 
     public void setCursor(int cursor) {
@@ -175,13 +184,8 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 return;
             }
         }
+        mouseUpdateCursor(mouseX,mouseY);
         focusedField = null;
-
-        int line = mouseY / fontRenderer.FONT_HEIGHT;
-        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth); // TODO: inaccurate
-        int column = mouseX / (charWidth * groupSize) - printedSpacingWidth;
-
-        setCursor(column + line * (groupSize * groupsPerLine));
     }
 
     @Override
@@ -205,7 +209,6 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 drawRect(x, y * fontRenderer.FONT_HEIGHT, x + 2 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.GREEN.getColorValue());
             }
             if (i == cursor) {
-                // drawRect(x * charWidth, y * fontRenderer.FONT_HEIGHT, x * charWidth + 4 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.RED.getColorValue());
                 int nx = x + (cursorNibble == Nibble.UPPER ? 0 : charWidth);
                 drawRect(nx, (int) (y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT * 0.9f), nx + charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.BLUE.getColorValue());
             }
