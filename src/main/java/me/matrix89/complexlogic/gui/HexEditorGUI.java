@@ -22,7 +22,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     private Nibble cursorNibble = Nibble.UPPER;
 
     private int groupSize = 2;
-    private int groupsPerLine = 2;
+    private int groupsPerLine = 4;
     //spacing size in character widths
     private int spacing = 2;
     private int charWidth;
@@ -47,8 +47,6 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     @Override
     public void initGui() {
         charWidth = fontRenderer.getCharWidth('_');
-        groupsPerLine = 8;
-        groupSize = 4;
         rnd.nextBytes(data);
         spacing = 1;
 
@@ -154,14 +152,28 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     }
 
     @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        super.mouseReleased(mouseX, mouseY, state);
+        if(selectionAnchor == cursor) {
+            selectionAnchor = SELECTION_NONE;
+        }
+    }
+
+    private void mouseUpdateCursor(int mouseX, int mouseY) {
+        int line = (mouseY / fontRenderer.FONT_HEIGHT) + scroll  -1;
+        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
+        int column = (mouseX / charWidth - printedSpacingWidth) / 2;
+
+        setCursor(column + line * (groupSize * groupsPerLine));
+    }
+
+    @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        mouseUpdateCursor(mouseX,mouseY);
     }
 
     public void setCursor(int cursor) {
-        if (!isShiftKeyDown() && !isCtrlKeyDown()) {
-            selectionAnchor = SELECTION_NONE;
-        }
         this.cursor = Math.max(0, Math.min(cursor, data.length - 1));
     }
 
@@ -175,13 +187,9 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 return;
             }
         }
+        mouseUpdateCursor(mouseX,mouseY);
+        selectionAnchor = cursor;
         focusedField = null;
-
-        int line = mouseY / fontRenderer.FONT_HEIGHT;
-        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth); // TODO: inaccurate
-        int column = mouseX / (charWidth * groupSize) - printedSpacingWidth;
-
-        setCursor(column + line * (groupSize * groupsPerLine));
     }
 
     @Override
@@ -201,11 +209,10 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 x += spacing * charWidth;
             }
 
-            if (selectionAnchor != SELECTION_NONE && ((i >= selectionAnchor && i <= cursor) || (i <= selectionAnchor && i >= cursor))) {
+            if (selectionAnchor != SELECTION_NONE && selectionAnchor != cursor && ((i >= selectionAnchor && i <= cursor) || (i <= selectionAnchor && i >= cursor))) {
                 drawRect(x, y * fontRenderer.FONT_HEIGHT, x + 2 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.GREEN.getColorValue());
             }
             if (i == cursor) {
-                // drawRect(x * charWidth, y * fontRenderer.FONT_HEIGHT, x * charWidth + 4 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.RED.getColorValue());
                 int nx = x + (cursorNibble == Nibble.UPPER ? 0 : charWidth);
                 drawRect(nx, (int) (y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT * 0.9f), nx + charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.BLUE.getColorValue());
             }
