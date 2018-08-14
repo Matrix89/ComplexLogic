@@ -67,10 +67,10 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 setCursor(--cursor);
                 break;
             case 200://up
-                setCursor(-(groupSize * groupsPerLine)); // TODO: broken
+                setCursor(cursor-(groupSize * groupsPerLine));
                 break;
             case 208://down
-                setCursor(+(groupSize * groupsPerLine));
+                setCursor(cursor+(groupSize * groupsPerLine));
                 break;
         }
         cursorNibble = Nibble.UPPER;
