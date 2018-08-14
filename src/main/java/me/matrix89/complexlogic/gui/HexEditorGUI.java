@@ -1,150 +1,122 @@
 package me.matrix89.complexlogic.gui;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.item.EnumDyeColor;
 import pl.asie.charset.lib.inventory.GuiContainerCharset;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
-    ArrayList<HexTextField> lines = new ArrayList<>();
+    private int cursor = 0;
 
-    int cursorX;
-    int cursorY;
-    int selectionStartX;
-    int selectionStartY;
-    int selectionEndX;
-    int selectionEndY;
-    int spacing = 2;
+    private enum Nibble {UPPER, LOWER}
 
-    boolean cursorWhite = false;
-    float lastCursorBlink = 0;
-    Random rnd = new Random();
-    int charWidth;
-    int charHeight;
+    private Nibble cursorNibble = Nibble.UPPER;
+
+    private int groupSize = 2;
+    private int groupsPerLine = 2;
+    private int spacing = 2;
+    private int charWidth = 3;
+
+    private Random rnd = new Random();
+
+    private byte[] data = new byte[32];
 
     public HexEditorGUI(HexEditorContainer container, int xSize, int ySize) {
         super(container, xSize, ySize);
-        byte[] table = new byte[32];
-        rnd.nextBytes(table);
-        for (int i =0; i<table.length; i++){
-            lines.add(new HexTextField(table[i]));
-        }
-
+        rnd.nextBytes(data);
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        charWidth = fontRenderer.getCharWidth('_');
-        charHeight = fontRenderer.FONT_HEIGHT;
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-
-        String character = String.valueOf(typedChar).toUpperCase();
+        System.out.println(keyCode);
         Pattern p = Pattern.compile("[a-fA-F0-9]");
-        if (p.matcher(character).find()) {
-            int index = (cursorX + cursorY * spacing*3)/2;
-            int indexMod = (cursorX + cursorY * spacing) % 2;
-            System.out.println(index + ":" + indexMod);
-            HexTextField ht = lines.get(index);
-            if(ht!=null){
-                try {
-                    System.out.println(Byte.parseByte(character, 16));
-                    ht.setValue((byte)((ht.value & 0xF0) | Byte.parseByte(character, 16)));
-                }catch (Exception e){
+        System.out.println(cursorNibble);
+        if (p.matcher(String.valueOf(typedChar).toUpperCase()).find()) {
+            switch (cursorNibble) {
+                case UPPER:
+                    data[cursor] &= (data[cursor] << 8 | 0x0f);
+                    data[cursor] |= Byte.parseByte("" + typedChar, 16) << 4;
 
-                }
+                    cursorNibble = Nibble.LOWER;
+                    return;
+                case LOWER:
+                    data[cursor] &= 0xf0;
+                    data[cursor] |= Byte.parseByte("" + typedChar, 16);
+                    cursor++;
+                    cursorNibble = Nibble.UPPER;
             }
+            return;
         }
-
+        switch (keyCode) {
+            case 205:
+                setCursor(++cursor);
+                break;
+            case 203:
+                setCursor(--cursor);
+                break;
+            case 200://up
+                setCursor(-(groupSize * groupsPerLine)); // TODO: broken
+                break;
+            case 208://down
+                setCursor(+(groupSize * groupsPerLine));
+                break;
+        }
+        cursorNibble = Nibble.UPPER;
         super.keyTyped(typedChar, keyCode);
     }
 
     @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        setCursor(mouseX / ((charWidth * 2 * groupSize) + spacing * (mouseX / ((charWidth * 2 * groupSize)) / groupSize)) + mouseY / fontRenderer.FONT_HEIGHT * groupSize * groupsPerLine);// inaccurate
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+    }
+
+    public void setCursor(int cursor) {
+        this.cursor = Math.max(0, Math.min(cursor, data.length - 1));
     }
 
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        System.out.println(String.format("%d:%d", mouseX, mouseY));
-        int offsetX = mouseX;
-        int offsetY = mouseY;
-        if (offsetX >= 0 && offsetY >= 0) {
-            cursorX = (int) Math.min(spacing*3 - 2, (offsetX / charWidth));
-            cursorY = (int) Math.min(lines.size()/spacing,(offsetY / charHeight));
-        }
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
-    class HexTextField {
-        private byte value;
-
-        public HexTextField(byte value) {
-            this.value= value;
-        }
-
-        public void render(int x, int y) {
-            fontRenderer.drawString(String.format("%02X", value), x, y, 0);
-        }
-
-        public void setValue(byte value) {
-            this.value = value;
-        }
-
-        public String getLower() {
-            return String.format("%02X", value & 0xF);
-        }
-
-        public String getUpper() {
-            return String.format("%02X", (value >> 4) & 0xF);
-        }
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawRect(0, 0, 256, 256, 0xffC6C6C6);
-        int yStart = 0;
-        int xStart = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            if(i%spacing==0 && i!=0){
-                yStart++;
-                xStart=0;
+        FontRenderer fontRenderer = mc.fontRenderer;
+
+
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < data.length; i++) {
+            if (i != 0 && i % (groupSize * groupsPerLine) == 0) {
+                y += 1;
+                x = 0;
+            }
+            if (x != 0 && i % groupSize == 0) {
+                x += spacing;
             }
 
-            lines.get(i).render(xStart* charWidth*3, yStart*charHeight);
-            xStart++;
+            if (i == cursor) {
+                drawRect(x * charWidth, y * fontRenderer.FONT_HEIGHT, x * charWidth + 4 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.RED.getColorValue());
+                int nx = x + (cursorNibble == Nibble.UPPER ? 0 : 1);
+                drawRect(nx * charWidth, (int) (y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT * 0.9f), nx * charWidth + 2 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.BLUE.getColorValue());
+            }
+            fontRenderer.drawString(String.format("%02x", data[i]), x * charWidth, y * fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
+            x += 4;
         }
-        spacing = 3;
-        drawRect( (cursorX * charWidth) - 1,
-                (cursorY * charHeight) - 1,
-                ((cursorX + 1) * charWidth) ,
-                (cursorY + 1) * charHeight,
-                spacing == 0 ? 0 : 0xffffffff);
-//
-//        for (int i = 0; i < lines.size(); i++) {
-//            fontRenderer.drawString(lines.get(i), 10, i * fontRenderer.FONT_HEIGHT + 3, 0);
-//        }
-//        float marginX = 10;
-//        float marginY = 10;
-//
-//        lastCursorBlink += partialTicks;
-//        if (lastCursorBlink >= 10) {
-//            if (spacing == 0) {
-//                spacing = 1;
-//            } else {
-//                spacing = 0;
-//            }
-//            lastCursorBlink = 0;
-//        }
-
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
