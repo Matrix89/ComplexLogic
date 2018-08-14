@@ -15,7 +15,7 @@ public class PatchPanelGUI extends GuiContainerCharset<PatchPanelContainer> {
     private PatchPanelContainer container;
 
     public PatchPanelGUI(PatchPanelContainer inventorySlotsIn) {
-        super(inventorySlotsIn, 228, 228);
+        super(inventorySlotsIn, 239, 239);
         this.container = inventorySlotsIn;
     }
 
