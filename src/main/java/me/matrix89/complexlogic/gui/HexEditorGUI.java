@@ -22,7 +22,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     private Nibble cursorNibble = Nibble.UPPER;
 
     private int groupSize = 2;
-    private int groupsPerLine = 2;
+    private int groupsPerLine = 4;
     //spacing size in character widths
     private int spacing = 2;
     private int charWidth;
@@ -47,8 +47,6 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     @Override
     public void initGui() {
         charWidth = fontRenderer.getCharWidth('_');
-        groupsPerLine = 8;
-        groupSize = 4;
         rnd.nextBytes(data);
         spacing = 1;
 
@@ -153,6 +151,14 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         cursorNibble = Nibble.UPPER;
     }
 
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        super.mouseReleased(mouseX, mouseY, state);
+        if(selectionAnchor == cursor) {
+            selectionAnchor = SELECTION_NONE;
+        }
+    }
+
     private void mouseUpdateCursor(int mouseX, int mouseY) {
         int line = (mouseY / fontRenderer.FONT_HEIGHT) + scroll  -1;
         int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
@@ -168,9 +174,6 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     }
 
     public void setCursor(int cursor) {
-        if (!isShiftKeyDown() && !isCtrlKeyDown()) {
-            selectionAnchor = SELECTION_NONE;
-        }
         this.cursor = Math.max(0, Math.min(cursor, data.length - 1));
     }
 
@@ -185,6 +188,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
             }
         }
         mouseUpdateCursor(mouseX,mouseY);
+        selectionAnchor = cursor;
         focusedField = null;
     }
 
@@ -205,7 +209,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 x += spacing * charWidth;
             }
 
-            if (selectionAnchor != SELECTION_NONE && ((i >= selectionAnchor && i <= cursor) || (i <= selectionAnchor && i >= cursor))) {
+            if (selectionAnchor != SELECTION_NONE && selectionAnchor != cursor && ((i >= selectionAnchor && i <= cursor) || (i <= selectionAnchor && i >= cursor))) {
                 drawRect(x, y * fontRenderer.FONT_HEIGHT, x + 2 * charWidth, y * fontRenderer.FONT_HEIGHT + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.GREEN.getColorValue());
             }
             if (i == cursor) {
