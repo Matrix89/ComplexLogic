@@ -38,7 +38,7 @@ public class PatchPanelContainer extends ContainerBase {
         if (logic == null || partGate == null) return;
         this.connectionGrid = connectionGrid;
         logic.setGateConnectionGrid(connectionGrid);
-        partGate.scheduleRedstoneTick();
+        logic.onChanged(partGate);
     }
 
     public void detectAndSendChanges() {
