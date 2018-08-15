@@ -7,6 +7,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 
+import javax.xml.bind.DatatypeConverter;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -118,8 +119,8 @@ public class HexEditorComponent extends Gui {
                 x = posX;
             }
             // Address column
-            if(x == posX) {
-                fontRenderer.drawString(String.format("%0" + dataLenCharacterCount +"X", i), x, y, EnumDyeColor.RED.getColorValue());
+            if (x == posX) {
+                fontRenderer.drawString(String.format("%0" + dataLenCharacterCount + "X", i), x, y, EnumDyeColor.RED.getColorValue());
                 x += dataLenCharacterCount * charWidth;
             }
 
@@ -173,7 +174,7 @@ public class HexEditorComponent extends Gui {
 
         int knobH = h / getLineCount();
         int knobY = (int) ((h * getScrollPercentage()) - knobH / 2);
-        knobY = MathHelper.clamp(knobY, 0, h- knobH);
+        knobY = MathHelper.clamp(knobY, 0, h - knobH);
         drawRect(rx, posY + knobY, rx + scrollBarWidth, posY + knobY + knobH, 0xff000000 | EnumDyeColor.BLACK.getColorValue()); // Knob
     }
 
@@ -186,8 +187,6 @@ public class HexEditorComponent extends Gui {
             if (selectionAnchor == SELECTION_NONE) {
                 selectionAnchor = cursor;
             }
-        } else {
-            selectionAnchor = SELECTION_NONE;
         }
         switch (keyCode) {
             case 205:
@@ -212,6 +211,20 @@ public class HexEditorComponent extends Gui {
                 setClipboardString(sb.toString());
                 break;
             case 47: //paste
+                String cb = getClipboardString();
+                int missingSpace = Math.max(selectionAnchor == SELECTION_NONE ? cb.length() / 2 : cb.length() / 2 - getSelectionLength(), 0);
+                System.out.println(getSelectionLength());
+                System.out.println(missingSpace);
+                if (missingSpace == 0) {
+                    System.arraycopy(DatatypeConverter.parseHexBinary(cb), 0, data, getSelectionStart(), cb.length() / 2);
+                } else {
+                    byte[] newData = new byte[data.length + missingSpace];
+                    System.arraycopy(data, 0, newData, 0, getSelectionStart());
+                    System.arraycopy(DatatypeConverter.parseHexBinary(cb), 0, newData, cursor, cb.length() / 2);
+                    System.arraycopy(data, (getSelectionStart()) + (cb.length() / 2), newData, getSelectionStart() + cb.length() / 2, data.length - ((cb.length() / 2) + getSelectionStart()));
+                    data = newData;
+                }
+
                 break;
             case 13: // +
                 addScroll(1);
@@ -219,13 +232,12 @@ public class HexEditorComponent extends Gui {
             case 12: //-
                 addScroll(-1);
                 break;
-
         }
         cursorNibble = Nibble.UPPER;
     }
 
     private int getAddressColumnCharacterCount() {
-        return (""+data.length).length();
+        return ("" + data.length).length();
     }
 
     public int getDataLength() {
@@ -248,10 +260,25 @@ public class HexEditorComponent extends Gui {
         }
     }
 
+    public int getSelectionLength() {
+        if (selectionAnchor > cursor) {
+            return selectionAnchor - cursor + 1;
+        } else {
+            return cursor - selectionAnchor + 1;
+        }
+    }
+
     public void addScroll(int a) {
         scroll = MathHelper.clamp(scroll + a, 0, getLineCount());
     }
 
+    public int getSelectionStart() {
+        if (selectionAnchor > cursor) {
+            return cursor;
+        } else {
+            return selectionAnchor;
+        }
+    }
 
     public void mouseReleased(int mouseX, int mouseY, int state) {
         if (selectionAnchor == cursor) {
