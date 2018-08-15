@@ -24,13 +24,13 @@ public class PatchPanelLogic extends BundledGateLogic {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag, boolean isClient) {
-        if(!isClient){
+        //if(!isClient){
             NBTTagCompound array = new NBTTagCompound();
             for (int i = 0; i < 16; i++) {
                 array.setByteArray(String.valueOf(i), GateConnectionGrid[i]);
             }
             tag.setTag("GateConnectionGrid", array);
-        }
+      //  }
         return super.writeToNBT(tag, isClient);
     }
 

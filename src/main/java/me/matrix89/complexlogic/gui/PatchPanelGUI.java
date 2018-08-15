@@ -47,7 +47,11 @@ public class PatchPanelGUI extends GuiContainerCharset<ContainerGate> {
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        ComplexLogic.registry.sendToServer(new PatchPanelPacket(((PatchPanelLogic)container.getGate().getLogic()).getGateConnectionGrid()));
+        try {
+            ComplexLogic.registry.sendToServer(new PatchPanelPacket( ((PatchPanelLogic) container.getGate().getLogic()).getGateConnectionGrid(), container.getGate()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         super.actionPerformed(button);
     }
 
