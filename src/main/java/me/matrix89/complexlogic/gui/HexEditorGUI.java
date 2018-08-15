@@ -73,6 +73,12 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     }
 
     @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        editor.handleMouseInput();
+    }
+
+    @Override
     public void onResize(Minecraft mcIn, int w, int h) {
         super.onResize(mcIn, w, h);
     }

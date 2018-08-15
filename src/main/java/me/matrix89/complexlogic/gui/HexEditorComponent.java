@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.math.MathHelper;
+import org.lwjgl.input.Mouse;
 
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -138,8 +140,7 @@ public class HexEditorComponent extends Gui {
     }
 
     public float getScrollPercentage() {
-        int lines = data.length / (groupSize * groupsPerLine) - ((h / fontRenderer.FONT_HEIGHT) - overScroll);
-        return scroll / (float) lines;
+        return scroll / (float) getLineCount();
     }
 
     public void drawScrollBar() {
@@ -185,19 +186,31 @@ public class HexEditorComponent extends Gui {
             case 47: //paste
                 break;
             case 13: // +
-                if (getScrollPercentage() < 1) {
-                    scroll++;
-                }
+                addScroll(1);
                 break;
             case 12: //-
-                if (getScrollPercentage() > 0) {
-                    scroll--;
-                }
+                addScroll(-1);
                 break;
 
         }
         cursorNibble = Nibble.UPPER;
     }
+
+    public int getLineCount() {
+        return data.length / (groupSize * groupsPerLine) - ((h / fontRenderer.FONT_HEIGHT) - overScroll);
+    }
+
+    public void handleMouseInput() {
+        int s = Mouse.getEventDWheel();
+        if (s != 0) {
+            addScroll(s > 0 ? -1 : 1);
+        }
+    }
+
+    public void addScroll(int a) {
+        scroll = MathHelper.clamp(scroll + a, 0, getLineCount());
+    }
+
 
     public void mouseReleased(int mouseX, int mouseY, int state) {
         if (selectionAnchor == cursor) {
