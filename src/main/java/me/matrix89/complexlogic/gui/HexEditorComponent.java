@@ -24,7 +24,7 @@ public class HexEditorComponent extends Gui {
     public int groupSize = 2;
     public int groupsPerLine = 4;
     //spacing size in character widths
-    private int spacing = 2;
+    private int spacing = 0;
     private int charWidth;
     private int scroll = 0;
     private int overScroll = 3;
@@ -83,8 +83,14 @@ public class HexEditorComponent extends Gui {
         mouseX -= posX;
         mouseY -= posY;
         int line = (mouseY / fontRenderer.FONT_HEIGHT) + scroll;
-        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
-        int column = (mouseX / charWidth) / 2 - printedSpacingWidth;
+
+        int clickedGroup = (int) (mouseX / (float) (((2 * groupSize) + spacing) * charWidth));
+        int groupWidth = (2 * charWidth * groupSize) + (spacing * charWidth);
+        int groupX = clickedGroup * groupWidth;
+        int xInGroup = mouseX - groupX;
+        int byteInGroup = xInGroup / (2 * charWidth);
+
+        int column = clickedGroup * groupSize + byteInGroup;
 
         setCursor(column + line * getBytesPreLine());
     }
