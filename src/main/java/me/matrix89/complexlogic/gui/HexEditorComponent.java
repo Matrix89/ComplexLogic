@@ -82,24 +82,24 @@ public class HexEditorComponent extends Gui {
     private void mouseUpdateCursor(int mouseX, int mouseY) {
         mouseX -= posX;
         mouseY -= posY;
-        int line = (mouseY / fontRenderer.FONT_HEIGHT) + scroll - 1;
-        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth) + 1;
+        int line = (mouseY / fontRenderer.FONT_HEIGHT) + scroll;
+        int printedSpacingWidth = mouseX / (2 * charWidth * groupSize + spacing * charWidth);
         int column = (mouseX / charWidth) / 2 - printedSpacingWidth;
 
-        setCursor(column + line * (groupSize * groupsPerLine));
+        setCursor(column + line * getBytesPreLine());
     }
 
 
     public void draw() {
         int x = posX;
         int y = posY;
-        int startIdx = scroll * groupSize * groupsPerLine;
-        for (int i = startIdx; i < Math.min(data.length, startIdx + h / fontRenderer.FONT_HEIGHT * groupSize * groupsPerLine); i++) {
-            if (i % (groupSize * groupsPerLine) == 0) {
+        int startIdx = scroll * getBytesPreLine();
+        for (int i = startIdx; i < Math.min(data.length, startIdx + h / fontRenderer.FONT_HEIGHT * getBytesPreLine()); i++) {
+            if (x != posX && i % getBytesPreLine() == 0) {
                 y += fontRenderer.FONT_HEIGHT;
                 x = posX;
             }
-            if (x != 0 && i % groupSize == 0) {
+            if (x != posX && i % groupSize == 0) {
                 x += spacing * charWidth;
             }
 
@@ -171,10 +171,10 @@ public class HexEditorComponent extends Gui {
                 setCursor(--cursor);
                 break;
             case 200://up
-                setCursor(cursor - (groupSize * groupsPerLine));
+                setCursor(cursor - getBytesPreLine());
                 break;
             case 208://down
-                setCursor(cursor + (groupSize * groupsPerLine));
+                setCursor(cursor + getBytesPreLine());
                 break;
             case 46: //copy
                 StringBuilder sb = new StringBuilder();
@@ -198,8 +198,12 @@ public class HexEditorComponent extends Gui {
         cursorNibble = Nibble.UPPER;
     }
 
+    public int getBytesPreLine() {
+        return groupsPerLine * groupSize;
+    }
+
     public int getLineCount() {
-        return data.length / (groupSize * groupsPerLine) - ((h / fontRenderer.FONT_HEIGHT) - overScroll);
+        return data.length / getBytesPreLine() - ((h / fontRenderer.FONT_HEIGHT) - overScroll);
     }
 
     public void handleMouseInput() {
