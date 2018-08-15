@@ -1,0 +1,44 @@
+{
+  "conditions": [
+    {
+      "type": "charset:module_loaded",
+      "module": "simplelogic.gates"
+    },
+    {
+      "type": "charset:simplelogic_gate_enabled",
+      "gate": "complex-logic:bintobcd"
+    }
+  ],
+  "type": "charset:shaped",
+  "group": "complex-logic:gate_bundled_bintobcd",
+  "pattern": [
+    "cbc",
+    "bcb",
+    "srs"
+  ],
+  "key": {
+    "b": {
+      "type": "forge:ore_dict",
+      "ore": "wireLogicBundled"
+    },
+    "s": {
+      "type": "charset:material",
+      "material": ["stone", "slab"]
+    },
+    "c": {
+      "item": "minecraft:comparator"
+    },
+    "r": {
+      "item": "minecraft:repeater"
+    }
+  },
+  "result": {
+    "type": "minecraft:item_nbt",
+    "item": "charset:logic_gate",
+    "data": 0,
+    "count": 1,
+    "nbt": {
+      "logic": "complex-logic:binto7seg"
+    }
+  }
+}

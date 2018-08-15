@@ -35,7 +35,7 @@ public class ProxyCommon {
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "modulo"), ModuloLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "multiplication"), MultiplicationLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "random"), RandomLogic.class);
-        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "bintobcd"), BinToBCDLogic.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "bintobcd"), RealBinToBCDLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "globalor"), GlobalORLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "bitreorderer"), BitReordererLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "subtractor"), SubtractorLogic.class);
@@ -45,6 +45,7 @@ public class ProxyCommon {
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "buttonpanel"), ButtonPanelLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "patchpanel"), PatchPanelLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "textdisplay"), TextDisplayLogic.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "binto7seg"), BinTo7Seg.class);
 
         event.registerPartForCreativeTab(new PartGate(new AdderLogic()));
         event.registerPartForCreativeTab(new PartGate(new BundledViewerLogic()));
@@ -59,7 +60,7 @@ public class ProxyCommon {
         event.registerPartForCreativeTab(new PartGate(new ModuloLogic()));
         event.registerPartForCreativeTab(new PartGate(new MultiplicationLogic()));
         event.registerPartForCreativeTab(new PartGate(new RandomLogic()));
-        event.registerPartForCreativeTab(new PartGate(new BinToBCDLogic()));
+        event.registerPartForCreativeTab(new PartGate(new BinTo7Seg()));
         event.registerPartForCreativeTab(new PartGate(new GlobalORLogic()));
         event.registerPartForCreativeTab(new PartGate(new BitReordererLogic()));
         event.registerPartForCreativeTab(new PartGate(new SubtractorLogic()));
@@ -69,6 +70,7 @@ public class ProxyCommon {
         event.registerPartForCreativeTab(new PartGate(new ButtonPanelLogic()));
         event.registerPartForCreativeTab(new PartGate(new PatchPanelLogic()));
         event.registerPartForCreativeTab(new PartGate(new TextDisplayLogic()));
+        event.registerPartForCreativeTab(new PartGate(new RealBinToBCDLogic()));
     }
 
     @SideOnly(Side.CLIENT)

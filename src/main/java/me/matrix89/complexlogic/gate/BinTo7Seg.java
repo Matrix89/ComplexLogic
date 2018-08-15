@@ -5,7 +5,7 @@ import pl.asie.simplelogic.gates.logic.GateConnection;
 import pl.asie.simplelogic.gates.logic.GateRenderState;
 import pl.asie.simplelogic.gates.logic.IGateContainer;
 
-public class BinToBCDLogic extends BundledGateLogic {
+public class BinTo7Seg extends BundledGateLogic {
     private static final byte[][] decoder = new byte[][]{
             new byte[]{15, 0, 15, 15, 15, 15, 15},//0
             new byte[]{0, 0, 0, 0, 15, 0, 15},//1
@@ -19,7 +19,7 @@ public class BinToBCDLogic extends BundledGateLogic {
             new byte[]{15, 15, 15, 15, 15, 0, 15},//9
     };
 
-    public BinToBCDLogic() {
+    public BinTo7Seg() {
         super();
         byte[] outWest = new byte[16];
         byte[] outNorth = new byte[16];
