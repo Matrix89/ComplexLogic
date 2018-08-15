@@ -1,19 +1,13 @@
 package me.matrix89.complexlogic.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.EnumDyeColor;
-import org.lwjgl.Sys;
 import pl.asie.charset.lib.inventory.GuiContainerCharset;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
@@ -141,6 +135,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         drawRect(x, y, x + w, y + h, 0xffC6C6C6);
         textFields.forEach(field -> field.draw(mouseX, mouseY, partialTicks));
 
+        drawString(fontRenderer, String.format("Length: %05X", editor.getDataLength()), x+5, y+ 5, EnumDyeColor.WHITE.getColorValue());
         editor.draw();
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }

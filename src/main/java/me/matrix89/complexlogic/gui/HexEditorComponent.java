@@ -10,9 +10,7 @@ import org.lwjgl.input.Mouse;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import static net.minecraft.client.gui.GuiScreen.isCtrlKeyDown;
-import static net.minecraft.client.gui.GuiScreen.isShiftKeyDown;
-import static net.minecraft.client.gui.GuiScreen.setClipboardString;
+import static net.minecraft.client.gui.GuiScreen.*;
 
 public class HexEditorComponent extends Gui {
     private int cursor = 0;
@@ -45,6 +43,7 @@ public class HexEditorComponent extends Gui {
 
     private int scrollBarWidth = 10;
 
+
     public HexEditorComponent(FontRenderer fontRenderer, int x, int y, int w, int h) {
         this.fontRenderer = fontRenderer;
         charWidth = fontRenderer.getCharWidth('_');
@@ -54,7 +53,8 @@ public class HexEditorComponent extends Gui {
         this.h = h;
         spacing = 2;
 
-        groupsPerLine = (w - scrollBarWidth) / (charWidth * 2 * groupSize + (spacing * charWidth));
+        int aw = (w - scrollBarWidth) - getAddressColumnCharacterCount() * charWidth;
+        groupsPerLine = aw / (charWidth * 2 * groupSize + (spacing * charWidth));
     }
 
     public void setPos(int x, int y) {
@@ -87,6 +87,10 @@ public class HexEditorComponent extends Gui {
     private void mouseUpdateCursor(int mouseX, int mouseY) {
         mouseX -= posX;
         mouseY -= posY;
+
+        //remove the address column
+        mouseX -= getAddressColumnCharacterCount() * charWidth + spacing * charWidth;
+
         int line = (mouseY / fontRenderer.FONT_HEIGHT) + scroll;
 
         int clickedGroup = (int) (mouseX / (float) (((2 * groupSize) + spacing) * charWidth));
@@ -105,12 +109,19 @@ public class HexEditorComponent extends Gui {
         int x = posX;
         int y = posY;
         int startIdx = scroll * getBytesPreLine();
+        int dataLenCharacterCount = getAddressColumnCharacterCount();
         for (int i = startIdx; i < Math.min(data.length, startIdx + h / fontRenderer.FONT_HEIGHT * getBytesPreLine()); i++) {
             if (i > data.length || i < 0) return;
             if (x != posX && i % getBytesPreLine() == 0) {
                 y += fontRenderer.FONT_HEIGHT;
                 x = posX;
             }
+            // Address column
+            if(x == posX) {
+                fontRenderer.drawString(String.format("%0" + dataLenCharacterCount +"X", i), x, y, EnumDyeColor.RED.getColorValue());
+                x += dataLenCharacterCount * charWidth;
+            }
+
             if (x != posX && i % groupSize == 0) {
                 x += spacing * charWidth;
             }
@@ -211,6 +222,15 @@ public class HexEditorComponent extends Gui {
         }
         cursorNibble = Nibble.UPPER;
     }
+
+    private int getAddressColumnCharacterCount() {
+        return (""+data.length).length();
+    }
+
+    public int getDataLength() {
+        return data.length;
+    }
+
 
     public int getBytesPreLine() {
         return groupsPerLine * groupSize;
