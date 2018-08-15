@@ -45,8 +45,9 @@ public class PatchPanelPacket extends PacketGate {
         if (!(partGate.logic instanceof PatchPanelLogic)) return;
         PatchPanelLogic logic = (PatchPanelLogic) partGate.logic;
         logic.setGateConnectionGrid(connectionGrid);
-        if(!partGate.getGateWorld().isRemote)
-            partGate.markGateChanged(true);
+        if(!partGate.getGateWorld().isRemote) {
+            partGate.logic.onChanged(partGate);
+        }
     }
 
     @Override
