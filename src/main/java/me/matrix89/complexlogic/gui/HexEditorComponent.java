@@ -160,6 +160,8 @@ public class HexEditorComponent extends Gui {
             if (selectionAnchor == SELECTION_NONE) {
                 selectionAnchor = cursor;
             }
+        } else {
+            selectionAnchor = SELECTION_NONE;
         }
         switch (keyCode) {
             case 205:
