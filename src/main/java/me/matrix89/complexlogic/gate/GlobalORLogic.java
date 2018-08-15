@@ -20,8 +20,9 @@ public class GlobalORLogic extends BundledGateLogic {
         }
     }
 
+
     @Override
-    public boolean updateOutputs(IGateContainer gate) {
+    public void onChanged(IGateContainer gate) {
         byte[] in = getInputValueBundled(EnumFacing.SOUTH);
         byte out = 0;
         if (in != null) {
@@ -30,8 +31,9 @@ public class GlobalORLogic extends BundledGateLogic {
             }
         }
         setRedstoneOutputValue(EnumFacing.NORTH, out);
-        return true;
+        gate.markGateChanged(true);
     }
+
 
     @Override
     public GateRenderState getLayerState(int i) {
