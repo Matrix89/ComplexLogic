@@ -1,16 +1,11 @@
 package me.matrix89.complexlogic.network;
 
-import me.matrix89.complexlogic.gui.PatchPanelContainer;
-import net.minecraft.client.Minecraft;
+import me.matrix89.complexlogic.gate.PatchPanelLogic;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import pl.asie.charset.lib.network.Packet;
-
-import java.io.IOException;
+import pl.asie.simplelogic.gates.gui.ContainerGate;
 
 public class PatchPanelPacket extends Packet {
     byte[][] connectionGrid = new byte[16][16];
@@ -35,12 +30,12 @@ public class PatchPanelPacket extends Packet {
     public void apply(INetHandler iNetHandler) {
         EntityPlayer player = getPlayer(iNetHandler);
         if (player != null) {
-            if (player.openContainer instanceof PatchPanelContainer) {
-                if (player.world.isRemote) {
-                    ((PatchPanelContainer) player.openContainer).updateFromServer(connectionGrid);
-                } else {
-                    ((PatchPanelContainer) player.openContainer).updateFromClient(connectionGrid);
-                }
+            if (player.openContainer instanceof ContainerGate) {
+                //if (player.world.isRemote) {
+                ((PatchPanelLogic) ((ContainerGate) player.openContainer).getGate().getLogic()).setGateConnectionGrid(connectionGrid);
+                //} else {
+                //    ((ContainerGate) player.openContainer).updateFromClient(connectionGrid);
+                // }
             }
         }
     }

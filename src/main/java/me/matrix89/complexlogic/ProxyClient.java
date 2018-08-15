@@ -4,6 +4,8 @@ import me.matrix89.complexlogic.client.BundledViewerRenderer;
 import me.matrix89.complexlogic.client.ButtonPannelRenderer;
 import me.matrix89.complexlogic.client.SegmentDisplayRenderer;
 import me.matrix89.complexlogic.client.TextDisplayRenderer;
+import me.matrix89.complexlogic.gate.PatchPanelLogic;
+import me.matrix89.complexlogic.gui.PatchPanelGUI;
 import me.matrix89.complexlogic.lights.ColorLampBlock;
 import me.matrix89.complexlogic.lights.LampBlockColorHandler;
 import net.minecraft.block.Block;
@@ -32,6 +34,7 @@ public class ProxyClient extends ProxyCommon {
         SimpleLogicGatesClient.INSTANCE.registerRenderer(SegmentDisplayRenderer.INSTANCE);
         SimpleLogicGatesClient.INSTANCE.registerRenderer(ButtonPannelRenderer.INSTANCE);
         SimpleLogicGatesClient.INSTANCE.registerRenderer(TextDisplayRenderer.INSTANCE);
+        SimpleLogicGatesClient.INSTANCE.registerGui(PatchPanelLogic.class, PatchPanelGUI::new);
     }
 
     @SubscribeEvent

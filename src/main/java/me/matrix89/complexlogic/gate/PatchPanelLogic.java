@@ -58,7 +58,8 @@ public class PatchPanelLogic extends BundledGateLogic {
     @Override
     public boolean onRightClick(IGateContainer gate, EntityPlayer player, Vec3d vec, EnumHand hand) {
         if (!player.isSneaking() && EnumHand.MAIN_HAND==hand) {
-            player.openGui(ComplexLogic.INSTANCE, 0, gate.getGateWorld(), gate.getGatePos().getX(), gate.getGatePos().getY(), gate.getGatePos().getZ());
+            gate.openGUI(player);
+            //player.openGui(ComplexLogic.INSTANCE, 0, gate.getGateWorld(), gate.getGatePos().getX(), gate.getGatePos().getY(), gate.getGatePos().getZ());
             return true;
         }
         return false;

@@ -1,20 +1,22 @@
 package me.matrix89.complexlogic.gui;
 
 import me.matrix89.complexlogic.ComplexLogic;
+import me.matrix89.complexlogic.gate.PatchPanelLogic;
 import me.matrix89.complexlogic.network.PatchPanelPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import pl.asie.charset.lib.inventory.GuiContainerCharset;
+import pl.asie.simplelogic.gates.gui.ContainerGate;
 
 import java.io.IOException;
 
-public class PatchPanelGUI extends GuiContainerCharset<PatchPanelContainer> {
+public class PatchPanelGUI extends GuiContainerCharset<ContainerGate> {
     private ResourceLocation guiTexture = new ResourceLocation(ComplexLogic.MOD_ID, "textures/gui/patch_panel_gui_huge.png");
-    private PatchPanelContainer container;
+    private ContainerGate container;
 
-    public PatchPanelGUI(PatchPanelContainer inventorySlotsIn) {
+    public PatchPanelGUI(ContainerGate inventorySlotsIn) {
         super(inventorySlotsIn, 239, 239);
         this.container = inventorySlotsIn;
     }
@@ -45,7 +47,7 @@ public class PatchPanelGUI extends GuiContainerCharset<PatchPanelContainer> {
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        ComplexLogic.registry.sendToServer(new PatchPanelPacket(container.connectionGrid));
+        ComplexLogic.registry.sendToServer(new PatchPanelPacket(((PatchPanelLogic)container.getGate().getLogic()).getGateConnectionGrid()));
         super.actionPerformed(button);
     }
 
@@ -64,24 +66,24 @@ public class PatchPanelGUI extends GuiContainerCharset<PatchPanelContainer> {
             if (this.visible) {
                 //this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
                 Minecraft.getMinecraft().renderEngine.bindTexture(guiTexture);
-                if (container.connectionGrid[rowIdx][columnIdx] != 0)
+                if (((PatchPanelLogic)container.getGate().getLogic()).getGateConnectionGrid()[rowIdx][columnIdx] != 0)
                     drawTexturedModalRect(x, y, 9, 239, width, height);
                 //this.mouseDragged(mc, mouseX, mouseY);
             }
         }
 
         public boolean isChecked() {
-            return container.connectionGrid[rowIdx][columnIdx] != 0;
+            return ((PatchPanelLogic)container.getGate()).getGateConnectionGrid()[rowIdx][columnIdx] != 0;
         }
 
 
         @Override
         public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
             if (this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height) {
-                if (container.connectionGrid[rowIdx][columnIdx] != 0){
-                    container.connectionGrid[rowIdx][columnIdx] = 0;
+                if (((PatchPanelLogic)container.getGate().getLogic()).getGateConnectionGrid()[rowIdx][columnIdx] != 0){
+                    ((PatchPanelLogic)container.getGate().getLogic()).getGateConnectionGrid()[rowIdx][columnIdx] = 0;
                 }else {
-                    container.connectionGrid[rowIdx][columnIdx] = 15;
+                    ((PatchPanelLogic)container.getGate().getLogic()).getGateConnectionGrid()[rowIdx][columnIdx] = 15;
                 }
                 return true;
             }
