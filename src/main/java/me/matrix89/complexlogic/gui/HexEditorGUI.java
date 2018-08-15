@@ -31,9 +31,13 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         h = (int) (this.height * .98);
         y = (this.height - h) / 2;
         x = (this.width - w) / 2;
-        /*
-        editor = new HexEditorComponent(fontRenderer, x + 10, y + 10);
-        GuiNumberField gplField = new GuiNumberField(3, fontRenderer, 200, 30, 30, fontRenderer.FONT_HEIGHT, mc);
+
+        buttonList.add(new GuiButton(1, x + w - 75, y + 5, 70, 20, "delete byte"));
+        buttonList.add(new GuiButton(2, x + w - 150, y + 5, 70, 20, "insert byte"));
+
+        editor = new HexEditorComponent(fontRenderer, x + 10, y + 30, w - 20, h - (5 + 30));
+
+        GuiNumberField gplField = new GuiNumberField(3, fontRenderer, x + w - 195, y + 6, 30, fontRenderer.FONT_HEIGHT, mc);
         gplField.setValue(editor.groupsPerLine);
         gplField.setOnClick(integer -> {
             if (integer <= 0) {
@@ -45,7 +49,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         });
         textFields.add(gplField);
 
-        GuiNumberField grSzField = new GuiNumberField(3, fontRenderer, 200, 40, 30, fontRenderer.FONT_HEIGHT, mc);
+        GuiNumberField grSzField = new GuiNumberField(3, fontRenderer, x + w - 195, y + 15, 30, fontRenderer.FONT_HEIGHT, mc);
         grSzField.setValue(editor.groupSize);
         grSzField.setOnClick(integer -> {
             if (integer <= 0) {
@@ -55,14 +59,8 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
                 editor.groupSize = integer;
             }
         });
+
         textFields.add(grSzField);
-*/
-
-        buttonList.add(new GuiButton(1, x + w - 75, y + 5, 70, 20, "delete byte"));
-        buttonList.add(new GuiButton(2, x + w - 150, y + 5, 70, 20, "insert byte"));
-
-        //editor.setPos(x, y);
-        editor = new HexEditorComponent(fontRenderer, x + 10, y + 30, w - 20, h - (5 + 30));
         super.initGui();
     }
 

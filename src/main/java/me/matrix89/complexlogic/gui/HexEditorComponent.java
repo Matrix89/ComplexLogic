@@ -33,6 +33,7 @@ public class HexEditorComponent extends Gui {
 
     private Random rnd = new Random();
 
+    private final static int MAX_DATA_LEN = 65535;
     private byte[] data = new byte[512];
 
     private Minecraft mc;
