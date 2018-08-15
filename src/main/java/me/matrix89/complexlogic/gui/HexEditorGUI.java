@@ -64,8 +64,8 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         textFields.add(grSzField);
 */
 
-        buttonList.add(new GuiButton(1, x + w - 150, y + 5, 70, 20, "insert byte"));
-        buttonList.add(new GuiButton(2, x + w - 75, y + 5, 70, 20, "delete byte"));
+        buttonList.add(new GuiButton(1, x + w - 75, y + 5, 70, 20, "delete byte"));
+        buttonList.add(new GuiButton(2, x + w - 150, y + 5, 70, 20, "insert byte"));
 
         //editor.setPos(x, y);
         editor = new HexEditorComponent(fontRenderer, x + 10, y + 30, w - 20, h - (5 + 30));
@@ -141,30 +141,13 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        /*
-        byte[] newData;
-        try {
-            switch (button.id) {
-                case 1: // insert byte
-                    newData = new byte[data.length + 1];
-                    System.arraycopy(data, 0, newData, 0, Math.max(0, cursor - 1));
-                    System.arraycopy(data, cursor, newData, cursor + 1, data.length - cursor);
-                    data = newData;
-                    break;
-                case 2: // remove byte
-                    newData = new byte[data.length - 1];
-                    System.arraycopy(data, 0, newData, 0, cursor);
-                    System.arraycopy(data, cursor + 1, newData, cursor, data.length - cursor - 1);
-                    if (cursor >= data.length - 1) {
-                        setCursor(cursor - 1);
-                    }
-                    data = newData;
-                    break;
-            }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
+        switch (button.id) {
+            case 1:
+                editor.insertByte();
+                break;
+            case 2:
+                editor.deleteByte();
+                break;
         }
-        super.actionPerformed(button);
-        */
     }
 }

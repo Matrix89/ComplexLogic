@@ -3,9 +3,7 @@ package me.matrix89.complexlogic.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiSimpleScrolledSelectionListProxy;
 import net.minecraft.item.EnumDyeColor;
-import org.lwjgl.input.Keyboard;
 
 import java.util.Random;
 import java.util.regex.Pattern;
@@ -115,6 +113,30 @@ public class HexEditorComponent extends Gui {
         }
         drawScrollBar();
     }
+
+    /**
+     * Deletes byte under cursor
+     */
+    public void deleteByte() {
+        byte[] newData = new byte[data.length + 1];
+        System.arraycopy(data, 0, newData, 0, Math.max(0, cursor - 1));
+        System.arraycopy(data, cursor, newData, cursor + 1, data.length - cursor);
+        data = newData;
+    }
+
+    /**
+     * Inserts byte before cursor
+     */
+    public void insertByte() {
+        byte[] newData = new byte[data.length - 1];
+        System.arraycopy(data, 0, newData, 0, cursor);
+        System.arraycopy(data, cursor + 1, newData, cursor, data.length - cursor - 1);
+        if (cursor >= data.length - 1) {
+            setCursor(cursor - 1);
+        }
+        data = newData;
+    }
+
     public float getScrollPercentage() {
         int lines = data.length / (groupSize * groupsPerLine) - ((h / fontRenderer.FONT_HEIGHT) - overScroll);
         return scroll / (float) lines;
@@ -122,7 +144,7 @@ public class HexEditorComponent extends Gui {
 
     public void drawScrollBar() {
         int rx = posX + w - 5;
-        drawRect(rx, posY, rx + 5, posY + h, 0xff000000| EnumDyeColor.RED.getColorValue());
+        drawRect(rx, posY, rx + 5, posY + h, 0xff000000 | EnumDyeColor.RED.getColorValue());
 
         int knobY = posY + (int) (h * getScrollPercentage());
         drawRect(rx, knobY, rx + 5, knobY + 1, 0xff000000 | EnumDyeColor.BLACK.getColorValue()); // Knob
@@ -163,12 +185,12 @@ public class HexEditorComponent extends Gui {
             case 47: //paste
                 break;
             case 13: // +
-                if(getScrollPercentage() < 1) {
+                if (getScrollPercentage() < 1) {
                     scroll++;
                 }
                 break;
             case 12: //-
-                if(getScrollPercentage() > 0) {
+                if (getScrollPercentage() > 0) {
                     scroll--;
                 }
                 break;
