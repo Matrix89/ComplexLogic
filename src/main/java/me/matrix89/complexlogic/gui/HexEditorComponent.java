@@ -35,13 +35,15 @@ public class HexEditorComponent extends Gui {
 
     private Random rnd = new Random();
 
-    private byte[] data = new byte[256];
+    private byte[] data = new byte[512];
 
     private Minecraft mc;
     private int posX;
     private int posY;
     private int h;
     private int w;
+
+    private int scrollBarWidth = 10;
 
     public HexEditorComponent(FontRenderer fontRenderer, int x, int y, int w, int h) {
         this.fontRenderer = fontRenderer;
@@ -50,6 +52,9 @@ public class HexEditorComponent extends Gui {
         this.posY = y;
         this.w = w;
         this.h = h;
+        spacing = 2;
+
+        groupsPerLine = (w - scrollBarWidth) / (charWidth * 2 * groupSize + (spacing * charWidth));
     }
 
     public void setPos(int x, int y) {
@@ -101,6 +106,7 @@ public class HexEditorComponent extends Gui {
         int y = posY;
         int startIdx = scroll * getBytesPreLine();
         for (int i = startIdx; i < Math.min(data.length, startIdx + h / fontRenderer.FONT_HEIGHT * getBytesPreLine()); i++) {
+            if (i > data.length || i < 0) return;
             if (x != posX && i % getBytesPreLine() == 0) {
                 y += fontRenderer.FONT_HEIGHT;
                 x = posX;
@@ -150,11 +156,13 @@ public class HexEditorComponent extends Gui {
     }
 
     public void drawScrollBar() {
-        int rx = posX + w - 5;
-        drawRect(rx, posY, rx + 5, posY + h, 0xff000000 | EnumDyeColor.RED.getColorValue());
+        int rx = posX + w - scrollBarWidth;
+        drawRect(rx, posY, rx + scrollBarWidth, posY + h, 0xff000000 | EnumDyeColor.RED.getColorValue());
 
-        int knobY = posY + (int) (h * getScrollPercentage());
-        drawRect(rx, knobY, rx + 5, knobY + 1, 0xff000000 | EnumDyeColor.BLACK.getColorValue()); // Knob
+        int knobH = h / getLineCount();
+        int knobY = (int) ((h * getScrollPercentage()) - knobH / 2);
+        knobY = MathHelper.clamp(knobY, 0, h- knobH);
+        drawRect(rx, posY + knobY, rx + scrollBarWidth, posY + knobY + knobH, 0xff000000 | EnumDyeColor.BLACK.getColorValue()); // Knob
     }
 
     public void setCursor(int cursor) {
