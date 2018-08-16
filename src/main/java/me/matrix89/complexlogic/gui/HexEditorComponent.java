@@ -179,12 +179,12 @@ public class HexEditorComponent extends Gui {
     }
 
     public void setCursor(int cursor) {
-        if(cursor == data.length) {
+        if (cursor == data.length) {
             byte[] newData = new byte[data.length + 1];
             System.arraycopy(data, 0, newData, 0, data.length);
             data = newData;
         }
-        this.cursor = Math.max(0, Math.min( data.length - 1, cursor ));
+        this.cursor = Math.max(0, Math.min(data.length - 1, cursor));
     }
 
     private void handledMovement(int keyCode) {
@@ -206,6 +206,7 @@ public class HexEditorComponent extends Gui {
             case 208://down
                 setCursor(cursor + getBytesPreLine());
                 break;
+            case 45:
             case 46: //copy
                 StringBuilder sb = new StringBuilder();
                 int start = Math.min(selectionAnchor, cursor);
@@ -214,12 +215,16 @@ public class HexEditorComponent extends Gui {
                     sb.append(String.format("%02X", data[i]));
                 }
                 setClipboardString(sb.toString());
+                if (keyCode == 45) {
+                    byte[] newData = new byte[data.length - getSelectionLength()];
+                    System.arraycopy(data, 0, newData, 0, getSelectionLength() - 1);
+                    System.arraycopy(data, getSelectionStart() + getSelectionLength(), newData, getSelectionStart(), data.length - (getSelectionStart() + getSelectionLength()));
+                    data = newData;
+                }
                 break;
             case 47: //paste
                 String cb = getClipboardString();
                 int missingSpace = Math.max(selectionAnchor == SELECTION_NONE ? cb.length() / 2 : cb.length() / 2 - getSelectionLength(), 0);
-                System.out.println(getSelectionLength());
-                System.out.println(missingSpace);
                 if (missingSpace == 0) {
                     System.arraycopy(DatatypeConverter.parseHexBinary(cb), 0, data, getSelectionStart(), cb.length() / 2);
                 } else {
@@ -229,7 +234,6 @@ public class HexEditorComponent extends Gui {
                     System.arraycopy(data, (getSelectionStart()) + (cb.length() / 2), newData, getSelectionStart() + cb.length() / 2, data.length - ((cb.length() / 2) + getSelectionStart()));
                     data = newData;
                 }
-
                 break;
             case 13: // +
                 addScroll(1);
