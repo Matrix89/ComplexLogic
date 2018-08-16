@@ -179,7 +179,12 @@ public class HexEditorComponent extends Gui {
     }
 
     public void setCursor(int cursor) {
-        this.cursor = Math.max(0, Math.min(cursor, data.length - 1));
+        if(cursor == data.length) {
+            byte[] newData = new byte[data.length + 1];
+            System.arraycopy(data, 0, newData, 0, data.length);
+            data = newData;
+        }
+        this.cursor = Math.max(0, Math.min( data.length - 1, cursor ));
     }
 
     private void handledMovement(int keyCode) {
