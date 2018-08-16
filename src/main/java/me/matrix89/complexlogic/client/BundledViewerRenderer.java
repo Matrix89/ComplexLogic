@@ -88,7 +88,7 @@ public class BundledViewerRenderer extends GateCustomRenderer<BundledViewerLogic
             initModels();
         }
 
-        byte[] data = logic.getInputValueBundled(EnumFacing.SOUTH);
+        byte[] data = logic.getOutputValueBundled(EnumFacing.NORTH);
         if (data != null) {
             for (int i = 0; i < 16; i++) {
                 int v = data[i];
