@@ -35,7 +35,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         buttonList.add(new GuiButton(1, x + w - 75, y + 5, 70, 20, "delete byte"));
         buttonList.add(new GuiButton(2, x + w - 150, y + 5, 70, 20, "insert byte"));
 
-        editor = new HexEditorComponent(fontRenderer, x + 10, y + 30, w - 20, h - (5 + 30));
+        editor = new HexEditorComponent(fontRenderer, x + 10, y + 30, w - 20, h - (5 + 40));
 
         GuiNumberField gplField = new GuiNumberField(3, fontRenderer, x + w - 195, y + 6, 30, fontRenderer.FONT_HEIGHT, mc);
         gplField.setValue(editor.groupsPerLine);
@@ -133,7 +133,7 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         drawRect(x, y, x + w, y + h, 0xffC6C6C6);
         textFields.forEach(field -> field.draw(mouseX, mouseY, partialTicks));
 
-        drawString(fontRenderer, String.format("Length: %05X", editor.getDataLength()), x+5, y+ 5, EnumDyeColor.WHITE.getColorValue());
+        drawString(fontRenderer, String.format("Length: %05X", editor.getDataLength()), x+5, y+ h - 5 - fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
         editor.draw();
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
     }
