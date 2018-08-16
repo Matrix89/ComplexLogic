@@ -29,6 +29,11 @@ public class SegmentDisplayRenderer extends GateCustomRenderer<SegmentDisplayLog
     }
 
     @Override
+    public boolean hasDynamic() {
+        return true;
+    }
+
+    @Override
     public void renderStatic(IGateContainer gate, SegmentDisplayLogic logic, boolean isItem, Consumer<IBakedModel> modelConsumer, BiConsumer<BakedQuad, EnumFacing> quadConsumer) {
         if (isItem) {
             if (segmentBakedModel == null) {

@@ -66,6 +66,11 @@ public class BundledViewerRenderer extends GateCustomRenderer<BundledViewerLogic
     }
 
     @Override
+    public boolean hasDynamic() {
+        return true;
+    }
+
+    @Override
     public Class<BundledViewerLogic> getLogicClass() {
         return BundledViewerLogic.class;
     }

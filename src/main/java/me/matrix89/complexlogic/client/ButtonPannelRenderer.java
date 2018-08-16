@@ -71,6 +71,10 @@ public class ButtonPannelRenderer extends GateCustomRenderer<ButtonPanelLogic> {
         }
     }
 
+    @Override
+    public boolean hasDynamic() {
+        return true;
+    }
 
     @Override
     public void renderStatic(IGateContainer gate, ButtonPanelLogic logic, boolean isItem, Consumer<IBakedModel> modelConsumer, BiConsumer<BakedQuad, EnumFacing> quadConsumer) {

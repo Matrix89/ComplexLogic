@@ -24,6 +24,11 @@ public class TextDisplayRenderer extends GateCustomRenderer<TextDisplayLogic> {
     }
 
     @Override
+    public boolean hasDynamic() {
+        return true;
+    }
+
+    @Override
     public void renderDynamic(IGateContainer gate, TextDisplayLogic logic, IBlockAccess world, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
         super.renderDynamic(gate, logic, world, x, y, z, partialTicks, destroyStage, partial, buffer);
         int codepoint = logic.codepointClient;
