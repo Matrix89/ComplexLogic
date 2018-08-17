@@ -35,7 +35,7 @@ public class HexEditorComponent extends Gui {
     private Random rnd = new Random();
 
     private final static int MAX_DATA_LEN = 65535;
-    private byte[] data = new byte[512];
+    private byte[] data = new byte[0];
 
     private Minecraft mc;
     private int posX;
@@ -57,6 +57,14 @@ public class HexEditorComponent extends Gui {
 
         int aw = (w - scrollBarWidth) - getAddressColumnCharacterCount() * charWidth;
         groupsPerLine = aw / (charWidth * 2 * groupSize + (spacing * charWidth));
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     public void setPos(int x, int y) {

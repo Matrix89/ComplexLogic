@@ -1,13 +1,24 @@
 package me.matrix89.complexlogic.gui;
 
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import me.matrix89.complexlogic.ComplexLogic;
+import me.matrix89.complexlogic.network.HexEditorPacket;
+import me.matrix89.complexlogic.network.PatchPanelPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
 import pl.asie.charset.lib.inventory.GuiContainerCharset;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
 
@@ -15,15 +26,38 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     private GuiTextField focusedField = null;
 
     private HexEditorComponent editor;
+    private EntityPlayer player;
 
-    public HexEditorGUI(HexEditorContainer container, int xSize, int ySize) {
+    public HexEditorGUI(HexEditorContainer container, int xSize, int ySize, EntityPlayer player) {
         super(container, xSize, ySize);
+        this.player = player;
     }
 
     private int w;
     private int h;
     private int y;
     private int x;
+
+    private byte[] readBookTag() {
+        if (!player.getHeldItem(EnumHand.MAIN_HAND).hasTagCompound()) return new byte[0];
+        NBTTagCompound tag = player.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        Map<Integer, Integer> memory = new Int2IntOpenHashMap();
+        AtomicInteger maxaddress = new AtomicInteger();
+        tag.getKeySet().forEach(k -> {
+            int key = Integer.parseInt(k);
+            ((Int2IntOpenHashMap) memory).put(key, tag.getInteger(k));
+            if (maxaddress.get() < key) {
+                maxaddress.set(key);
+            }
+        });
+        byte[] result = new byte[(maxaddress.get()+1) * 2];
+        memory.forEach((k, v) -> {
+            result[k * 2] = (byte) (v >> 8 & 0xff);
+            result[k * 2 + 1] = (byte) (v & 0xfF);
+        });
+        return result;
+    }
+
 
     @Override
     public void initGui() {
@@ -36,6 +70,11 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         buttonList.add(new GuiButton(2, x + w - 150, y + 5, 70, 20, "insert byte"));
 
         editor = new HexEditorComponent(fontRenderer, x + 10, y + 30, w - 20, h - (5 + 40));
+        try {
+            editor.setData(readBookTag());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         GuiNumberField gplField = new GuiNumberField(3, fontRenderer, x + w - 195, y + 6, 30, fontRenderer.FONT_HEIGHT, mc);
         gplField.setValue(editor.groupsPerLine);
@@ -133,9 +172,15 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
         drawRect(x, y, x + w, y + h, 0xffC6C6C6);
         textFields.forEach(field -> field.draw(mouseX, mouseY, partialTicks));
 
-        drawString(fontRenderer, String.format("Length: %05X", editor.getDataLength()), x+5, y+ h - 5 - fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
+        drawString(fontRenderer, String.format("Length: %05X", editor.getDataLength()), x + 5, y + h - 5 - fontRenderer.FONT_HEIGHT, EnumDyeColor.WHITE.getColorValue());
         editor.draw();
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    }
+
+    @Override
+    public void onGuiClosed() {
+        ComplexLogic.registry.sendToServer(new HexEditorPacket(editor.getData()));
+        player.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(HexEditorPacket.createBookTag(editor.getData()));
     }
 
     @Override
