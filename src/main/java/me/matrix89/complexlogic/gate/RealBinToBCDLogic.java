@@ -16,7 +16,6 @@ public class RealBinToBCDLogic extends BundledGateLogic {
         switch (dir) {
             case NORTH:
             case EAST:
-            case WEST:
                 return GateConnection.OUTPUT_BUNDLED;
             case SOUTH:
                 return GateConnection.INPUT_BUNDLED;
@@ -35,9 +34,9 @@ public class RealBinToBCDLogic extends BundledGateLogic {
             in = in / 10;
             ++i;
         }
-        setBundledOutputValue(EnumFacing.WEST, bundledDigiToRs(lcd[4]));
-        setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(lcd[2] | (lcd[3]<<8)));
-        setBundledOutputValue(EnumFacing.EAST, bundledDigiToRs(lcd[0] | (lcd[1]<<8)));
+
+        setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(lcd[4]));
+        setBundledOutputValue(EnumFacing.EAST, bundledDigiToRs(lcd[0] | (lcd[1]<<4)| (lcd[2]<<8) | (lcd[3]<<12)));
         return true;
 
     }
