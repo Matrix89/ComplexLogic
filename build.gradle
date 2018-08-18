@@ -63,7 +63,7 @@ repositories {
 
 dependencies {
     deobfCompile "MCMultiPart2:MCMultiPart-exp:2.5.1_66"
-    deobfCompile name: "Charset", version: "0.5.4.8.10-full-deobf"
+    deobfCompile name: "Charset", version: "0.5.5.0.15-full-deobf"
     // deobfCompile name: "Charset-Lib", version: "deobf"
     // deobfCompile name: "SimpleLogic", version: "deobf"
 }

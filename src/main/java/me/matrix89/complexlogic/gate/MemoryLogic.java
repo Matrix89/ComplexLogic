@@ -42,14 +42,11 @@ public class MemoryLogic extends BundledGateLogic {
                 NBTTagCompound mapTag = new NBTTagCompound();
                 memory.forEach((k, v) -> mapTag.setInteger(k.toString(), v));
                 playerIn.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(mapTag);
-                System.out.println("Write to HexBook");
             }else if(!gate.getGateWorld().isRemote){
                 memory.clear();
                 if(playerIn.getHeldItem(EnumHand.MAIN_HAND).hasTagCompound()) {
-                    System.out.println("Write to Memory");
                     NBTTagCompound tag = playerIn.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
                     tag.getKeySet().forEach((k) -> memory.put(Integer.parseInt(k), tag.getInteger(k)));
-                    System.out.println(memory.toString());
                 }
                 gate.markGateChanged(true);
                 gate.scheduleRedstoneTick();
@@ -123,7 +120,6 @@ public class MemoryLogic extends BundledGateLogic {
                 memory.put(newAddress, newValue);
             }
         }
-        System.out.println(memory.toString());
         setBundledOutputValue(EnumFacing.NORTH, bundledDigiToRs(memory.getOrDefault(address, 0)));
         return true;
     }
