@@ -1,0 +1,26 @@
+{
+  "type": "charset:shaped",
+  "group": "complex-logic:tools",
+  "pattern": [
+    "sbs",
+    "brb",
+    "sbs"
+  ],
+  "key": {
+    "b": {
+      "item": "minecraft:paper"
+    },
+    "s": {
+      "item": "minecraft:redstone"
+    },
+    "r": {
+      "item": "minecraft:redstone_torch"
+    }
+  },
+  "result": {
+    "type": "minecraft:item",
+    "item": "complex-logic:hex_book",
+    "data": 0,
+    "count": 1
+  }
+}

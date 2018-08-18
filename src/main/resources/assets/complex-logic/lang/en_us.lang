@@ -34,3 +34,6 @@ tile.cage_lamp_inverted.name=%s Inverted Cage Lamp
 # Flat lamps
 tile.flat_lamp.name=%s Flat Lamp
 tile.flat_lamp_inverted.name=%s Inverted Flat Lamp
+
+#Other
+item.complex-logic.hexbook.name=Hex Editor

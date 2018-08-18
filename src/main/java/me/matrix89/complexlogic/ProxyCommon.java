@@ -1,10 +1,20 @@
 package me.matrix89.complexlogic;
 
 import me.matrix89.complexlogic.gate.*;
+import me.matrix89.complexlogic.gui.HexEditorContainer;
+import me.matrix89.complexlogic.gui.HexEditorGUI;
+import me.matrix89.complexlogic.item.HexBook;
 import me.matrix89.complexlogic.lights.ColorLampBlock;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -90,8 +100,12 @@ public class ProxyCommon {
         for (Map.Entry<Block, Item> entry : ColorLampBlock.LampRegistry.entrySet()) {
             register.getRegistry().register(entry.getValue());
         }
+        register.getRegistry().register(HexBook.INSTANCE);
     }
 
+    public ActionResult<ItemStack> onHexBookRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
+    }
 
     public void registerColor() {
 

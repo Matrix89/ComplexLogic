@@ -1,8 +1,13 @@
 package me.matrix89.complexlogic.gate;
 
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import me.matrix89.complexlogic.item.HexBook;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.Vec3d;
 import pl.asie.simplelogic.gates.PartGate;
 import pl.asie.simplelogic.gates.logic.GateConnection;
 import pl.asie.simplelogic.gates.logic.GateRenderState;
@@ -28,6 +33,27 @@ public class MemoryLogic extends BundledGateLogic {
             tag.setInteger("newValue", newValue);
         }
         return super.writeToNBT(tag, isClient);
+    }
+
+    @Override
+    public boolean onRightClick(IGateContainer gate, EntityPlayer playerIn, Vec3d vec, EnumHand hand) {
+        if(playerIn.getHeldItem(EnumHand.MAIN_HAND).isItemEqual(new ItemStack(HexBook.INSTANCE))){
+            if(playerIn.isSneaking() && !gate.getGateWorld().isRemote) {
+                NBTTagCompound mapTag = new NBTTagCompound();
+                memory.forEach((k, v) -> mapTag.setInteger(k.toString(), v));
+                playerIn.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(mapTag);
+            }else if(!gate.getGateWorld().isRemote){
+                memory.clear();
+                if(playerIn.getHeldItem(EnumHand.MAIN_HAND).hasTagCompound()) {
+                    NBTTagCompound tag = playerIn.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+                    tag.getKeySet().forEach((k) -> memory.put(Integer.parseInt(k), tag.getInteger(k)));
+                }
+                gate.markGateChanged(true);
+                gate.scheduleRedstoneTick();
+            }
+            return true;
+        }
+        return super.onRightClick(gate, playerIn, vec, hand);
     }
 
     @Override
@@ -86,7 +112,7 @@ public class MemoryLogic extends BundledGateLogic {
                 newAddress = address;
                 newValue = value;
             }
-        } else {
+        } else if(updateSignalOn){
             updateSignalOn = false;
             if (newValue == 0) {
                 memory.remove(newAddress);
