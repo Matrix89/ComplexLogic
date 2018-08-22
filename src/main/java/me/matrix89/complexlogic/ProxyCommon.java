@@ -104,7 +104,7 @@ public class ProxyCommon {
     }
 
     public ActionResult<ItemStack> onHexBookRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
+        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
 
     public void registerColor() {

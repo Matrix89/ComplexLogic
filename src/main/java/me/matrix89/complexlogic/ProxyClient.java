@@ -8,6 +8,7 @@ import me.matrix89.complexlogic.gate.PatchPanelLogic;
 import me.matrix89.complexlogic.gui.PatchPanelGUI;
 import me.matrix89.complexlogic.gui.HexEditorContainer;
 import me.matrix89.complexlogic.gui.HexEditorGUI;
+import me.matrix89.complexlogic.guilib.ComplexGuiScreen;
 import me.matrix89.complexlogic.item.HexBook;
 import me.matrix89.complexlogic.lights.ColorLampBlock;
 import me.matrix89.complexlogic.lights.LampBlockColorHandler;
@@ -103,7 +104,7 @@ public class ProxyClient extends ProxyCommon {
 
     @Override
     public ActionResult<ItemStack> onHexBookRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        Minecraft.getMinecraft().displayGuiScreen(new HexEditorGUI(new HexEditorContainer(playerIn.inventory), 256, 256, playerIn));
+        Minecraft.getMinecraft().displayGuiScreen(new ComplexGuiScreen());
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
 
