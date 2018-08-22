@@ -19,7 +19,7 @@ public class ButtonComponent implements IComponent {
 	
 	@Override
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-	
+
 	}
 	
 	@Override
@@ -44,6 +44,9 @@ public class ButtonComponent implements IComponent {
 		}else{
 			DrawingUtils.drawRect(size, 0xFF0000FF);
 		}
+		if(size.checkCollision(mouseX, mouseY))
+			DrawingUtils.drawRect(size, 0x77ffffff);
+		fontRenderer.drawString(message, size.getXStart(), size.getYStart(), 0xffffffff);
 	}
 	
 	@Override

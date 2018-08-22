@@ -2,6 +2,7 @@ package me.matrix89.complexlogic.guilib;
 
 import java.io.IOException;
 
+import me.matrix89.complexlogic.guilib.components.TextfieldComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -22,6 +23,8 @@ public class ComplexGuiScreen extends GuiScreen {
 		rootComponent = new PanelComponent(new Rectangle(0, 0, width, height));
 		rootComponent.addChild(new ButtonComponent("Witaj", 10, 10, fontRenderer));
 		rootComponent.addChild(new ButtonComponent("Witaj", 50, 10, fontRenderer));
+		rootComponent.addChild(new TextfieldComponent( 100, 10, 5,fontRenderer));
+		rootComponent.addChild(new TextfieldComponent(200, 10, 2, fontRenderer));
 	}
 	
 	@Override
