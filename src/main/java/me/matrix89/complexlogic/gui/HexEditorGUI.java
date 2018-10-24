@@ -187,10 +187,10 @@ public class HexEditorGUI extends GuiContainerCharset<HexEditorContainer> {
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
             case 1:
-                editor.insertByte();
+                editor.deleteByte();
                 break;
             case 2:
-                editor.deleteByte();
+                editor.insertByte();
                 break;
         }
     }

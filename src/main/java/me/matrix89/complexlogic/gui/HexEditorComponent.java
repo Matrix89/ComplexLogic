@@ -5,9 +5,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.math.MathHelper;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.lwjgl.input.Mouse;
 
-import javax.xml.bind.DatatypeConverter;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -20,8 +21,8 @@ public class HexEditorComponent extends Gui {
 
     private Nibble cursorNibble = Nibble.UPPER;
 
-    public int groupSize = 2;
-    public int groupsPerLine = 4;
+    int groupSize = 2;
+    int groupsPerLine = 4;
     //spacing size in character widths
     private int spacing = 0;
     private int charWidth;
@@ -34,9 +35,6 @@ public class HexEditorComponent extends Gui {
 
     private Random rnd = new Random();
 
-    private final static int MAX_DATA_LEN = 65535;
-    private byte[] data = new byte[0];
-
     private Minecraft mc;
     private int posX;
     private int posY;
@@ -45,6 +43,7 @@ public class HexEditorComponent extends Gui {
 
     private int scrollBarWidth = 10;
 
+    private DataModel data;
 
     public HexEditorComponent(FontRenderer fontRenderer, int x, int y, int w, int h) {
         this.fontRenderer = fontRenderer;
@@ -54,17 +53,18 @@ public class HexEditorComponent extends Gui {
         this.w = w;
         this.h = h;
         spacing = 2;
+        this.data = new DataModel();
 
         int aw = (w - scrollBarWidth) - getAddressColumnCharacterCount() * charWidth;
         groupsPerLine = aw / (charWidth * 2 * groupSize + (spacing * charWidth));
     }
 
     public byte[] getData() {
-        return data;
+        return data.getRawData();
     }
 
     public void setData(byte[] data) {
-        this.data = data;
+        this.data.setRawData(data);
     }
 
     public void setPos(int x, int y) {
@@ -75,16 +75,20 @@ public class HexEditorComponent extends Gui {
     public void keyTyped(char typedChar, int keyCode) {
         Pattern p = Pattern.compile("[a-fA-F0-9]");
         if (!isCtrlKeyDown() && p.matcher(String.valueOf(typedChar).toUpperCase()).find()) {
+            byte b = data.getByte(cursor);
             switch (cursorNibble) {
                 case UPPER:
-                    data[cursor] &= (data[cursor] << 8 | 0x0f);
-                    data[cursor] |= Byte.parseByte("" + typedChar, 16) << 4;
+                    b &= (b << 8 | 0x0f);
+                    b |= Byte.parseByte("" + typedChar, 16) << 4;
 
+                    data.setByte(cursor, b);
                     cursorNibble = Nibble.LOWER;
                     return;
                 case LOWER:
-                    data[cursor] &= 0xf0;
-                    data[cursor] |= Byte.parseByte("" + typedChar, 16);
+                    b &= 0xf0;
+                    b |= Byte.parseByte("" + typedChar, 16);
+
+                    data.setByte(cursor, b);
                     setCursor(cursor + 1);
                     cursorNibble = Nibble.UPPER;
             }
@@ -120,8 +124,8 @@ public class HexEditorComponent extends Gui {
         int y = posY;
         int startIdx = scroll * getBytesPreLine();
         int dataLenCharacterCount = getAddressColumnCharacterCount();
-        for (int i = startIdx; i < Math.min(data.length, startIdx + h / fontRenderer.FONT_HEIGHT * getBytesPreLine()); i++) {
-            if (i > data.length || i < 0) return;
+        for (int i = startIdx; i < Math.min(data.length(), startIdx + h / fontRenderer.FONT_HEIGHT * getBytesPreLine()); i++) {
+            if (i > data.length() || i < 0) return;
             if (x != posX && i % getBytesPreLine() == 0) {
                 y += fontRenderer.FONT_HEIGHT;
                 x = posX;
@@ -143,7 +147,7 @@ public class HexEditorComponent extends Gui {
                 int nx = x + (cursorNibble == Nibble.UPPER ? 0 : charWidth);
                 drawRect(nx, (int) (y + fontRenderer.FONT_HEIGHT * 0.9f), nx + charWidth, y + fontRenderer.FONT_HEIGHT, 0xff000000 | EnumDyeColor.BLUE.getColorValue());
             }
-            fontRenderer.drawString(String.format("%02X", data[i]), x, y, EnumDyeColor.WHITE.getColorValue());
+            fontRenderer.drawString(String.format("%02X", data.getByte(i)), x, y, EnumDyeColor.WHITE.getColorValue());
             x += 2 * charWidth;
         }
         drawScrollBar();
@@ -153,23 +157,14 @@ public class HexEditorComponent extends Gui {
      * Deletes byte under cursor
      */
     public void deleteByte() {
-        byte[] newData = new byte[data.length + 1];
-        System.arraycopy(data, 0, newData, 0, Math.max(0, cursor - 1));
-        System.arraycopy(data, cursor, newData, cursor + 1, data.length - cursor);
-        data = newData;
+        data.deleteByte(cursor);
     }
 
     /**
      * Inserts byte before cursor
      */
     public void insertByte() {
-        byte[] newData = new byte[data.length - 1];
-        System.arraycopy(data, 0, newData, 0, cursor);
-        System.arraycopy(data, cursor + 1, newData, cursor, data.length - cursor - 1);
-        if (cursor >= data.length - 1) {
-            setCursor(cursor - 1);
-        }
-        data = newData;
+        data.insertByte(cursor, (byte) 0);
     }
 
     public float getScrollPercentage() {
@@ -180,19 +175,17 @@ public class HexEditorComponent extends Gui {
         int rx = posX + w - scrollBarWidth;
         drawRect(rx, posY, rx + scrollBarWidth, posY + h, 0xff000000 | EnumDyeColor.RED.getColorValue());
 
-        int knobH = h / getLineCount();
+        int knobH = h / Math.max(getLineCount(), 1);
         int knobY = (int) ((h * getScrollPercentage()) - knobH / 2);
         knobY = MathHelper.clamp(knobY, 0, h - knobH);
         drawRect(rx, posY + knobY, rx + scrollBarWidth, posY + knobY + knobH, 0xff000000 | EnumDyeColor.BLACK.getColorValue()); // Knob
     }
 
     public void setCursor(int cursor) {
-        if (cursor == data.length) {
-            byte[] newData = new byte[data.length + 1];
-            System.arraycopy(data, 0, newData, 0, data.length);
-            data = newData;
+        if (cursor == data.length()) {
+            data.insertByte(cursor, (byte) 0);
         }
-        this.cursor = Math.max(0, Math.min(data.length - 1, cursor));
+        this.cursor = Math.max(0, Math.min(data.length() - 1, cursor));
     }
 
     private void handledMovement(int keyCode) {
@@ -220,28 +213,26 @@ public class HexEditorComponent extends Gui {
                 int start = Math.min(selectionAnchor, cursor);
                 int end = Math.max(selectionAnchor, cursor);
                 for (int i = start; i <= end; i++) {
-                    sb.append(String.format("%02X", data[i]));
+                    sb.append(String.format("%02X", data.getByte(i)));
                 }
                 setClipboardString(sb.toString());
                 if (keyCode == 45) {
-                    byte[] newData = new byte[data.length - getSelectionLength()];
-                    System.arraycopy(data, 0, newData, 0, getSelectionLength() - 1);
-                    System.arraycopy(data, getSelectionStart() + getSelectionLength(), newData, getSelectionStart(), data.length - (getSelectionStart() + getSelectionLength()));
-                    data = newData;
                 }
                 break;
             case 47: //paste
                 String cb = getClipboardString();
-                int missingSpace = Math.max(selectionAnchor == SELECTION_NONE ? cb.length() / 2 : cb.length() / 2 - getSelectionLength(), 0);
-                if (missingSpace == 0) {
-                    System.arraycopy(DatatypeConverter.parseHexBinary(cb), 0, data, getSelectionStart(), cb.length() / 2);
-                } else {
-                    byte[] newData = new byte[data.length + missingSpace];
-                    System.arraycopy(data, 0, newData, 0, getSelectionStart());
-                    System.arraycopy(DatatypeConverter.parseHexBinary(cb), 0, newData, cursor, cb.length() / 2);
-                    System.arraycopy(data, (getSelectionStart()) + (cb.length() / 2), newData, getSelectionStart() + cb.length() / 2, data.length - ((cb.length() / 2) + getSelectionStart()));
-                    data = newData;
+
+                byte[] cbData;
+                try {
+                    cbData = Hex.decodeHex(cb.toCharArray());
+                } catch (DecoderException e) {
+                    break;
                 }
+                for (byte c : cbData) {
+                    data.setByte(cursor, c);
+                    setCursor(++cursor);
+                }
+
                 break;
             case 13: // +
                 addScroll(1);
@@ -254,11 +245,11 @@ public class HexEditorComponent extends Gui {
     }
 
     private int getAddressColumnCharacterCount() {
-        return ("" + data.length).length();
+        return ("" + data.length()).length();
     }
 
     public int getDataLength() {
-        return data.length;
+        return data.length();
     }
 
 
@@ -267,7 +258,7 @@ public class HexEditorComponent extends Gui {
     }
 
     public int getLineCount() {
-        return data.length / getBytesPreLine() - ((h / fontRenderer.FONT_HEIGHT) - overScroll);
+        return data.length() / getBytesPreLine() - ((h / fontRenderer.FONT_HEIGHT) - overScroll);
     }
 
     public void handleMouseInput() {
@@ -310,5 +301,68 @@ public class HexEditorComponent extends Gui {
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         mouseUpdateCursor(mouseX, mouseY);
         selectionAnchor = cursor;
+    }
+
+    private class DataModel {
+        private final static int MAX_DATA_LEN = 65535;
+        private byte[] data = new byte[0];
+
+        private byte[] range(int start, int end) {
+            start = MathHelper.clamp(start, 0, data.length);
+            end = MathHelper.clamp(end, 0, data.length);
+
+            byte[] out = new byte[Math.abs(start - end)];
+            System.arraycopy(data, start, out, 0, out.length);
+            return out;
+        }
+
+        private void deleteByte(int pos) {
+            if (pos < 0 || data.length == 0 || pos >= data.length) return;
+            byte[] newData = new byte[data.length - 1];
+            try {
+                System.arraycopy(data, 0, newData, 0, pos);
+                System.arraycopy(data, pos + 1, newData, pos, data.length - pos - 1);
+            }catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+            data = newData;
+        }
+
+        private void insertByte(int pos, byte b) {
+            byte[] newData = new byte[data.length + 1];
+
+            try {
+                System.arraycopy(data, 0, newData, 0, Math.max(0, pos));
+                System.arraycopy(data, pos, newData, pos + 1, data.length - pos);
+
+                newData[pos] = b;
+            }catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+
+            data = newData;
+        }
+
+        private void setRawData(byte[] b) {
+            data = b;
+        }
+
+        private void setByte(int pos, byte b) {
+            if (pos < 0 || pos > data.length) return;
+            data[pos] = b;
+        }
+
+
+        private byte getByte(int pos) {
+            return data[pos];
+        }
+
+        private int length() {
+            return data.length;
+        }
+
+        private byte[] getRawData() {
+            return data;
+        }
     }
 }
