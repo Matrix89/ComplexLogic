@@ -56,6 +56,8 @@ public class ProxyCommon {
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "patchpanel"), PatchPanelLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "textdisplay"), TextDisplayLogic.class);
         event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "binto7seg"), BinTo7Seg.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "dac"), DACLogic.class);
+        event.registerLogicType(new ResourceLocation(ComplexLogic.MOD_ID, "adc"), ADCLogic.class);
 
         event.registerPartForCreativeTab(new PartGate(new AdderLogic()));
         event.registerPartForCreativeTab(new PartGate(new BundledViewerLogic()));
@@ -81,6 +83,8 @@ public class ProxyCommon {
         event.registerPartForCreativeTab(new PartGate(new PatchPanelLogic()));
         event.registerPartForCreativeTab(new PartGate(new TextDisplayLogic()));
         event.registerPartForCreativeTab(new PartGate(new RealBinToBCDLogic()));
+        event.registerPartForCreativeTab(new PartGate(new DACLogic()));
+        event.registerPartForCreativeTab(new PartGate(new ADCLogic()));
     }
 
     @SideOnly(Side.CLIENT)
