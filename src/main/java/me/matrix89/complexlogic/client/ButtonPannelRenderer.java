@@ -85,7 +85,11 @@ public class ButtonPannelRenderer extends GateCustomRenderer<ButtonPanelLogic> {
             }
 
             for (int i = 0; i < 16; i++) {
-                modelConsumer.accept(getTransformedModel(buttonModels[i], gate));
+                try {
+                    modelConsumer.accept(getTransformedModel(buttonModels[i], gate));
+                } catch (ModelTransformer.TransformationFailedException e) {
+                    e.printStackTrace();
+                }
             }
 
             super.renderStatic(gate, logic, isItem, modelConsumer, quadConsumer);
@@ -115,15 +119,19 @@ public class ButtonPannelRenderer extends GateCustomRenderer<ButtonPanelLogic> {
             int color = i & 15;
             boolean v = (i & 16) != 0;
 
-            buttonModels[i] = ModelTransformer.transform(
-                    v ? buttonPanelBakedModelOn : buttonPanelBakedModelOff,
-                    SimpleLogicGates.blockGate.getDefaultState(),
-                    0L,
-                    ModelTransformer.IVertexTransformer.compose(
-                            transformations[color],
-                            ModelTransformer.IVertexTransformer.tint(v ? colors[color][1] : colors[color][0])
-                    )
-            );
+            try {
+                buttonModels[i] = ModelTransformer.transform(
+                        v ? buttonPanelBakedModelOn : buttonPanelBakedModelOff,
+                        SimpleLogicGates.blockGate.getDefaultState(),
+                        0L,
+                        ModelTransformer.IVertexTransformer.compose(
+                                transformations[color],
+                                ModelTransformer.IVertexTransformer.tint(v ? colors[color][1] : colors[color][0])
+                        )
+                );
+            } catch (ModelTransformer.TransformationFailedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

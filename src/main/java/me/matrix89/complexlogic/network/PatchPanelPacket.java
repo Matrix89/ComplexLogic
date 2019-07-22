@@ -4,11 +4,9 @@ import me.matrix89.complexlogic.gate.PatchPanelLogic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.PacketBuffer;
-import pl.asie.charset.lib.network.Packet;
-import pl.asie.simplelogic.gates.PacketGate;
 import pl.asie.simplelogic.gates.PartGate;
-import pl.asie.simplelogic.gates.gui.ContainerGate;
 import pl.asie.simplelogic.gates.logic.IGateContainer;
+import pl.asie.simplelogic.gates.network.PacketGate;
 
 public class PatchPanelPacket extends PacketGate {
     byte[][] connectionGrid = new byte[16][16];

@@ -43,7 +43,11 @@ public class SegmentDisplayRenderer extends GateCustomRenderer<SegmentDisplayLog
                         ModelLoader.defaultTextureGetter()
                 );
             }
-            modelConsumer.accept(getTransformedModel(segmentBakedModel, gate));
+            try {
+                modelConsumer.accept(getTransformedModel(segmentBakedModel, gate));
+            } catch (ModelTransformer.TransformationFailedException e) {
+                e.printStackTrace();
+            }
             super.renderStatic(gate, logic, isItem, modelConsumer, quadConsumer);
         }
     }

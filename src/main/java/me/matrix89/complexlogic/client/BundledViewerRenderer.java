@@ -81,7 +81,11 @@ public class BundledViewerRenderer extends GateCustomRenderer<BundledViewerLogic
             if (viewerLampsBakedModel == null) {
                 initModels();
             }
-            modelConsumer.accept(getTransformedModel(viewerLampsBakedModel, gate));
+            try {
+                modelConsumer.accept(getTransformedModel(viewerLampsBakedModel, gate));
+            } catch (ModelTransformer.TransformationFailedException e) {
+                e.printStackTrace();
+            }
             super.renderStatic(gate, logic, isItem, modelConsumer, quadConsumer);
         }
     }
